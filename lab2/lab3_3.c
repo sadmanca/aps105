@@ -19,6 +19,8 @@ execution of the program appears below:
 */
 
 #include <stdio.h>
+#include <string.h>
+
 int main() {
 
     int start_hours, trip_hours, end_hours;
@@ -42,25 +44,39 @@ int main() {
     }
 
     end_hours = start_hours + trip_hours + extra_hour;
-    if (end_hours > 24) {
+    if (end_hours >= 24) {
         next_day = 1;
         end_hours = end_hours - 24;
     }
 
-    printf("\nCurrent time is %d:%.0f", start_hours, start_min);
-    if (end_hours < 10) {
-        if (next_day == 1) {
-            printf("\nArrival Time is next day 0%d:%.0f", end_hours, end_min);
-        } else {
-            printf("\nArrival Time is same day 0%d:%.0f", end_hours, end_min);
-        }
+    if (start_hours < 10) {
+        printf("\nCurrent time is 0%d:", start_hours);
     } else {
-        if (next_day == 1) {
-            printf("\nArrival Time is next day %d:%.0f", end_hours, end_min);
-        } else {
-            printf("\nArrival Time is same day %d:%.0f", end_hours, end_min);
-        }
+        printf("\nCurrent time is %d:", start_hours);
+    }
 
+    if (start_min < 10) {
+        printf("0%.0f", start_min);
+    } else {
+        printf("%.0f", start_min);
+    }
+
+    if (next_day == 1) {
+        printf("\nArrival Time is next day ");
+    } else {
+        printf("\nArrival Time is same day ");
+    }
+
+    if (end_hours < 10) {
+        printf("0%d:", end_hours);
+    } else {
+        printf("%d:", end_hours);
+    }
+
+    if (end_min < 10) {
+        printf("0%.0f", end_min);
+    } else {
+        printf("%.0f", end_min);
     }
 
     return 0;
