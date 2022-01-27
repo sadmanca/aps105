@@ -48,52 +48,58 @@ including all punctuation. Any variation from this will result in a loss of mark
     -3 cents: invalid amount.
 */
 
+//
+// APS105-W22 Lab 3 Part 3 - Change
+//
+// This program calculates the minimum number of coins (of quarters, dimes, nickels, and/or cents)
+// required to equal the value of a number of cents totalling less than 100 (i.e. less than 1 dollar).
+//
+
 #include <stdio.h>
 #include <string.h>
 
 int main(void) {
+    // variables to store number of coins of each type
     int cents, quarters, dimes, nickels;
+    const int QUARTER_VALUE = 25, DIME_VALUE = 10, NICKEL_VALUE = 5;
 
     printf("Please give an amount in cents less than 100: ");
     while (1) {
+        // initialize strings for printing an additional "s" when there are more than 1 coin
         char quarters_plural[9] = "quarter", nickels_plural[8] = "nickel", dimes_plural[6] = "dime", cents_plural[6] = "cent";
         scanf("%d", &cents);
         
         printf("%d cents: ", cents);
+
         if (cents <= 0 || cents >= 100) {
             printf("invalid amount.");
             break;
         }
 
-        quarters = cents / 25;
-        cents -= quarters * 25;
+        quarters = cents / QUARTER_VALUE;
+        cents -= quarters * QUARTER_VALUE;
 
-        dimes = cents / 10;
-        cents -= dimes * 10;
+        dimes = cents / DIME_VALUE;
+        cents -= dimes * DIME_VALUE;
 
-        nickels = cents / 5;
-        cents -= nickels * 5;
+        nickels = cents / NICKEL_VALUE;
+        cents -= nickels * NICKEL_VALUE;
 
+        // if there is more than 1 coin of a type, set string of coin to be plural
         if (quarters > 1) {
-            // strcat(quarters_plural, "s");
             strcpy(quarters_plural, "quarters");
-            // quarters_plural[8] = "s";
         }
         if (nickels > 1) {
             strcpy(nickels_plural, "nickels");
-            // strcat(nickels_plural, "s");
-            // printf("%s", nickels_plural);
         }
         if (dimes > 1) {
             strcpy(dimes_plural, "dimes");
-            // strcat(dimes_plural, "s");
         }
         if (cents > 1) {
             strcpy(cents_plural, "cents");
-            // strcat(cents_plural, "s");
-            // printf("%s", cents_plural);
         }
 
+        // nested if-else for all possible combinations of types and singularity/plurality of coins
         if (quarters) {
             printf("%d %s", quarters, quarters_plural);
             if (dimes) {
@@ -163,6 +169,7 @@ int main(void) {
             // cents
             printf("%d %s.", cents, cents_plural);
         }
+
         printf("\nPlease give an amount in cents less than 100: ");
     }
     return 0;

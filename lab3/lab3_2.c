@@ -43,6 +43,12 @@ Hint: You may find it helpful to draw the required output on a piece of graph pa
 your program.
 */
 
+//
+// APS105-W22 Lab 3 Part 2 - The Triangle
+//
+// This program prints a hollow triangle of asterisks given the number of rows inputted by the user
+//
+
 #include <stdio.h>
 
 int main(void) {
@@ -54,28 +60,34 @@ int main(void) {
     int row;
     int spaces_before_first_star = -1, spaces_after_first_star = 1;
     
+    // print top of triangle
     for (int i = 0; i < num_rows - 1; i++) {
         printf(" ");
         spaces_before_first_star++;
     }
     
     printf("*\n");
+
+    // print interior of triangle
     for (row = 2; row < num_rows; row++) {
+
         for (int i = 0; i < spaces_before_first_star; i++) {
             printf(" ");
         }
         printf("*");
+
         for (int i = 0; i < spaces_after_first_star; i++) {
             printf(" ");
         }
-        printf("*\n");
+        printf("*");
+        printf("\n");
 
-        spaces_before_first_star--;
+        spaces_before_first_star -= 1;
         spaces_after_first_star += 2;
     }
 
+    // print base of triangle
     int num_base_stars = 2 * num_rows - 1;
-
     if (num_rows != 1) {
         for (int i = 0; i < num_base_stars; i++) {
             printf("*");

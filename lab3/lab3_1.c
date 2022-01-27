@@ -35,6 +35,13 @@ by the int type. The test cases will only use threshold values sufficiently smal
 answers.
 */
 
+//
+// APS105-W22 Lab 3 Part 1 - Substance Test
+//
+// This program identifies a substance if its boiling point (given by the user) is within a given 
+// threshold of the expected boiling point of various substances
+//
+
 #include <stdio.h>
 #include <stdlib.h>
 
