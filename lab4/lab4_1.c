@@ -38,27 +38,31 @@ int print_spaces(int num_spaces) {
 }
 
 int triangle(int rows) {
+	const int SPACING = 5;
 	if (rows == 1) {
 		printf("%d", choose(0, 0));
-		print_spaces(5);
+		print_spaces(SPACING);
 		printf("\n");
+
 	} else if (rows == 0) {
 		printf("");
+
 	} else {
-		int spaces = 3 * (rows - 1);
-		print_spaces(spaces);
+		int spaces_before_first_num = 3 * (rows - 1);
+		print_spaces(spaces_before_first_num);
 		printf("%d", choose(0, 0));
-		print_spaces(5);
+		print_spaces(SPACING);
 		printf("\n");
 
 		for (int row = 2; row <= rows; row++) {
-			spaces -= 3;
-			print_spaces(spaces);
+			spaces_before_first_num -= 3;
+			print_spaces(spaces_before_first_num);
 			printf("%d", choose(row - 1, row - 1));
+
 			for (int col = 2; col <= row; col++) {
 				printf("%6d", choose(row - 1, row - col));
 			}
-			print_spaces(5);
+			print_spaces(SPACING);
 			printf("\n");
 		}
 	}

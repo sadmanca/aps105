@@ -1,5 +1,13 @@
 // APS105S-W22 Lab 4 Part 2 - Erdos-Woods Numbers
 
+// This program finds an Erdos-Woods number (if one exists) within a range of
+// k values (inclusive; given by user) by testing for validity within a range of
+// a values (inclusive; given by user).
+
+// VALIDITY OF AN ERDOS-WOODS NUMBER: if for a positive integer k there is a 
+// positive integer a such that each evaluation of gcd(a, a + i) > 1 or 
+// gcd(a + k, a + i) > 1 returns true, then k is an Erdos-Woods number.
+
 #include <stdio.h>
 
 int gcd(int num_1, int num_2) {
@@ -28,21 +36,6 @@ int main(void) {
         printf("Enter the number to stop searching for a (inclusive): ");
         scanf("%d", &stop_a);
     }
-
-    // start_k = 3;
-    // stop_k = 20;
-    // start_a = 1;
-    // stop_a = 10000;
-
-    // start_k = 3;
-    // stop_k = 22;
-    // start_a = 3000000;
-    // stop_a = 4000000;
-
-    // start_k = 3;
-    // stop_k = 15;
-    // start_a = 1;
-    // stop_a = 3000;
 
     int is_erdos_woods;
     for (int k = start_k; k <= stop_k; k++) {
