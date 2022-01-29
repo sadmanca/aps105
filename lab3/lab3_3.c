@@ -1,13 +1,15 @@
 /*
 Part 3 — Change
 
-In this part, you are asked to write a program that makes change for amounts less than one dollar.
-User input should be a positive integer value less than 100, which represents an amount of cash,
-in cents. The program should prompt the user for a such a positive integer value, and should then
-print the original amount of cash, together with a set of coins (quarters, dimes, nickels, cents) that
-could make up that amount. The program should produce change containing the minimum number
-of coins required for the given amount. The output should be in a natural, non-stilted form. For
-example, input of 58 should produce the following output:
+In this part, you are asked to write a program that makes change for amounts
+less than one dollar. User input should be a positive integer value less than
+100, which represents an amount of cash, in cents. The program should prompt the
+user for a such a positive integer value, and should then print the original
+amount of cash, together with a set of coins (quarters, dimes, nickels, cents)
+that could make up that amount. The program should produce change containing the
+minimum number of coins required for the given amount. The output should be in a
+natural, non-stilted form. For example, input of 58 should produce the following
+output:
 
     58 cents: 2 quarters, 1 nickel, and 3 cents.
 
@@ -15,16 +17,18 @@ rather than something like
 
     58 cents: 2 quarters, 0 dimes, 1 nickels, 3 cents.
 
-Invalid input (0, negative values or positive values of 100 or more) should be rejected by your
-program as shown in the examples below. Your program should repeatedly prompt the user for the
-next amount, until an invalid amount has been entered. When an invalid amount has been entered
-by the user, the program will terminate.
+Invalid input (0, negative values or positive values of 100 or more) should be
+rejected by your program as shown in the examples below. Your program should
+repeatedly prompt the user for the next amount, until an invalid amount has been
+entered. When an invalid amount has been entered by the user, the program will
+terminate.
 
 SAMPLE RUN
 
-Shown below is a sample run of the program. The values 10, 16, 20, . . . are entered by the user in
-each sample run. Given the same user input, your output should match the following output exactly,
-including all punctuation. Any variation from this will result in a loss of marks with some test cases.
+Shown below is a sample run of the program. The values 10, 16, 20, . . . are
+entered by the user in each sample run. Given the same user input, your output
+should match the following output exactly, including all punctuation. Any
+variation from this will result in a loss of marks with some test cases.
 
     Please give an amount in cents less than 100: 10
     10 cents: 1 dime.
@@ -51,8 +55,9 @@ including all punctuation. Any variation from this will result in a loss of mark
 //
 // APS105-W22 Lab 3 Part 3 - Change
 //
-// This program calculates the minimum number of coins (of quarters, dimes, nickels, and/or cents)
-// required to equal the value of a number of cents totalling less than 100 (i.e. less than 1 dollar).
+// This program calculates the minimum number of coins (of quarters, dimes,
+// nickels, and/or cents) required to equal the value of a number of cents
+// totalling less than 100 (i.e. less than 1 dollar).
 //
 
 #include <stdio.h>
@@ -72,7 +77,8 @@ int main(void) {
 
     printf("Please give an amount in cents less than 100: ");
     while (1) {
-        // initialize strings for printing an additional "s" when there are more than 1 coin
+        // initialize strings for printing an additional "s" when there are more
+        // than 1 coin
         char quarters_plural[9] = "quarter";
         char nickels_plural[8] = "nickel";
         char dimes_plural[6] = "dime";
@@ -109,7 +115,8 @@ int main(void) {
             strcpy(cents_plural, "cents");
         }
 
-        // nested if-else for all possible combinations of types and singularity/plurality of coins
+        // nested if-else for all possible combinations of types and
+        // singularity/plurality of coins
         if (quarters) {
             printf("%d %s", quarters, quarters_plural);
             if (dimes) {

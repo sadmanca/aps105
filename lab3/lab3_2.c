@@ -1,12 +1,13 @@
 /*
 Part 2 — The Triangle
 
-Write a complete C program that uses the * character to draw a triangle of a given number of rows.
-The program first prompts the user to enter the number of rows in the triangle. Your program may
-assume that the input is a valid integer from 1 to 20 (inclusive).
+Write a complete C program that uses the * character to draw a triangle of a
+given number of rows. The program first prompts the user to enter the number of
+rows in the triangle. Your program may assume that the input is a valid integer
+from 1 to 20 (inclusive).
 
-Here are some sample outputs from the execution of the program. The output of your program
-should match the sample output.
+Here are some sample outputs from the execution of the program. The output of
+your program should match the sample output.
 
 Sample output 1:
 
@@ -39,14 +40,15 @@ Sample output 4:
      *               *
     *******************
 
-Hint: You may find it helpful to draw the required output on a piece of graph paper before writing
-your program.
+Hint: You may find it helpful to draw the required output on a piece of graph
+paper before writing your program.
 */
 
 //
 // APS105-W22 Lab 3 Part 2 - The Triangle
 //
-// This program prints a hollow triangle of asterisks given the number of rows inputted by the user
+// This program prints a hollow triangle of asterisks given the number of rows
+// inputted by the user
 //
 
 #include <stdio.h>
