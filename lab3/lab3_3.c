@@ -60,13 +60,23 @@ including all punctuation. Any variation from this will result in a loss of mark
 
 int main(void) {
     // variables to store number of coins of each type
-    int cents, quarters, dimes, nickels;
-    const int QUARTER_VALUE = 25, DIME_VALUE = 10, NICKEL_VALUE = 5;
+    int cents = -1;
+    int quarters = -1;
+    int dimes = -1;
+    int nickels = -1;
+
+    // value of each type of coin in cents
+    const int QUARTER_VALUE = 25;
+    const int DIME_VALUE = 10;
+    const int NICKEL_VALUE = 5;
 
     printf("Please give an amount in cents less than 100: ");
     while (1) {
         // initialize strings for printing an additional "s" when there are more than 1 coin
-        char quarters_plural[9] = "quarter", nickels_plural[8] = "nickel", dimes_plural[6] = "dime", cents_plural[6] = "cent";
+        char quarters_plural[9] = "quarter";
+        char nickels_plural[8] = "nickel";
+        char dimes_plural[6] = "dime";
+        char cents_plural[6] = "cent";
         scanf("%d", &cents);
         
         printf("%d cents: ", cents);

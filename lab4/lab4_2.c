@@ -19,7 +19,11 @@ int gcd(int num_1, int num_2) {
 }
 
 int main(void) {
-    int start_k = -1, stop_k = -1, start_a = -1, stop_a = -1;
+    int start_k = -1;
+    int stop_k = -1;
+    int start_a = -1;
+    int stop_a = -1;
+
     while (start_k <= 2) {
         printf("Enter the number to start searching for k (> 2, inclusive): ");
         scanf("%d", &start_k);
@@ -37,12 +41,12 @@ int main(void) {
         scanf("%d", &stop_a);
     }
 
-    int is_erdos_woods;
+    int is_erdos_woods = 1;
     for (int k = start_k; k <= stop_k; k++) {
         printf("Trying k = %d...\n", k);
         for (int a = start_a; a <= stop_a; a++) {
             for (int i = 0; i < k; i++) {
-            is_erdos_woods = 1;
+                is_erdos_woods = 1;
                 if (!(gcd(a, a + i) > 1 || gcd(a + k, a + i) > 1)) {
                     is_erdos_woods = 0;
                     break;

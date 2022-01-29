@@ -52,13 +52,13 @@ your program.
 #include <stdio.h>
 
 int main(void) {
-    int num_rows;
+    int num_rows = -1;
 
     printf("Enter the number of rows in the triangle: ");
     scanf("%d", &num_rows);
 
-    int row;
-    int spaces_before_first_star = -1, spaces_after_first_star = 1;
+    int spaces_before_first_star = -1;
+    int spaces_after_first_star = 1;
     
     // print top of triangle
     for (int i = 0; i < num_rows - 1; i++) {
@@ -69,7 +69,7 @@ int main(void) {
     printf("*\n");
 
     // print interior of triangle
-    for (row = 2; row < num_rows; row++) {
+    for (int row = 2; row < num_rows; row++) {
 
         for (int i = 0; i < spaces_before_first_star; i++) {
             printf(" ");

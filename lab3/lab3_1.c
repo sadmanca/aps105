@@ -46,8 +46,14 @@ answers.
 #include <stdlib.h>
 
 int main(void) {
-    const int  WATER_BOILING_POINT = 100, MERCURY_BOILING_POINT = 357, COPPER_BOILING_POINT = 1187, SILVER_BOILING_POINT = 2193, GOLD_BOILING_POINT = 2660;
-    int threshold, boiling_point;
+    const int  WATER_BOILING_POINT = 100;
+    const int MERCURY_BOILING_POINT = 357;
+    const int COPPER_BOILING_POINT = 1187;
+    const int SILVER_BOILING_POINT = 2193;
+    const int GOLD_BOILING_POINT = 2660;
+    
+    int threshold = -1;
+    int boiling_point = -1;
 
     printf("Enter the threshold in Celsius: ");
     scanf("%d", &threshold);
