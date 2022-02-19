@@ -38,7 +38,9 @@ int print_spaces(int num_spaces) {
 }
 
 int triangle(int rows) {
+	// number of spaces taken by each element
 	const int SPACING = 5;
+
 	if (rows == 1) {
 		printf("%d", choose(0, 0));
 		print_spaces(SPACING);
@@ -59,6 +61,9 @@ int triangle(int rows) {
 			print_spaces(spaces_before_first_num);
 			printf("%d", choose(row - 1, row - 1));
 
+			// the 6 in %6d specifies the minimum number of characters to be printed
+			// if the value to be printed is shorter than this number, 
+			// the result is padded with blank spaces
 			for (int col = 2; col <= row; col++) {
 				printf("%6d", choose(row - 1, row - col));
 			}

@@ -6,7 +6,7 @@
 
 // VALIDITY OF AN ERDOS-WOODS NUMBER: if for a positive integer k there is a 
 // positive integer a such that each evaluation of gcd(a, a + i) > 1 or 
-// gcd(a + k, a + i) > 1 returns true, then k is an Erdos-Woods number.
+// gcd(a + k, a + i) > 1 returns true (where 0 < i < k), then k is an Erdos-Woods number.
 
 #include <stdio.h>
 
