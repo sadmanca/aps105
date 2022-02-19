@@ -21,36 +21,46 @@ Array size cannot be 0.
 #include <stdio.h>
 
 void longestSequence(int a[], int sizeA) {
-    int curr_len = 0;
-    int prev_len = 0;
-    int start_longest = 0;
-
+    int longest_seq[sizeA];
+    int longest_len = 0;
+    
     for (int i = 0; i < sizeA; i++) {
-        // if next num in sequence is larger than current num
-        if (a[i + 1] > a[i]) {
+        // declare length of increasing sequence as 1
+        // because the array will always have at least 1 item
+        int curr_len = 1;
+
+        // determine length of longest increasing sequence starting at i
+        // use separate variable index to avoid changing i because we want to iterate 
+        // through every potential starting index i in the array
+        int index = i; 
+        while (a[index + 1] > a[index] && index < sizeA - 1) {
             curr_len++;
-            if (curr_len > prev_len) {
-                start_longest = i + 1 - curr_len;
-                prev_len = curr_len;
+            index++;
+        }
+
+        // if length of current increasing sequence is longer than previous longest sequence,
+        // then replace longest_seq with the values in the current increasing sequence
+        if (curr_len > longest_len) {
+            longest_len = curr_len;
+            index = i;
+            for(int j = 0; j < curr_len; j++) {
+                longest_seq[j] = a[index];
+                index++;
             }
-        } else {
-            prev_len = curr_len;
-            curr_len = 0;
         }
     }
-
+    
     printf("Longest sequence is ");
     int i = 0;
-    for (i; i < prev_len; i++) {
-        printf("%d, ", a[start_longest + i]);
-    }   
-    printf("%d.", a[start_longest + i]);
+    for (i = 0; i < longest_len - 1; i++) {
+        printf("%d, ",longest_seq[i]);
+    }
+    printf("%d.", longest_seq[i]);
 }
 
 int main(void) {
-    // int a[] = {1, 3, 10, 1, 7, 8, 10, 30, 0};
-    int a[] = {-1, 0, -2, 1, -3, 3, -10, 5, -5, 8, -8, -10, 10, -6, 6, -7, 7, -9, 9, 0};
-    int size = sizeof(a) / sizeof(a[0]);
-    longestSequence(a, size);
+    int a[] =  {1, 3, 10, 1, 7, 8, 10, 30, 0};
+    // int a[] =  {-1, 0, -2, 1, -3, 3, -10, 5, -5, 8, -8, -10, 10, -6, 6, -7, 7, -9, 9, 0};
+    longestSequence(a, sizeof(a)/sizeof(a[0]));
     return 0;
 }
