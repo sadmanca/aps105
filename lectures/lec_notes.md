@@ -8,6 +8,9 @@
       - [WARNINGS](#warnings)
       - [OPERATOR PRECEDENCE & ASSOCIATIVITY](#operator-precedence--associativity)
 - [5. Math Functions](#5-math-functions)
+    - [5.0.1. MATH LIBRARY FUNCTIONS](#501-math-library-functions)
+    - [5.0.2. GENERATING RANDOM NUMBERS](#502-generating-random-numbers)
+    - [APPLICATIONS OF RANDOM NUMBERS](#applications-of-random-numbers)
 - [6. Relational Expressions](#6-relational-expressions)
 - [7. Logic Operators](#7-logic-operators)
 - [8. Loops](#8-loops)
@@ -280,6 +283,112 @@ https://web.microsoftstream.com/video/2e8252f9-8652-4afe-b7e9-0e0d089e80f7?st=14
 <hr style="border:4px solid #575757; margin: 30px 0 30px 0; "> </hr>
 
 # 5. Math Functions
+
+### 5.0.1. MATH LIBRARY FUNCTIONS
+
+```c
+#include <math.h>
+
+// Notice how All operands and return types are double
+double fabs(double x) // return absolute value of x
+/* ↓
+   Q: Why use fabs() over abs()?
+   A: abs() only returns int, so it will truncate doubles, unlike fabs() */
+
+double fmax(double x, double y) // return largest of x, y
+double fmin(double x, double y) // return smallest of x, y 
+
+double floor(double x) // *round down* to int
+double ceil(double x) // *round up* to int
+double rint(double x) // *round to nearest* int
+
+double fmod(double x, double y) // mod for floating points
+```
+
+**PRACTICE:**
+1\. How can you round 2.18 to 2.20? {.p}
+
+A: 
+1. multiply by 10 (`2.18 * 10 = 21.8`)
+2. round up/to the nearest integer (`rint(21.8) = ceil(21.8) = 22.0`)
+3. divide by 10 (`22.0 / 10 = 2.20`)
+4. written as a single operation: **`rint(num * 10) / 10`**{.lg}
+
+2\. Imagine Canada no longer uses pennies. How can you round any dollar amount (e.g. `$2.94`) to the nearest nickel (e.g. `$2.94 → $2.95`)? {.p}
+
+A: use question 1 as a model for solving rounding problems:
+1. we recognize that we want to use `rint()`, because we need to round to the nearest number.
+2. **PROBLEM**: we are not rounding to the nearest int; we need to round to the nearest nickel (i.e. nearest 0.05).
+3. **SOLUTION**: 
+   1. **convert dollar amount to be decimal number of nickels:** 
+   ($\text{2.94 dollars } \times \frac{\text{100 cents}}{\text{1 dollar}} \times \frac{\text{1 nickel}}{\text{5 cents}} =$ `2.94 * 100 / 5`)
+   2. round number of nickels to nearest integer: 
+   (`rint(58.8) = 59 nickels`) 
+   3. convert rounded number of nickels back to dollars: 
+   ($\text{59 nickels } \times \frac{\text{5 cents}}{\text{1 nickel}} \times \frac{\text{1 dollar}}{\text{100 cents}} =$ `59 * 5 / 100`)
+4. now that we have a process for rounding, we can write it as a single expression: **`printf("%lf, rint(price * 100/5) *5/100)`**{.lg}
+
+---
+
+### 5.0.2. GENERATING RANDOM NUMBERS
+
+```c
+// random number generator functions require standard library
+#include <stdlib.h>
+```
+
+```c
+// takes no input argument
+int rand()
+```
+Generates a positive int from 0 to $2^{31}-1$` = RAND_MAX`
+
+Q: Why is `rand()` a "pseudo-random" number generator? {.r}
+
+A: Each time you run a program with `rand()`, the same numbers will be generated. This occurs because `rand()` uses a deterministic algorithm to generate random numbers. {.lg}
+
+Q: How can we generate a different set of randuom numbers using `rand()`? {.r}
+
+A: Change the **SEED** for the random number generator (only need to change it once at the beginning of the program) {.lg}
+```c
+void srand(unsigned int SEED)
+// default seed = 1
+```
+
+Q: How can we set a random seed every time we run a program? {.r}
+
+A: make seed dependent on time: {.lg}
+
+```c
+#include <time.h>
+srand(time(NULL))
+// time(NULL) → return time as seconds since 1 Jan 1970
+```
+
+### APPLICATIONS OF RANDOM NUMBERS 
+
+Q: How can we generate a random number within an interval ***STARTING AT 0*** (e.g. 0-1)? {.r}
+
+A: Using mod (`%`): {.lg}
+
+```c
+0 % 5 = 0 // ← ←
+1 % 5 = 1 //     ↑
+2 % 5 = 2 //     ↑
+3 % 5 = 3 //     ↑
+4 % 5 = 4 //     ↑
+5 % 5 = 0 // REPEATS
+6 % 5 = 1
+```
+`% 5` will always return a number between `0 to 4`
+`% 2` will always return a number between `0 to 1`
+**`% n` will always return a number between `0 to n-1`**
+
+Thus, to generate a number from `0 to n-1`, we can use `num = rand() % n` {.lg}
+
+- Q: How can we generate a random number within an interval ***NOT*** starting at 0 (e.g. `a to b`, 5 to 15)? {.r}
+- A: Generate a number from `0+a to b-a`, i.e. `num = rand() % (b-a + 1) + a` {.lg}
+- e.g. random number from 5-15: generate random num from 0-10, then add 5 (`num = rand() % 11 + 5`)
 
 <hr style="border:4px solid #575757; margin: 30px 0 30px 0; "> </hr>
 
