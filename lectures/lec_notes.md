@@ -36,6 +36,9 @@
   - [13.3. Returning Pointers in Functions](#133-returning-pointers-in-functions)
 - [14. Variable Scopes](#14-variable-scopes)
   - [14.1. Overlapping Scopes](#141-overlapping-scopes)
+- [15. 1D Arrays](#15-1d-arrays)
+  - [15.1. Ways to Declare/Initalize 1D Arrays](#151-ways-to-declareinitalize-1d-arrays)
+    - [15.1.1. Writing into Unallocated Memory](#1511-writing-into-unallocated-memory)
 
 # 1. _Course Intro_
 
@@ -833,5 +836,40 @@ When variable with the same name is declared in a statement inside another state
 
   // OUTPUT: 1 10 0
   ```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 15. 1D Arrays
+
+## 15.1. Ways to Declare/Initalize 1D Arrays
+
+```c
+int a[5] // declares 5 variables: a[0], ..., a[4]
+int all_zero[5] = {0} // sets all indices to have the same value
+int individual_values[5] = {0,1,2,3,4} // set unique value at each index
+
+// both initializations below are the same
+int individual_values[] = {0,1,2,3,4}
+int individual_values[5] = {0,1,2,3,4}
+
+int individual_values[10] = {0,1,2,3,4} // first 5 indices are unique values; rest are 0
+
+int size_less_than_values[3] = {0,1,2,3,4} // compile-time error
+```
+
+### 15.1.1. Writing into Unallocated Memory
+Q: What happens if we try to assign a value beyond the declared indices of an array (e.g. `a[6] = 23` for `int a[5]`)? {.r}
+
+A: Because the C compiler does not do range checking, this may result in a segmentation fault or overwrite other indices of the array; it is nondeterministic. {.lg}
+
+**PRACTICE:**
+1\. What is the address of a variable at an array index (e.g. for array `int a[]`)? {.p}
+
+`&a[n]` for variable at array index n. {.lg} 
+
+2\. Write a function that reverses an integer array. {.p}
+```c
+see lecture 15: 02-11-2022_Lecture
+```
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
