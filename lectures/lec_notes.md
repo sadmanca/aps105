@@ -30,6 +30,10 @@
   - [12.1. Why we need pointers ('Call by value')](#121-why-we-need-pointers-call-by-value)
   - [12.2. Defining pointers](#122-defining-pointers)
   - [12.3. Memory Taken up by Addresses & Pointers](#123-memory-taken-up-by-addresses--pointers)
+- [13. More on Pointers](#13-more-on-pointers)
+  - [13.1. Void Pointers](#131-void-pointers)
+  - [13.2. NULL Pointers](#132-null-pointers)
+  - [13.3. Returning Pointers in Functions](#133-returning-pointers-in-functions)
 
 # 1. _Course Intro_
 
@@ -720,5 +724,62 @@ pd = &pi;
 *pd = 7.0;
 ????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
 ```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 13. More on Pointers
+
+## 13.1. Void Pointers
+
+**VOID POINTER:**  has no associated data type; can hold address of any type & can be casted to any type.
+```c
+int i = 10;
+char c = 'x';
+
+// void pointers can hold addresses of any type
+void *p = &a; // address of int 'i'
+*p = &b // address of char 'c'
+```
+
+## 13.2. NULL Pointers
+
+**NULL POINTER:** is a constant pointer (pointing to address 0) used...
+- ...to initialize pointers w/o assigning a valid memory address
+  - e.g. `int *p = NULL;`
+  - uninitialized pointers have arbitrary values & we don't know whether they are valid or not (which is why sometimes segmentation faults might occur, while other times they may not; the fault is nondeterministic)
+- ...to check for valid pointer address before dereferencing
+  - e.g. `p != NULL`
+  - this helps prevent **Runtime Segmentation Faults** (invalid access of memory) by allowing us to check if a pointer has been assigned an address
+- ...as a function argument (instead of passing a valid memory address)
+
+## 13.3. Returning Pointers in Functions
+
+Consider a function `largerAddress()` that returns the address of (i.e. a pointer to) the larger of x & y. 
+
+The `main()` function looks like:
+```c
+int main(void) {
+  int x = 1, y = 2;
+  // since we want the address of the variable with the larger value, we will be storing the returned pointer in a pointer variable
+  int *l = largerAddress(&x, &y); 
+  // '&x', '&y' are parameters because we need to return the address of a variable, not the actual value
+}
+```
+Q: What will `largerAddress()` look like? What will the return type be? {.r}
+```c
+// A:
+int* largerAddress(int *x, int *y) {
+  if (*x > *y) {
+    return x;
+  }
+  return y;
+}
+```
+- Q: Why do we return `x` instead of `&x`, `*x`, or `&*x`? {.r}
+- A: After `largerAddress()` takes in addresses `&x` and `&y` as parameters, the function initalizes pointers `*x` and `*y` with those addresses. {.lg}
+- Since we just want the address of (i.e. a pointer to) the variable with the larger value, we can just return `x` or `y`. {.lg}
+- Since `x` is already a pointer, `*x` returns the value at the address, which is not what we want. 
+- `&x` returns the address of the pointer `x` itself, which is not what we want either (we want the address of the variable `x` in `main()`).
+- `&*x` is the same as returning the pointer `x`, because `&` and `*` are opposite operations.
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
