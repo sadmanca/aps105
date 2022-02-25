@@ -34,6 +34,8 @@
   - [13.1. Void Pointers](#131-void-pointers)
   - [13.2. NULL Pointers](#132-null-pointers)
   - [13.3. Returning Pointers in Functions](#133-returning-pointers-in-functions)
+- [14. Variable Scopes](#14-variable-scopes)
+  - [14.1. Overlapping Scopes](#141-overlapping-scopes)
 
 # 1. _Course Intro_
 
@@ -781,5 +783,55 @@ int* largerAddress(int *x, int *y) {
 - Since `x` is already a pointer, `*x` returns the value at the address, which is not what we want. 
 - `&x` returns the address of the pointer `x` itself, which is not what we want either (we want the address of the variable `x` in `main()`).
 - `&*x` is the same as returning the pointer `x`, because `&` and `*` are opposite operations.
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 14. Variable Scopes
+
+VARIABLE SCOPE: the set of C statements (example below) within which a variable is defined/visible/accessible.
+- variables declared inside function headers (e.g. `func(int x`) or compound statements (e.g. `{ {var} }`) are only available within their respective statement.
+- declaring a variable before initializing it results in compile-time error:
+- ```c 
+  // e.g.
+  i = 1; // compiler error
+  int i;
+  ```
+
+GLOBAL VARIABLES: are declared at the top of the .c file outside any functions; are scoped to all functions in the file.
+```c
+// e.g.
+#include <stdio.h>
+int x; // GLOBAL VARIABLE
+
+// x is scoped outside any function
+
+void func() {
+  ... // x is scoped here
+}
+
+int main(void) {
+  ... // x is scoped here too
+}
+```
+
+## 14.1. Overlapping Scopes
+
+When variable with the same name is declared in a statement inside another statement that has already declared a variable with that name, the scope of those variables (which are different variables that point to different addresses but just have the same name) is overlapping.
+- this is NOT an invalid operation; no errors/warnings will be given.
+- the value assigned to the interior scoped variable is limited to the interior statement; in the surrounding statement, the value of the variable goes back to its original value.
+  ```c
+  // e.g.
+  int i = 1;
+  printf("%d", i);
+  {
+    int i = 10;
+    printf("%d", i);
+  }
+  printf("%d", i);
+  // what is the output?
+
+
+  // OUTPUT: 1 10 0
+  ```
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
