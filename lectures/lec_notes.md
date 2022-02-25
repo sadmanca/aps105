@@ -26,6 +26,10 @@
 - [9. For Loops](#9-for-loops)
 - [10. See 8. & 9. (Nested Loops)](#10-see-8--9-nested-loops)
 - [11. Functions](#11-functions)
+- [12. Intro to Pointers](#12-intro-to-pointers)
+  - [12.1. Why we need pointers ('Call by value')](#121-why-we-need-pointers-call-by-value)
+  - [12.2. Defining pointers](#122-defining-pointers)
+  - [12.3. Memory Taken up by Addresses & Pointers](#123-memory-taken-up-by-addresses--pointers)
 
 # 1. _Course Intro_
 
@@ -592,5 +596,129 @@ int function(int num, bool truth) {
 ```
 
 Variables in functions are different from variables in `main()` even if they have the same name because they have different scopes.
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 12. Intro to Pointers
+
+## 12.1. Why we need pointers ('Call by value')
+
+**CALL BY VALUE:** when a parameter is passed to a function (e.g. `sqrt(2)`), a copy of the value in the parameter variable is sent, not the variable itself.
+
+e.g. Consider a function to swap the values of 2 variables.
+```c
+void swap(int x, int y) {
+  int temp = x;
+  x = y;
+  y = temp;
+  // does not change x, y variable values in main()
+}
+```
+
+=> to change the variable itself, use **POINTERS.**
+
+## 12.2. Defining pointers
+
+Q: What are pointers? {.r}
+
+A: Pointers are variables (of type *pointer*) that store an address/location of another variable.
+ {.lg}
+
+- in memory, pointer variables store the address of another variable instead of an actual value.
+
+```c
+// pointer variable declaration
+int *pointer;
+int* pointer;
+
+// assign pointer to address of x
+int x = 5;
+pointer = &x; // & = 'address of' operator
+
+// DEREFERENCE a pointer = get value of variable that pointer is pointing to
+int y = *pointer // * = 'dereference' operator
+```
+
+Q: How does changing the dereferenced value (e.g. `*a = 2`) of a pointer affect the value of the variable it is pointing to {.r}
+
+A: The value of the variable being pointed to changes, but the pointer variable does not change (still holds the address of the variable). {.lg}
+
+e.g.
+```c
+int x = 3, y = 4;
+// declare pointer variables
+int *a, *b;
+
+// initialize pointers with addresses of x, y
+a = &x;
+b = &y;
+
+// changing the dereferenced value of each pointer changes the value of the variable being pointed to
+*a = 30; // now x = 30
+*b = 40; // now y = 30
+```
+
+## 12.3. Memory Taken up by Addresses & Pointers 
+
+Q: What is the value of an address of a variable? {.lr}
+
+A: Addresses are non-negative integers (includes NULL pointer 0) that correspond to a memory location within the computer. **EACH ADDRESS IDENTIFIES 1 BYTE OF DATA.** {.lg}
+- For a specific instance of a running program, variables in the same scope have the same address (obviously, different variables will have different addresses).
+- Each time a program is run, it may or may not store variables in the same addresses/memory locations.
+
+Q: How much space in memory does a pointer take up? {.r}
+
+A: Pointers take up the space needed to hold an address, which is 4 Bytes on a 32-bit machine and 8 Bytes on a 64-bit machine.{.lg}
+
+Q: Can we declare a pointer variable that pointers to a pointer? {.r}
+
+A: Yes; `int **p2 = &p1`, where `p2` is a pointer that points to pointer `p1`. {.lg}
+
+**PRACTICE:**{.p}
+1\. Write a C function that swaps 2 variables. {.p}
+```c
+// function parameters are pointers
+void swap(int *a,int *b) {
+  // changing the dereferenced value of each pointer changes the value of the variable being pointed to
+  int temp = *a;
+  *a = *b;
+  *a = temp;
+}
+
+int main(void) {
+  int x = 1, y = 2;
+  // because no pointer is actually initialized in main(), the function is given the 'address of' the int variables as parameters
+  swap(&i, &j);
+}
+``` 
+
+2\. If I have the following code... {.p}
+```c
+int i;
+int *pi;
+double d;
+double *pd;
+```
+...which of the following are valid statements? {.p}
+```c
+i = &pd;
+pi = &i;
+pd = i;
+pd = &pi;
+*pi = &i;
+*pd = 7.0;
+```
+
+Non-pointer variables cannot be assigned 'address of' values using `&`. Pointers of one type cannot be assigned addresses of pointers of a different type. {.lg}
+```c
+// A:
+i = &pd; // INVALID: &pd is address of pd, which 
+pi = &i;
+pd = i;
+pd = &pi;
+*pi = &i;
+*pd = 7.0;
+????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
+```
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
