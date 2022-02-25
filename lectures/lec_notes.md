@@ -42,6 +42,10 @@
 - [16. Array Pointers & Pointer Arithmetic](#16-array-pointers--pointer-arithmetic)
   - [16.1. Array Pointers](#161-array-pointers)
   - [16.2. Pointer Arithmetic](#162-pointer-arithmetic)
+- [17. Dynamic Memory Allocation](#17-dynamic-memory-allocation)
+  - [17.1. `malloc()`](#171-malloc)
+  - [17.2. `free`](#172-free)
+- [18. ***_MIDTERM PREP_***](#18-midterm-prep)
 
 # 1. _Course Intro_
 
@@ -985,5 +989,48 @@ void swap(int *a, int i, int j) {
   *(a + j) = temp;
 }
 ```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 17. Dynamic Memory Allocation
+
+## 17.1. `malloc()`
+Q: How can we allocate memory (i.e. set the size) of an array if we don't know how many elements it will hold while we are writing the program? {.r}
+
+A: Either...
+- set an arbitrarily high array size
+  - a waste of memory if left unused 
+- write code that allows us to allocate a specific size of memory (for an array) based on variable input using `malloc()` and `free`. {.lg}
+
+**HEAP:** a large amount of pre-reserved memory that a program can use to store data that won't be until the program is running.
+- examples of data that IS known before the program runs includes constants, int/double/char variables, and fixed arrays.
+
+We can use the `malloc()` function to allocate memory for arrays:
+```c
+// remember 
+int *a = (int*) malloc(num_elements * sizeof(type))
+// while 'malloc' return type is void* and is implicitly typecasted to whatever data type it is being assigned to, typecasting as int* is easier to understand
+```
+- Q: Do we need to initalize an array as `int a[1]` or any other low value before allocating memory using `malloc()`? {.lr}
+- A: No; by running `int *a = malloc(...)`, we are effectively initializing the array as a pointer.  {.lg}
+
+##  17.2. `free`
+
+After we are done using an array with allocated memory, we should unallocate that memory in the heap so it can be used for other tasks.
+- Memory Leak: when allocated memory is forgotten to be unallocated.
+
+To free memory allocated to a pointer, we pass that pointer as an argument to the `free()` function:
+```c
+int* a = malloc(...);
+...
+free(a); // don't need to input size, only pointer
+
+// it is also good practice to reassign a freed pointer to 'NULL' to avoid nondeterministic run-time errors in the case the freed pointer is dereferenced
+a = NULL;
+```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 18. ***_MIDTERM PREP_***
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
