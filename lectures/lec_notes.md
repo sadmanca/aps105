@@ -21,6 +21,11 @@
     - [6.2.2. De Morgan's Law](#622-de-morgans-law)
     - [6.2.3. Dangling if-else](#623-dangling-if-else)
 - [7. See 6. (De Morgan's Law, dangling `else`)](#7-see-6-de-morgans-law-dangling-else)
+- [8. While Loops](#8-while-loops)
+  - [8.1. do-while Loops](#81-do-while-loops)
+- [9. For Loops](#9-for-loops)
+- [10. See 8. & 9. (Nested Loops)](#10-see-8--9-nested-loops)
+- [11. Functions](#11-functions)
 
 # 1. _Course Intro_
 
@@ -499,5 +504,93 @@ if (...) {
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 7. See 6. (De Morgan's Law, dangling `else`)
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 8. While Loops
+
+## 8.1. do-while Loops
+```c
+do {
+  ...
+} while (...); // don't forget ';'!
+```
+`do-while` loops execute the `do` body at least once before checking the `while` condition.
+- `do-while` loops are often used for checking user input validity (since you need to take input at least once).
+
+# 9. For Loops
+
+```c
+// scope of variables initialized in a loop is limited to that loop
+for (<initialization>; <condition>; <alteration>) {
+  ...;
+}
+```
+```c
+// can exclude curly brackets if only 1 statement (like with 'if')
+for (...; ...; ...;) // this is called STATEMENT HEADER
+  ...;
+```
+```c
+// can exclude initialization
+int i = 1;
+for ( ; n <= 15; n++) {
+  ...
+}
+```
+```c
+// can exclude intialization AND alteration
+int i = 1;
+for ( ; n <= 15; ) {
+  ...
+  n++;
+}
+```
+```c
+// excluding condition defaults to 'true'
+for(int i = 1; ; i++) {
+  ...
+  // infinite loop; need to break manually
+}
+```
+```c
+// we can have complex expressions in statement header
+// e.g.
+for (int i = 1, double j = 2; i != j && !done; printf("*"), k++) {
+  ...
+}
+```
+
+# 10. See 8. & 9. (Nested Loops)
+
+PRINT FULL TRIANGLE OF STARS
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 11. Functions
+
+Functions called in `main()` can either be:
+- implemented before `main()`
+  - must be implemented before being called
+- PROTOTYPE of function before `main()` & implemented after `main()`
+  - can be implemented in any order
+  - NOTE: compiler will not complain if it sees the function in `main()` even if it has not been implemented
+
+```c
+// prototype
+return_type function(parameter_1, parameter_2);
+// can also just give type; e.g.
+int function(int, bool); 
+
+int main(void){
+  function(2, true);
+}
+
+int function(int num, bool truth) {
+  ...
+}
+```
+
+Variables in functions are different from variables in `main()` even if they have the same name because they have different scopes.
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
