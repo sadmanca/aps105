@@ -39,6 +39,9 @@
 - [15. 1D Arrays](#15-1d-arrays)
   - [15.1. Ways to Declare/Initalize 1D Arrays](#151-ways-to-declareinitalize-1d-arrays)
     - [15.1.1. Writing into Unallocated Memory](#1511-writing-into-unallocated-memory)
+- [16. Array Pointers & Pointer Arithmetic](#16-array-pointers--pointer-arithmetic)
+  - [16.1. Array Pointers](#161-array-pointers)
+  - [16.2. Pointer Arithmetic](#162-pointer-arithmetic)
 
 # 1. _Course Intro_
 
@@ -870,6 +873,117 @@ A: Because the C compiler does not do range checking, this may result in a segme
 2\. Write a function that reverses an integer array. {.p}
 ```c
 see lecture 15: 02-11-2022_Lecture
+```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 16. Array Pointers & Pointer Arithmetic
+## 16.1. Array Pointers
+In C, the identifier (name) of an array points* to the 1st element in the array.
+```c
+// e.g.
+int a[] = {1,2,3,4};
+
+// a is pointer to (i.e. points to address of) a[0]
+a     <==>    &a[0]
+*a    <==>   *&a[0]   <==>   a[0]
+```
+- Q: Since an array identifier points to the 1st element in the array, is an array identifer a pointer variable? {.lr}
+- A: No, array identifiers are not pointer variables. We know this because assigning an array identifer variable to another address causes a compile-time error. {.lg}
+- e.g. `a = &x` is invalid
+
+We can use pointers to pass arrays as parameters to functions, enabling us to actually manipulate arrays using functions.
+
+Q: How do we pass an array as a parameter to a function? {.r}
+
+A: Pass the pointer to the 1st element (`a = &a[0]`) as a function argument. The function parameter for the array is the pointer (`*a`), but we can also just write it as an array variable (`int a[]`). {.lg}
+
+- Because we are passing a pointer to a function, manipulating elements of the array changes the values directly in the memory (and thus in `main()` as well).
+```c
+// all are same; argument given is always a pointer
+int func(int *list); 
+int func(int list[]);
+int func(int list[100]); // size given doesn't matter, because it is ultimately a pointer
+
+int a[] = {1,2,3};
+// remember a == &a[0]
+int result = func(a);
+```
+- Since we can only pass a pointer to the 1st element of an array, this does not allow for the function to know the size of the array. For now (we will look at [dynamic memory allocation](#17-dynamic-memory-allocation) in the next lecture), _*you should also pass the size of the array as a parameter.*_
+
+## 16.2. Pointer Arithmetic
+
+Q: If we let pointer `int* p = a = &a[0]` (that is, pointer to first element in array `a`), how can we get the next element in the array w/o using `&a[0+1]` (i.e. by manipulating pointer `p`)? {.r}
+
+A: pointer `p+1` points to the next element of the array. {.lg}
+
+**POINTER ARITHMETIC**{.c} (adding an integer value to a pointer value; e.g. `p+1`) advances the pointer value in units of the type it points to.
+- Because `p` is an integer pointer (of type `int*`) & `int` takes up 4 Bytes, `p+1` will point to the address that 4 Bytes ahead.
+  - Since each address takes up 1 Byte, if the integer value of pointer `p` is, say 1000, the integer value of pointer `p+1` will be 1000 Bytes + (4 Bytes per int) = 1004.
+  - $\therefore$ pointer to `a[1]` if `int *p = a` is:
+    `a + 1` <=> `&a[0] + 1` <=> `&a[1]`
+    and
+    `*(a + 1)` <=> `*(&a[1])` <=> `a[1]`
+- Different pointer types (e.g. `char`, `double`) advance the pointer by an amount corresponding to the amount of memory that type takes up in memory.
+- Adding to pointers is valid only if both the original pointer and the result of the addition point to elements of the same array object, or just past the end of it.
+
+Q: What is the difference between `a[i]` and `*(a + i)`? {.lr}
+
+A: None; they compile to the same machine code. {.lg}
+
+We can also: 
+1. add/subtract pointers to/from each other (e.g. `q-p`)
+   - e.g. if `int *p = a = &a[0]` and `int *q = &a[3]`, then `q-p = 3-0 = 3`{.lg}
+2. use relational operators to compare pointers to each other (e.g. `if (p <= q)`)
+3. use relational operators to compare a pointer to an integer
+   - for all integers (except 0), this means that we're just comparing the address of the pointer (which isn't necessarily practical, but can come up on exams).
+   - we can use `if (p != 0)` <=> `if (p != NULL)` to check if a pointer points to a valid address before dereferencing
+
+C does not check array bounds, so *pointer arithmetic that goes beyond the bounds of an array*{.r} is a nondeterministic bug -> it will not result in a compile-time error/warning or a run-time warning, but *may or may not result in a run-time warning*{.r}.
+
+**PRACTICE:**
+1\. For the code below, how can we rewrite `&marks[i]` using pointer arithmetic? {.p}
+```c
+int a[size];
+for (int i = 0; i < size; i++) {
+  scanf("%d", &a[i]);
+}
+```
+1\) Since `&a[0]` <=> `a` and `&a[1]` <=> `&a[0] + 1` <=> `a + 1`, *we can replace `&a[i]` with `a + i`*{.lg}:
+```c
+// 'scanf("%d", &a[i]);'
+scanf("%d", a + i);
+```
+2\) We can also *rewrite the header of the `for` loop to increment a pointer initially at the first element of the array*{.lg}:
+```c
+// 'int i = 0; i < size; i++' is necessary because we can't check array bounds any other way
+for (int *p = a, int = 0; i < size; p++, i++) {
+  scanf("%d", p);
+}
+```
+
+2\. a) Is the code below valid? Why or why not? {.p}
+```c
+void swap(int a[], int i, int j) {
+  int temp = a[i];
+  a[i] = a[j];
+  a[j] = temp;
+}
+```
+This code is valid. {.lg}
+- `int a[]` is pointer to the 1st element of `a[]`: `&a[0]`, which allows us to manipulate the array.
+- `a[i]` is equivalent to `*(&a[i])`, which allows us to dereference the value at `a[i]` and assign it a new value by: `a[i] = temp` <=> `*(&a[i])`.
+
+b) Rewrite the code using pointers and pointer arithmetic. {.p}
+```c
+// A:
+void swap(int *a, int i, int j) {
+  // a[i] <=> *(&a[i]) <=> *(&a[0] + i) <=> *(a + i)
+  // via the definition of pointers & pointer arithmetic
+  int temp = *(a + i);
+  *(a + i) = *(a + j);
+  *(a + j) = temp;
+}
 ```
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
