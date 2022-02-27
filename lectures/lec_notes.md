@@ -13,7 +13,7 @@
 - [5. Math Functions](#5-math-functions)
   - [5.1. Math Library Functions](#51-math-library-functions)
   - [5.2. Generating Random Numbers](#52-generating-random-numbers)
-  - [5.3. Applications Of Random Numbers](#53-applications-of-random-numbers)
+  - [5.3. Generating Random Numbers Within a Range](#53-generating-random-numbers-within-a-range)
 - [6. Relational & Logic Operators](#6-relational--logic-operators)
   - [6.1. Relational Operators](#61-relational-operators)
   - [6.2. Logic Operators](#62-logic-operators)
@@ -367,7 +367,7 @@ int rand()
 ```
 Generates a positive int from 0 to $2^{31}-1$` = RAND_MAX`
 - Q: Why does `RAND_MAX = `$2^{31}-1$? {.lr}
-- A: we assume we are dealing with a 32-bit computer. {.lg}
+- A: assume a 32-bit computer; 1 bit is taken up by sign of `int` (1 = positive; 0 = negative); leaves 31 bits for a number → largest number we can represent with 32 bits is $2^{31}-1$. {.lg}
 
 Q: Why is `rand()` a "pseudo-random" number generator? {.r}
 
@@ -391,7 +391,7 @@ srand(time(NULL))
 // time(NULL) → return time as seconds since 1 Jan 1970
 ```
 
-## 5.3. Applications Of Random Numbers 
+## 5.3. Generating Random Numbers Within a Range
 
 Q: How can we generate a random number within an interval ***STARTING AT 0*** (e.g. 0-1)? {.r}
 
@@ -412,9 +412,34 @@ A: Using mod (`%`): {.lg}
 
 Thus, we can use `rand() % n` to generate a number from `0 to n-1` {.lg}
 
-- Q: How can we generate a random number within an interval ***NOT*** starting at 0 (e.g. `MIN to MAX`, 5 to 15)? {.r}
-- A: Generate a number from `0+MIN to MAX-MIN`, i.e. `num = rand() % (MAX - MIN + 1) + MIN` {.lg}
-- e.g. to generate a random number from 5-15: generate random num from 0-10, then add 5 (`rand() % 11 + 5`)
+- Q: How can we generate a random number within an interval ***NOT*** starting at 0 (e.g. `5 to 15`)? {.r}
+- A: Generate a random number from `0 to 10`, then `add 5`: `rand() % 11 + 5` {.lg}
+
+| RANGE                        | EQUIVALENT RANGE                                                                                         | CODE                             |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| 0 to 100 {.r}                |                                                                                                          | `rand() % 101`                   |
+| -100 to 100 {.r}             | (0 to 200) - 100                                                                                         | `(rand() % 201) - 100`           |
+| 0 to 100 EVEN {.r}           | (0 to 50) * 2                                                                                            | `(rand() % 51) * 2`              |
+| 0 to 100 ODD {.r}            | (0 to 49) * 2 + 1                                                                                        | `(rand() % 50) * 2 + 1`          |
+| 0 to 100 DIVISIBLE BY 3 {.r} | follow process for EVEN: take range (0 to $\frac{\text{MAX}}{3}$), then multiply by divisor ($\times 3$) | `(rand() % 34) * 3`              |
+| 50 to 100 EVEN {.lr}         | (0 to 50 EVEN) + 50                                                                                      | `(rand() % 50) * 2 + 50`         |
+| 50 to 100 ODD {.lr}          | (0 to 50 ODD) + 50                                                                                       | `(rand() % 49) * 2 + 1) + 50`    |
+| -100 to 100 EVEN {.lr}       | (0 to 200 EVEN) - 100                                                                                    | `(rand() % 101) * 2 - 100`       |
+| -100 to 100 ODD {.lr}        | (0 to 200 ODD) - 100                                                                                     | `((rand() % 100) * 2 + 1) - 100` |
+
+**PRACTICE:**
+1\. Write a C statement to generate...
+a) ...odd numbers from 600 to 650. {.p}
+
+600 to 650 ODD <=> (0 to 50 ODD) + 600 <=> ((0 to 24) * 2 + 1) + 600 <=> `((rand % 25) * 2 + 1) + 600`{.lg}
+
+b) ...even numbers from 50 to 100. {.p}
+
+50 to 100 EVEN <=> (0 to 50 EVEN) + 50 <=> ((0 to 25) * 2) + 50 <=> `(rand() % 26) * 2 + 50`{.lg}
+
+c) ...numbers from -51 to 201 that are divisible by 3. {.p}
+
+-51 to 201 DIV3 <=> (0 to 252 DIV3) - 50 <=> ((0 to $\frac{252}{3}=$ 84) * 3) - 50 => `(rand() % 85) * 3 - 50`{.lg}
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
