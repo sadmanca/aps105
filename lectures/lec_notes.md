@@ -38,7 +38,7 @@
   - [14.1. Overlapping Scopes](#141-overlapping-scopes)
 - [15. 1D Arrays](#15-1d-arrays)
   - [15.1. Ways to Declare/Initalize 1D Arrays](#151-ways-to-declareinitalize-1d-arrays)
-    - [15.1.1. Writing into Unallocated Memory](#1511-writing-into-unallocated-memory)
+  - [15.2. Writing into Unallocated Memory](#152-writing-into-unallocated-memory)
 - [16. Array Pointers & Pointer Arithmetic](#16-array-pointers--pointer-arithmetic)
   - [16.1. Array Pointers](#161-array-pointers)
   - [16.2. Pointer Arithmetic](#162-pointer-arithmetic)
@@ -69,7 +69,6 @@ GRADING: 30% labs, 30% midterm, 40% final exam
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 2. _Intro to Computers_
-
 ## 2.1. ***_HOW ARE PROGRAMS STORED IN MEMORY?_***
 
 Q: What is a program?{.lr}
@@ -184,7 +183,6 @@ printf(" \' "); // single quote
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 3. Variable Types & I/O
-
 ## 3.1. `#define`
 
 Instead of using a `const` variable, we can `#define` a macro at the top of a .c file (no semicolon) and have that value be subsitituted in the code.
@@ -241,24 +239,22 @@ Operators Associativity is used when two operators of same precedence appear in 
 1. Associativity is only used when there are two or more operators of same precedence (i.e. precedence is evaluated first before associativity).
 2. All operators with the same precedence have same associativity.
 3. There is no chaining of comparison operators (e.g. `a < b < c`) in C: 
-```c
-// 'a < b < c' is equivalent to:
-if (a < b && b < c) ...
-```
-- Q: How is `a < b < c` evaluated in C? {.p}
-- A: all operators have same precedence, so we look at associativity (which is left-to-right for `<`). Thus, expression is evaluated as `(a < b) < c`.{.lg}
+   ```c
+   `a < b && b < c // is equivalent to 'a < b < c'`
+   ```
 
-https://en.cppreference.com/w/c/language/operator_precedence 
+Q: What is the hierarchy of precedence and associativity for operators in C?{.r}
+
 | Precedence | Operator            | Description                                    | Associativity |
 | ---------- | ------------------- | ---------------------------------------------- | ------------- |
-| 1          | `++i --i`           | Postfix increment and decrement                | Left-to-right |
+| 1          | `++i --i` $^1$ {.lr}          | Postfix increment and decrement                | Left-to-right |
 |            | `()`                | Function call                                  |               |
 |            | `[]`                | Array subscripting                             |               |
-| 2          | `i++ i--`           | Prefix increment and decrement                 | Right-to-left |
+| 2          | `i++ i--` $^2$ {.lr}           | Prefix increment and decrement                 | Right-to-left |
 |            | `(type)`            | Cast                                           |               |
 |            | *                   | Dereference                                    |               |
 |            | &                   | Address-of                                     |               |
-|            | `sizeof` $^1$ {.lr} | Size-of                                        |               |
+|            | `sizeof` $^3$ {.r} | Size-of                                        |               |
 | 3          | `* / %`             | * / %                                          | Left-to-right |
 | 4          | `+ -`               | + -                                            |               |
 | 5          | `< <=`              | < and ≤                                        |               |
@@ -270,9 +266,23 @@ https://en.cppreference.com/w/c/language/operator_precedence
 |            | `+= -=`             | Assignment by sum and difference               |               |
 |            | `*= /= %=`          | Assignment by product, quotient, and remainder |               |
 
+
 <!-- | 8          | `||`                | OR                                             |               | -->
 
-$^1$ Q: What is `sizeof()`? {.lr}
+Expressions with *$^1$postfix are evaluated first using original value of variable and then variable value is modified.*{.lr}
+Expressions with *$^2$prefix are evaluated after variable value is modified.*{.lr}
+```c
+// e.g.
+
+b = a++; // a++,   THEN b = a
+b = ++a; // b = a, THEN a++
+```
+
+- Q: Why is prefix and postfix still in the table then? {.lr}
+- A: Because they are higher in precedence than pointer `*` and `%`.{.lg}
+  - e.g. `*p++` is evaluated as `*(p++)`
+
+$^3$ Q: What is `sizeof()`? {.r}
 
 A: `sizeof()` returns the size (in B) of the type given as an argument. **`sizeof()` is NOT a function**{.lr} because it takes in type (not variables) as an argument (when you pass in a variable as an argument, it only takes in the variable's type). {.lg}
 
@@ -298,10 +308,13 @@ Arithmetic operators are lower precedence than relational operators, so:
 2. `!x == false`, even if x = 0
 3. `false == 0` → `0 > 5` => evaluates to **`false`**{.lg} 
 
+3\. What is the order of operations for `a < b < c`? {.p}
+
+All operators have same precedence, so we look at associativity (which is left-to-right for `<`). Thus, expression is evaluated as `(a < b) < c`{.lg}
+
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 5. Math Functions
-
 ## 5.1. Math Library Functions
 
 ```c
@@ -422,6 +435,7 @@ Thus, we can use `rand() % n` to generate a number from `0 to n-1` {.lg}
 | 0 to 100 EVEN {.r}           | (0 to 50) * 2                                                                                            | `(rand() % 51) * 2`              |
 | 0 to 100 ODD {.r}            | (0 to 49) * 2 + 1                                                                                        | `(rand() % 50) * 2 + 1`          |
 | 0 to 100 DIVISIBLE BY 3 {.r} | follow process for EVEN: take range (0 to $\frac{\text{MAX}}{3}$), then multiply by divisor ($\times 3$) | `(rand() % 34) * 3`              |
+|                              |                                                                                                          |                                  |
 | 50 to 100 EVEN {.lr}         | (0 to 50 EVEN) + 50                                                                                      | `(rand() % 50) * 2 + 50`         |
 | 50 to 100 ODD {.lr}          | (0 to 50 ODD) + 50                                                                                       | `(rand() % 49) * 2 + 1) + 50`    |
 | -100 to 100 EVEN {.lr}       | (0 to 200 EVEN) - 100                                                                                    | `(rand() % 101) * 2 - 100`       |
@@ -439,12 +453,11 @@ b) ...even numbers from 50 to 100. {.p}
 
 c) ...numbers from -51 to 201 that are divisible by 3. {.p}
 
--51 to 201 DIV3 <=> (0 to 252 DIV3) - 50 <=> ((0 to $\frac{252}{3}=$ 84) * 3) - 50 => `(rand() % 85) * 3 - 50`{.lg}
+-51 to 201 DIV3 <=> (0 to 252 DIV3) - 51 <=> ((0 to $\frac{252}{3}=$ 84) * 3) - 51 => `(rand() % 85) * 3 - 51`{.lg}
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 6. Relational & Logic Operators
-
 ## 6.1. Relational Operators
 
 ```c
@@ -534,7 +547,6 @@ if (...) {
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 8. While Loops
-
 ## 8.1. do-while Loops
 ```c
 do {
@@ -622,7 +634,6 @@ Variables in functions are different from variables in `main()` even if they hav
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 12. Intro to Pointers
-
 ## 12.1. Why we need pointers ('Call by value')
 
 **CALL BY VALUE:** when a parameter is passed to a function (e.g. `sqrt(2)`), a copy of the value in the parameter variable is sent, not the variable itself.
@@ -746,7 +757,6 @@ pd = &pi;
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 13. More on Pointers
-
 ## 13.1. Void Pointers
 
 **VOID POINTER:**  has no associated data type; can hold address of any type & can be casted to any type.
@@ -853,7 +863,6 @@ When variable with the same name is declared in a statement inside another state
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 15. 1D Arrays
-
 ## 15.1. Ways to Declare/Initalize 1D Arrays
 
 ```c
@@ -870,7 +879,7 @@ int individual_values[10] = {0,1,2,3,4} // first 5 indices are unique values; re
 int size_less_than_values[3] = {0,1,2,3,4} // compile-time error
 ```
 
-### 15.1.1. Writing into Unallocated Memory
+## 15.2. Writing into Unallocated Memory
 Q: What happens if we try to assign a value beyond the declared indices of an array (e.g. `a[6] = 23` for `int a[5]`)? {.r}
 
 A: Because the C compiler does not do range checking, this may result in a segmentation fault or overwrite other indices of the array; it is nondeterministic. {.lg}
@@ -920,6 +929,16 @@ int a[] = {1,2,3};
 int result = func(a);
 ```
 - Since we can only pass a pointer to the 1st element of an array, this does not allow for the function to know the size of the array. For now (we will look at [dynamic memory allocation](#17-dynamic-memory-allocation) in the next lecture), _*you should also pass the size of the array as a parameter.*_
+
+**PRACTICE:**
+1\. Suppose that a is a one-dimensional int array `int a[]` and p is a pointer to int variable `int *p`. Assuming that the assignment `p = a` has just been performed, which of the following expressions are illegal because of mismatched types? Of the remaining expressions, which are true? {.p}
+
+| EXPRESSION             | ANSWER                                                       |
+| ---------------------- | ------------------------------------------------------------ |
+| a) `p == a[0]` {.p}    | illegal (bc `p` is pointer/address of while `a[0]` is value) |
+| b) `p == &a[0]` {.p}   | true                                                         |
+| c) `*p == a[0]` {.p}   | true                                                         |
+| d) `p[0] == a[0]` {.p} | true                                                         |
 
 ## 16.2. Pointer Arithmetic
 
@@ -999,7 +1018,6 @@ void swap(int *a, int i, int j) {
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 17. Dynamic Memory Allocation
-
 ## 17.1. `malloc()`
 Q: How can we allocate memory (i.e. set the size) of an array if we don't know how many elements it will hold while we are writing the program? {.r}
 
@@ -1023,7 +1041,6 @@ int *a = (int*) malloc(num_elements * sizeof(type))
 ##  17.2. `free`
 
 After we are done using an array with allocated memory, we should unallocate that memory in the heap so it can be used for other tasks.
-- Memory Leak: when allocated memory is forgotten to be unallocated.
 
 To free memory allocated to a pointer, we pass that pointer as an argument to the `free()` function:
 ```c
@@ -1034,6 +1051,8 @@ free(a); // don't need to input size, only pointer
 // it is also good practice to reassign a freed pointer to 'NULL' to avoid nondeterministic run-time errors in the case the freed pointer is dereferenced
 a = NULL;
 ```
+
+When allocated memory is forgotten to be unallocated, **memory leaks** occur.
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
