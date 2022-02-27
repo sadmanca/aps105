@@ -80,17 +80,17 @@ Q: WHERE are data and instructions stored in a computer?{.r}
 
 A: Data is stored in main memory (RAM).
 
-- Q: What are the different UNITS OF MEMORY?{.r}
-- 
-  | UNIT     | SYMBOL | MEMORY SPACE {.lg} |
-  | -------- | ------ | ------------------ |
-  | Bit      | 1 or 0 | 1 bit              |
-  | Byte     | B      | $2^3$ bits         |
-  | KiloByte | KB     | $2^{10}$* B        |
-  | MegaByte | MB     | $2^{10}$ KB        |
-  | GigaByte | GB     | $2^{10}$ MB        |
-  | TeraByte | TB     | $2^{10}$ GB        |
-  \*$2^{10} = 1024$
+Q: What are the different UNITS OF MEMORY?{.r}
+
+| UNIT     | SYMBOL | MEMORY SPACE {.lg} |
+| -------- | ------ | ------------------ |
+| Bit      | 1 or 0 | 1 bit              |
+| Byte     | B      | $2^3$ bits         |
+| KiloByte | KB     | $2^{10}$* B        |
+| MegaByte | MB     | $2^{10}$ KB        |
+| GigaByte | GB     | $2^{10}$ MB        |
+| TeraByte | TB     | $2^{10}$ GB        |
+\*$2^{10} = 1024$
 
 e.g. How many bits are in 23 MB? {.p}
 
@@ -98,26 +98,35 @@ A: $23 MB\times 2^{10} KB/1MB \times 2^{10} B/KB \times 2^3\ bits/B = 23\times 2
 
 <!-- $2^{23}\text{ MB} \cdot \frac{2^{10} \text{ KB}}{1 \text{ MB}} \cdot \frac{2^{10} \text{ bits}}{1 \text{ B}} = 23 \cdot 2^{23} \text{ bits}$ -->
 
+Q: How much memory does each variable type in C take up? {.r}
+
+| TYPE    | MEMORY SPACE {.lg} |
+| ------- | ------------------ |
+| pointer | 1 B                |
+| `char`  | 1 B                |
+| `int`     | 4 B                |
+| `double`  | 8 B                |
+
 Q: HOW are data and instructions stored in a computer?{.lr}
 
 A: Data (numerical information; i.e. numbers) are encoded in binary (1s & 0s).
 
-- Q: How are numbers represented in BINARY?{.r} 
-- 
-  | DECIMAL | BINARY | MEMORY SPACE {.lg} |
-  | ------- | ------ | ------------------ |
-  | 0       | 0000   | 0 bits             |
-  | 1       | 0001   | 1 bit              |
-  | 2       | 0010   | 2 bits             |
-  | 3       | 0011   | 2 bits             |
-  | 4       | 0100   | 3 bits             |
-  | 5       | 0101*  | 3 bits             |
-  | 6       | 0110   | 3 bits             |
-  | 7       | 0111   | 3 bits             |
-  | 8       | 1000   | 4 bits             |
-  | ...     | ...    | ...                |
-  | n       | ...    | $2^n - 1$ bits     |
-  \*0101 = $2^3\cdot0 + 2^2\cdot 1 + 2^1\cdot0+2^0\cdot1$
+Q: How are numbers represented in BINARY?{.r} 
+
+| DECIMAL | BINARY | MEMORY SPACE {.lg} |
+| ------- | ------ | ------------------ |
+| 0       | 0000   | 0 bits             |
+| 1       | 0001   | 1 bit              |
+| 2       | 0010   | 2 bits             |
+| 3       | 0011   | 2 bits             |
+| 4       | 0100   | 3 bits             |
+| 5       | 0101*  | 3 bits             |
+| 6       | 0110   | 3 bits             |
+| 7       | 0111   | 3 bits             |
+| 8       | 1000   | 4 bits             |
+| ...     | ...    | ...                |
+| n       | ...    | $2^n - 1$ bits     |
+\*0101 = $2^3\cdot0 + 2^2\cdot 1 + 2^1\cdot0+2^0\cdot1$
 
 Q: How is main memory organized?{.r}
 
@@ -199,11 +208,11 @@ Implicit Type Conversion
   - sqrt function returns a double; is truncated when assigned to int y
 - int i = 8.3;
   - 8.3 is being typecast from double to int (is truncated)
-  
-#### 4.0.0.1. WARNINGS
 
 9/5 - int divided by int; result is truncated int (w/o decimal)
 1 + 2.5 - int + double is double
+
+#### 4.0.0.1. WARNINGS
 
 Division by 0:
 - (int) / 0
@@ -224,77 +233,44 @@ Modulus operator %:
 
 #### 4.0.0.2. OPERATOR PRECEDENCE & ASSOCIATIVITY 
 
-assignment operators evaluate expressions from right to left
-- for i = j = k = 1, the compiler will evaluate k = 1 first, then j = k, then i = j.
-
-Operators Precedence and Associativity are two characteristics of operators that determine the evaluation order of sub-expressions in absence of brackets
-
-Operator precedence determines which operator is performed first in an expression with more than one operators with different precedence. 
-    e.g. from high to low precedence:
-    1. arithmetic operators (*, /, %, +, -), are higher precedence than
-    2. logical operators (&&, ||),
-    3. assignment operators (=, +=, etc.)
+Operators Precedence and Associativity are two characteristics of operators that determine the evaluation order of sub-expressions in absence of brackets.
+- Operator precedence determines which operator is performed first in an expression with more than one operators with different precedence.
 
 Operators Associativity is used when two operators of same precedence appear in an expression. Associativity can be either Left to Right or Right to Left. 
-    e.g. ‘*’ and ‘/’ have same precedence and their associativity is Left to Right, so the expression “100 / 10 * 10” is treated as “(100 / 10) * 10”.
 
 1. Associativity is only used when there are two or more operators of same precedence (i.e. precedence is evaluated first before associativity).
 2. All operators with the same precedence have same associativity.
-3. There is no chaining of comparison operators in C: 
-        In Python, expression like
-        “c > b > a” is treated as “c > b and b > a”, but this type of chaining
-        doesn’t happen in C. For example consider the  following program:
-
-            int a = 10, b = 20, c = 30;
-            print(c > b > a);
-            >>> FALSE
-
-        **Why?** 
-        // (c > b > a) is treated as ((c  > b) > a), associativity of '>'
-        // is left to right. Therefore the value becomes ((30 > 20) > 10)
-        // which becomes (1 > 10), which is FALSE.
-
-Associativity of arithmetic (* / % + -) and logic (&& ||) is LEFT TO RIGHT.
-Associativity of assignment (= += -= *= /= %=) is RIGHT TO LEFT.
-
-IMPORTANT NOTE!!!
-It is important to note that a postfix increment or decrement expression evaluates to the value of the expression PRIOR to application of the respective operator. The increment or decrement operation occurs AFTER the operand is evaluated.
-    e.g. if (i++ > 0) ...
-    In this example, i is compared to 0, then incremented.
-
-Conversely, the prefix increment or decrement expression evaluates to the value of the expression AFTER the application of the respective operator. The increment or decrement operation occurs PRIOR to the operand being evaluated.
-    e.g. a = b++;
-    In this example, b is incremented, then the value of b is assigned to a.
-
-WHEN IS OPERATOR PRECEDENCE AND ASSOCIATIVITY RELEVANT?
-    Pre/postfix in/decrementing, typecasting.
+3. There is no chaining of comparison operators (e.g. `a < b < c`) in C: 
+```c
+// 'a < b < c' is equivalent to:
+if (a < b && b < c) ...
+```
+- Q: How is `a < b < c` evaluated in C? {.p}
+- A: all operators have same precedence, so we look at associativity (which is left-to-right for `<`). Thus, expression is evaluated as `(a < b) < c`.{.lg}
 
 https://en.cppreference.com/w/c/language/operator_precedence 
-| Precedence | Operator         | Description                                       | Associativity |
-| ---------- | ---------------- | ------------------------------------------------- | ------------- |
-| 1          | `++ --`          | Postfix increment and decrement            | Left-to-right |
-|            | `()`             | Function call                                     |               |
-|            | `[]`             | Array subscripting                                |               |
-|            | `.`              | Structure and union member access                 |               |
-|            | `->`             | Structure and union member access through pointer |               |
-| 2          | `++ --`          | Prefix increment and decrement                    | Right-to-left |
-|            | `(type)`         | Cast                                              |               |
-|            | *                | Dereference                                       |               |
-|            | &                | Address-of                                        |               |
-|            | `sizeof` $^1$ {.lr} | Size-of                                           |               |
-| 3          | `* / %`          | Multiplication, division, and remainder           | Left-to-right |
-| 4          | `+ -`            | Addition and subtraction                          |               |
-| 5          | `< <=`           | For relational operators < and ≤ respectively     |               |
-|            | `> >=`           | For relational operators > and ≥ respectively     |               |
-| 6          | `== !=`          | For relational = and ≠ respectively               |               |
-| 7          | `&&`             | Logical AND                                       |               |
-| 8          | `||`           | Logical OR                                        |               |
-| 9          | `=`              | Simple assignment                                 | Right-to-left |
-|            | `+= -=`          | Assignment by sum and difference                  |               |
-|            | `*= /= %=`       | Assignment by product, quotient, and remainder    |               |
-| 10         | `,`              | Comma                                             |               |
+| Precedence | Operator            | Description                                    | Associativity |
+| ---------- | ------------------- | ---------------------------------------------- | ------------- |
+| 1          | `++i --i`           | Postfix increment and decrement                | Left-to-right |
+|            | `()`                | Function call                                  |               |
+|            | `[]`                | Array subscripting                             |               |
+| 2          | `i++ i--`           | Prefix increment and decrement                 | Right-to-left |
+|            | `(type)`            | Cast                                           |               |
+|            | *                   | Dereference                                    |               |
+|            | &                   | Address-of                                     |               |
+|            | `sizeof` $^1$ {.lr} | Size-of                                        |               |
+| 3          | `* / %`             | * / %                                          | Left-to-right |
+| 4          | `+ -`               | + -                                            |               |
+| 5          | `< <=`              | < and ≤                                        |               |
+|            | `> >=`              | > and ≥                                        |               |
+| 6          | `== !=`             | = and ≠                                        |               |
+| 8          | `||`                | OR                                             |               |
+| 7          | `&&`                | AND                                            |               |
+| 9          | `=`                 | Assignment                                     | Right-to-left |
+|            | `+= -=`             | Assignment by sum and difference               |               |
+|            | `*= /= %=`          | Assignment by product, quotient, and remainder |               |
 
-https://web.microsoftstream.com/video/2e8252f9-8652-4afe-b7e9-0e0d089e80f7?st=1464 
+<!-- | 8          | `||`                | OR                                             |               | -->
 
 $^1$ Q: What is `sizeof()`? {.lr}
 
@@ -330,17 +306,20 @@ Arithmetic operators are lower precedence than relational operators, so:
 
 ```c
 #include <math.h>
+// math library also includes constants for pi (`M_PI`) and euler's number (`M_E`)
 
 // Notice how All operands and return types are double
 
 // if 'int' is given as argument, it is typecasted to 'double'
 double sqrt(double x);
 double pow(double x, double y); // x^y
+double exp(double x); // e^x
+double log(double x); // ln(x)
+double log10(double x); // log_10(x)
 
 double fabs(double x); // return absolute value of x
-/* ↓
-   Q: Why use fabs() over abs()?
-   A: abs() only returns int, so it will truncate doubles, unlike fabs() */
+//     Q: Why use fabs() over abs()?
+//     A: abs() only returns int, so it will truncate doubles, unlike fabs() 
 
 double fmax(double x, double y); // return largest of x, y
 double fmin(double x, double y); // return smallest of x, y 
@@ -387,6 +366,8 @@ A: use question 1 as a model for solving rounding problems:
 int rand()
 ```
 Generates a positive int from 0 to $2^{31}-1$` = RAND_MAX`
+- Q: Why does `RAND_MAX = `$2^{31}-1$? {.lr}
+- A: we assume we are dealing with a 32-bit computer. {.lg}
 
 Q: Why is `rand()` a "pseudo-random" number generator? {.r}
 
