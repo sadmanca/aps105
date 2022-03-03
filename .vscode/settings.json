@@ -1,0 +1,117 @@
+{
+  "C_Cpp_Runner.cCompilerPath": "/usr/bin/gcc",
+  "C_Cpp_Runner.cppCompilerPath": "/usr/bin/g++",
+  "C_Cpp_Runner.debuggerPath": "/usr/bin/gdb",
+  "C_Cpp_Runner.cStandard": "",
+  "C_Cpp_Runner.cppStandard": "",
+  "C_Cpp_Runner.msvcBatchPath": "",
+  "C_Cpp_Runner.warnings": [
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic"
+  ],
+  "C_Cpp_Runner.enableWarnings": true,
+  "C_Cpp_Runner.warningsAsError": false,
+  "C_Cpp_Runner.compilerArgs": [],
+  "C_Cpp_Runner.linkerArgs": [],
+  "C_Cpp_Runner.includePaths": [],
+  "C_Cpp_Runner.includeSearch": [
+    "*",
+    "**/*"
+  ],
+  "C_Cpp_Runner.excludeSearch": [
+    "**/build",
+    "**/build/**",
+    "**/.*",
+    "**/.*/**",
+    "**/.vscode",
+    "**/.vscode/**"
+  ],
+  "editor.fontFamily": "Iosevka, Consolas, 'Courier New', monospace",
+  "markdown.extension.print.theme": "dark",
+  // MARKDOWN PREVIEW text styling
+  "markdown.styles": [ "style.css" ],
+  // HIGHLIGHT TEXT IN .md FILES
+  "highlight.decorations": { "highlight.rangeBehavior": 1 },
+  "highlight.regexes": {
+      "(==.*?==)": {
+          "filterLanguageRegex": "markdown",
+          "decorations": [ {
+              "backgroundColor": "yellow" }
+          ]
+      },
+      "(~~.*?~~)": {
+          "filterLanguageRegex": "markdown",
+          "decorations": [ {
+              "textDecoration": "line-through" }
+          ]
+      },
+      "(  +)$": {
+          "filterLanguageRegex": "markdown",
+          "regexFlags": "gm",
+          "decorations": [ {
+              "borderRadius": "4px",
+              "backgroundColor": "rgba(155,0,0,0.2)" }
+          ]
+      },
+      "(!!! \\w*)": {
+          "filterLanguageRegex": "markdown",
+          "regexFlags": "g",
+          "decorations": [ {
+              "backgroundColor": "rgb(205,240,234,0.5)" }
+          ]
+      },
+      "^(# )": {
+          "filterLanguageRegex": "markdown",
+          "regexFlags": "gm",
+          "decorations": [ {
+              "isWholeLine": "true",
+              "backgroundColor": "rgba(172, 255, 62, 0.9)",
+              "color": "black",
+              "overviewRulerColor": "rgba(0, 182, 0, 1)" }
+          ]
+      },
+      "^(## )": {
+          "filterLanguageRegex": "markdown",
+          "regexFlags": "gm",
+          "decorations": [ {
+              "isWholeLine": "true",
+              "color": "black",
+              "backgroundColor": "rgba(172, 255, 62, 0.6)",
+              "overviewRulerColor": "rgba(172, 255, 62, 0.3)" }
+          ]
+      },
+      "^(### )": {
+          "filterLanguageRegex": "markdown",
+          "regexFlags": "gm",
+          "decorations": [ {
+              "isWholeLine": "true",
+              "letterSpacing": "1px",
+              "backgroundColor": "rgba(190,174,226,0.2)",
+              "overviewRulerColor": "rgba(190,174,226,0.3)" }
+          ]
+      },
+      "^(#### )": {
+          "filterLanguageRegex": "markdown",
+          "regexFlags": "gm",
+          "decorations": [ {
+              "isWholeLine": "true",
+              "letterSpacing": "1px",
+              "backgroundColor": "rgba(190,174,226,0.1)",
+              "overviewRulerColor": "rgba(190,174,226,0.2)" }
+          ]
+      }
+  },
+  "markdown.preview.lineHeight": 1.4,
+  "markdown.preview.breaks": true,
+  "markdown.preview.typographer": true,
+  "markdown.preview.fontFamily": "'Iosevka', -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif",
+  "[markdown]": {
+      "editor.snippetSuggestions": "top",
+      "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": true,
+      },
+  },
+}
