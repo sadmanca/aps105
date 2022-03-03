@@ -5,9 +5,9 @@
 - [2. _Intro to Computers_](#2-intro-to-computers)
   - [2.1. ***_HOW ARE PROGRAMS STORED IN MEMORY?_***](#21-how-are-programs-stored-in-memory)
   - [2.2. _Intro to Writing C Programs_](#22-intro-to-writing-c-programs)
-  - [Printing](#printing)
-    - [2.2.1. Escape Sequences](#221-escape-sequences)
-    - [Formatting Numbers (e.g. set width)](#formatting-numbers-eg-set-width)
+  - [2.3. Printing](#23-printing)
+    - [2.3.1. Escape Sequences](#231-escape-sequences)
+    - [2.3.2. Formatting Numbers (e.g. set width)](#232-formatting-numbers-eg-set-width)
 - [3. Variable Types & I/O](#3-variable-types--io)
   - [3.1. `#define`](#31-define)
 - [4. Arithmetic Operators & Order of Operations](#4-arithmetic-operators--order-of-operations)
@@ -27,6 +27,7 @@
 - [8. While Loops](#8-while-loops)
   - [8.1. do-while Loops](#81-do-while-loops)
 - [9. For Loops](#9-for-loops)
+  - [9.1. For Loop - Statement Header Variations](#91-for-loop---statement-header-variations)
 - [10. See 8. & 9. (Nested Loops)](#10-see-8--9-nested-loops)
 - [11. Functions](#11-functions)
 - [12. Intro to Pointers](#12-intro-to-pointers)
@@ -88,7 +89,7 @@ Q: What are the different UNITS OF MEMORY?{.r}
 | -------- | ------ | ------------------ |
 | Bit      | 1 or 0 | 1 bit              |
 | Byte     | B      | $2^3$ bits         |
-| KiloByte | KB     | $2^{10}$* B        |
+| KiloByte | KB     | $2^{10}$ B        |
 | MegaByte | MB     | $2^{10}$ KB        |
 | GigaByte | GB     | $2^{10}$ MB        |
 | TeraByte | TB     | $2^{10}$ GB        |
@@ -173,8 +174,8 @@ Q: What are the standard parts of a C program? {.lr}
 - `;` - every instruction must end with ;
 - `scanf(”%d”, &input);` - %d is a format specifier (this is expecting an int, %lf expects a double)
 
-## Printing
-### 2.2.1. Escape Sequences
+## 2.3. Printing
+### 2.3.1. Escape Sequences
 
 Use to print special characters:
 ```c
@@ -184,7 +185,7 @@ printf(' \" '); // double quote
 printf(" \' "); // single quote
 ```
 
-### Formatting Numbers (e.g. set width)
+### 2.3.2. Formatting Numbers (e.g. set width)
 ```c
 printf(%4d, int) // print int right aligned taking up 4 spaces 
 printf(%04d, int) // same as above + prefix of 0
@@ -254,7 +255,7 @@ Operators Associativity is used when two operators of same precedence appear in 
 2. All operators with the same precedence have same associativity.
 3. There is no chaining of comparison operators (e.g. `a < b < c`) in C; operators will be evaluated in based on precedence and associativity. 
    ```c
-   `a < b && b < c // is equivalent to 'a < b < c'`
+   a < b && b < c // is equivalent to 'a < b < c'
    ```
 
 Q: What is the hierarchy of precedence and associativity for operators in C?{.r}
@@ -287,7 +288,6 @@ Expressions with *$^1$postfix are evaluated first using original value of variab
 Expressions with *$^2$prefix are evaluated after variable value is modified.*{.lr}
 ```c
 // e.g.
-
 b = a++; // a++,   THEN b = a
 b = ++a; // b = a, THEN a++
 ```
@@ -299,11 +299,12 @@ b = ++a; // b = a, THEN a++
 $^3$ Q: What is `sizeof()`? {.r}
 
 A: `sizeof()` returns the size (in B) of the type given as an argument. **`sizeof()` is NOT a function**{.lr} because it takes in type (not variables) as an argument (when you pass in a variable as an argument, it only takes in the variable's type). {.lg}
-
-e.g.
-- `sizeof(int)` => `4`
-- `sizeof(double)` => `8`
-- `sizeof(char)` => `1`
+```c
+// e.g.
+sizeof(int)    // 4 (B)
+sizeof(double) // 8 (B)
+sizeof(char)   // 1 (B)
+```
 
 **PRACTICE**: 
 1\. What is the order of operations for `i = j = k = 1`? {.p}
@@ -345,6 +346,7 @@ double log(double x); // ln(x)
 double log10(double x); // log_10(x)
 
 double fabs(double x); // return absolute value of x
+//     ↓
 //     Q: Why use fabs() over abs()?
 //     A: abs() only returns int, so it will truncate doubles, unlike fabs() 
 
@@ -386,11 +388,8 @@ A: use question 1 as a model for solving rounding problems:
 ```c
 // random number generator functions require standard library
 #include <stdlib.h>
-```
 
-```c
-// takes no input argument
-int rand()
+int rand() // returns random int
 ```
 Generates a positive int from 0 to $2^{31}-1$` = RAND_MAX`
 - Q: Why does `RAND_MAX = `$2^{31}-1$? {.lr}
@@ -400,12 +399,11 @@ Q: Why is `rand()` a "pseudo-random" number generator? {.r}
 
 A: Each time you run a program with `rand()`, the same numbers will be generated. This occurs because `rand()` uses a deterministic algorithm to generate random numbers. {.lg}
 
-Q: How can we generate a different set of randuom numbers using `rand()`? {.r}
+Q: How can we generate a different set of random numbers using `rand()`? {.r}
 
 A: Change the **SEED** for the random number generator (only need to change it once at the beginning of the program) {.lg}
 ```c
-void srand(unsigned int SEED)
-// default seed = 1
+void srand(unsigned int SEED) // default seed = 1
 ```
 
 Q: How can we set a random seed every time we run a program? {.r}
@@ -425,11 +423,11 @@ Q: How can we generate a random number within an interval ***STARTING AT 0*** (e
 A: Using mod (`%`): {.lg}
 
 ```c
-0 % 5 = 0 // ← ←
-1 % 5 = 1 //     ↑
-2 % 5 = 2 //     ↑
-3 % 5 = 3 //     ↑
-4 % 5 = 4 //     ↑
+0 % 5 = 0 // ← ← ←
+1 % 5 = 1 //       ↑
+2 % 5 = 2 //       ↑
+3 % 5 = 3 //       ↑
+4 % 5 = 4 //       ↑
 5 % 5 = 0 // REPEATS
 6 % 5 = 1
 ```
@@ -518,9 +516,8 @@ if (LEFT || RIGHT) ...
 
 ### 6.2.2. De Morgan's Law
 ```c
-!(A && B) == !A || !B
-and
-!(A || B) == !A && !B
+!(A && B) // !A || !B
+!(A || B) // !A && !B
 ```
 
 ### 6.2.3. Dangling if-else
@@ -578,6 +575,9 @@ for (<initialization>; <condition>; <alteration>) {
   ...;
 }
 ```
+
+## 9.1. For Loop - Statement Header Variations
+
 ```c
 // can exclude curly brackets if only 1 statement (like with 'if')
 for (...; ...; ...;) // this is called STATEMENT HEADER
@@ -607,6 +607,7 @@ for(int i = 1; ; i++) {
 ```
 ```c
 // we can have complex expressions in statement header
+
 // e.g.
 for (int i = 1, double j = 2; i != j && !done; printf("*"), k++) {
   ...
@@ -690,11 +691,10 @@ Q: How does changing the dereferenced value (e.g. `*a = 2`) of a pointer affect 
 
 A: The value of the variable being pointed to changes, but the pointer variable does not change (still holds the address of the variable). {.lg}
 
-e.g.
 ```c
+// e.g.
 int x = 3, y = 4;
-// declare pointer variables
-int *a, *b;
+int *a, *b; // declare pointer variables
 
 // initialize pointers with addresses of x, y
 a = &x;
@@ -709,13 +709,13 @@ b = &y;
 
 Q: What is the value of an address of a variable? {.lr}
 
-A: Addresses are non-negative integers (includes NULL pointer 0) that correspond to a memory location within the computer. **EACH ADDRESS IDENTIFIES 1 BYTE OF DATA.** {.lg}
+A: Addresses are non-negative integers (includes NULL pointer 0) that correspond to a memory location within the computer.  {.lg}
 - For a specific instance of a running program, variables in the same scope have the same address (obviously, different variables will have different addresses).
 - Each time a program is run, it may or may not store variables in the same addresses/memory locations.
 
 Q: How much space in memory does a pointer take up? {.r}
 
-A: Pointers take up the space needed to hold an address, which is 4 Bytes on a 32-bit machine and 8 Bytes on a 64-bit machine.{.lg}
+A: Pointers take up the space needed to hold an address; since we simplify each address to identify 1 B of data for this course, that means each pointer takes up 1 B of memory.{.lg}
 
 Q: Can we declare a pointer variable that pointers to a pointer? {.r}
 

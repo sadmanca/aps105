@@ -100,7 +100,70 @@
               "backgroundColor": "rgba(190,174,226,0.1)",
               "overviewRulerColor": "rgba(190,174,226,0.2)" }
           ]
-      }
+      },
+      // HIGHLIGHT
+      "(.*{style=\\\"color:(.*)\\\"}.*)": {
+        "filterLanguageRegex": "markdown",
+        "decorations":[ {
+            "color": "$2"
+        } ]
+    },
+    "({\\.r})": {
+        "filterLanguageRegex": "markdown",
+        "decorations":[ {
+            "isWholeLine": "true",
+            "color": "rgb(249,38,114)"
+        } ]
+    },
+    "({\\.g})": {
+        "filterLanguageRegex": "markdown",
+        "decorations":[ {
+            "isWholeLine": "true",
+            "color": "rgb(166,226,46)"
+        } ]
+    },
+    "({\\.lg})": {
+        "filterLanguageRegex": "markdown",
+        "decorations":[ {
+            "isWholeLine": "true",
+            "color": "rgb(163, 238, 51)"
+        } ]
+    },
+    "({\\.b})": {
+        "filterLanguageRegex": "markdown",
+        "decorations":[ {
+            "isWholeLine": "true",
+            "color": "rgb(129,154,255)"
+        } ]
+    },
+    "({\\.c})": {
+        "filterLanguageRegex": "markdown",
+        "decorations":[ {
+            "isWholeLine": "true",
+            "color": "rgb(102,217,239)"
+        } ]
+    },
+    "({\\.m})": {
+        "filterLanguageRegex": "markdown",
+        "decorations":[ {
+            "isWholeLine": "true",
+            "color": "rgb(174,129,255)"
+        } ]
+    },
+    "({\\.p})": {
+        "filterLanguageRegex": "markdown",
+        "decorations":[ {
+            "isWholeLine": "true",
+            "color": "rgb(174,129,255)"
+        } ]
+    },
+    "({\\.y})": {
+        "filterLanguageRegex": "markdown",
+        "decorations":[ {
+            "isWholeLine": "true",
+            "color": "rgb(226,226,46)"
+        } ]
+    }
   },
   "markdown.preview.lineHeight": 1.4,
   "markdown.preview.breaks": true,
