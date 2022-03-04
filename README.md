@@ -51,7 +51,12 @@
   - [17.2. `free`](#172-free)
 - [18. ***_MIDTERM PREP_***](#18-midterm-prep)
 - [19. Intro to 2D Arrays](#19-intro-to-2d-arrays)
-  - [Syntax for 2D Arrays](#syntax-for-2d-arrays)
+  - [19.1. Initializing 2D Arrays](#191-initializing-2d-arrays)
+  - [19.2. 2D Array Memory Addresses/Pointer Arithmetic](#192-2d-array-memory-addressespointer-arithmetic)
+  - [19.3. Passing 2D Arrays to Functions](#193-passing-2d-arrays-to-functions)
+    - [19.3.1. Without Specifying Pointers](#1931-without-specifying-pointers)
+    - [19.3.2. With Specified Pointers](#1932-with-specified-pointers)
+- [20. 2D Arrays & Dynamic Memory Allocation](#20-2d-arrays--dynamic-memory-allocation)
 
 # 1. _Course Intro_
 
@@ -1074,17 +1079,89 @@ When allocated memory is forgotten to be unallocated, **memory leaks** occur.
 
 # 18. ***_MIDTERM PREP_***
 
-ADD PAST MIDTERM + TUTORIAL PROBLEMS TO A SEPARATE FILE
+<<<ADD PAST MIDTERM + TUTORIAL PROBLEMS TO A SEPARATE FILE>>>
+
+Material prior to the midterm will NOT BE TESTED ON THE FINAL EXAM. {.lr}
+
+Obviously, however, you are going to need to understand pre-midterm concepts in order to understand the concepts that will be tested on the final exam.
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 19. Intro to 2D Arrays
-## Syntax for 2D Arrays
+## 19.1. Initializing 2D Arrays
 ```c
 //  arr[rows][cols] = { {row1}, {row2}, ...}
 // where each row has 'cols' # of columns
 
-// e.g.
-int arr[2][3] = {{0, 0, 0}, {1, 1, 1} } // 2 rows 3 cols
+// e.g.            2 rows 3 cols
+int arr[2][3] = { {0, 0, 0},
+                  {1, 1, 1} };
 ```
+
+```c
+// CANNOT INITIALIZE 2D ARRAY with a SINGLE VALUE
+arr[3][4] = { 0 }; // COMPILE-TIME ERROR!
+
+// ↓
+
+// need to intialize 2D array via nexted 'for' loop
+for (int i = 0; i < num_rows; i++) {
+  for (j = 0; j < num_cols; j++) {
+    arr[i][j] = ...;
+  }
+}
+```
+
+## 19.2. 2D Array Memory Addresses/Pointer Arithmetic
+Q: How are 2D array values stored in memory addresses?
+(i.e. how does pointer arithmetic work with 2D arrays) {.r}
+
+A: 2D array values are in ROW-MAJOR ORDER (start at `arr[0][0]`, increment col in same row, then increment col). {.lg}
+
+| 2D ARRAY VALUE | ADDRESS                                              |
+| -------------- | ---------------------------------------------------- |
+| `arr[i][j]`    | `arr + sizeof(TYPE) * (i * num_cols - j)` $^1$ {.lr} |
+| ...            | ...                                                  |
+| `arr[2][1]`    | `arr + sizeof(TYPE) * 7`                             |
+| `arr[2][0]`    | `arr + sizeof(TYPE) * 6` -> row 2                    |
+| `arr[1][2]`    | `arr + sizeof(TYPE) * 5`                             |
+| `arr[1][1]`    | `arr + sizeof(TYPE) * 4`                             |
+| `arr[1][0]`    | `arr + sizeof(TYPE) * 3` -> row 1                    |
+| `arr[0][2]`    | `arr + sizeof(TYPE) * 2`                             |
+| `arr[0][1]`    | `arr + sizeof(TYPE) * 1`                             |
+| `arr[0][0]`    | `arr` -> row 0                                       |
+
+$^1$Q: How can we find the address of any 2D array value if we know its row (`i`) and column (`j`)? {.r}
+
+A: address of `arr[num_rows][num_cols]` = (address of `arr[0][0]`) `+ sizeof(TYPE) * (i * num_cols - j)` {.lg}
+
+## 19.3. Passing 2D Arrays to Functions
+
+### 19.3.1. Without Specifying Pointers
+The C compiler only needs the number of columns of a 2D array when passed as a parameter to a function.
+
+*NOTE: arrays (regardless of number of dimensions) are always passed to functions as pointers.*
+```c
+void func(int arr[   ][3]);
+void func(int arr[ 2 ][3]); // row num is optional
+void func(int col, int arr[][col]); // can also input 'col' as a variable
+```
+
+### 19.3.2. With Specified Pointers
+<<< INSERT NOTES REGARDING DEREFERENCING  >>>
+
+---
+PRACTICE:
+1\. Find 3 consecutive horizontal '1's in a 6 x 6 array. {.p}
+```c
+int board[6][6] = ...;
+
+// A:
+
+```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 20. 2D Arrays & Dynamic Memory Allocation
+
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
