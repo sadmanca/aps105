@@ -50,6 +50,8 @@
   - [17.1. `malloc()`](#171-malloc)
   - [17.2. `free`](#172-free)
 - [18. ***_MIDTERM PREP_***](#18-midterm-prep)
+- [19. Intro to 2D Arrays](#19-intro-to-2d-arrays)
+  - [Syntax for 2D Arrays](#syntax-for-2d-arrays)
 
 # 1. _Course Intro_
 
@@ -58,7 +60,7 @@ GRADING: 30% labs, 30% midterm, 40% final exam
 ## 1.1. _Parts of a Computer_
 *Q: What are the parts of a computer?*{.lr}
 - CPU
-    - executes instructions (e.g. add 2 numbers, store/delete data in memory) written in native/machine code 
+    - executes instructions (e.g. add 2 numbers, store/delete data in memory) written in native/machine code
 - main memory
     - indexed by addresses
     - stores data and instructions (which can be sent to CPU for executing instructions)
@@ -114,7 +116,7 @@ Q: HOW are data and instructions stored in a computer?{.lr}
 
 A: Data (numerical information; i.e. numbers) are encoded in binary (1s & 0s).
 
-Q: How are numbers represented in BINARY?{.r} 
+Q: How are numbers represented in BINARY?{.r}
 
 | DECIMAL | BINARY | MEMORY SPACE {.lg} |
 | ------- | ------ | ------------------ |
@@ -135,7 +137,7 @@ Q: How is main memory organized?{.r}
 
 A: Main memory is divided into cells, each holding 1 Byte and with an address (making memory “Byte-addressable”). {.lg}
 
-**PRACTICE:** 
+**PRACTICE:**
 1\. a) If we choose to represent addresses using 32-bits, how many different addresses can we have and what is the total memory that can be stored?{.p}
 
 The question is effectively asking how many different numbers we can store with 32 bits. The answer is $2^{32}-1 + 1$ Bytes (we use the equation $2^n - 1$ & the knowledge that representing 0 requires 0 bits). {.lg}
@@ -147,9 +149,9 @@ We can have $2^{64}$ addresses in total, so the total memory that can be stored 
 
 2\. a) What is the largest number we can store in 1 Byte? {.p}
 
-Since we have $2^3=8$ bits, the largest number we can come up with in binary is 11111111. 
+Since we have $2^3=8$ bits, the largest number we can come up with in binary is 11111111.
 
-Since there are 8 place values that can be a 1 or a 0, that means there must be $2^8$ different possible numbers that we can represent using 8 bits. 
+Since there are 8 place values that can be a 1 or a 0, that means there must be $2^8$ different possible numbers that we can represent using 8 bits.
 
 Subtracting $1$ from $2^8$ (because 0 is also a possible number), the largest number possible is $2^8-1=255$. {.lg}
 
@@ -187,10 +189,10 @@ printf(" \' "); // single quote
 
 ### 2.3.2. Formatting Numbers (e.g. set width)
 ```c
-printf(%4d, int) // print int right aligned taking up 4 spaces 
+printf(%4d, int) // print int right aligned taking up 4 spaces
 printf(%04d, int) // same as above + prefix of 0
 
-printf(%4f, double) // print double right aligned taking up 4 spaces 
+printf(%4f, double) // print double right aligned taking up 4 spaces
 printf(%.4f, double) // print double with 4 decimal values
 printf(%3.4f, double) // same as above + right aligned taking up 3 spaces
 ```
@@ -229,7 +231,7 @@ Implicit Type Conversion
 
 Division by 0:
 - (int) / 0
-  - compile-time warning, runtime error (floating point exception) 
+  - compile-time warning, runtime error (floating point exception)
   - e.g. 1/0
 - (double) / 0
   - results in inf
@@ -244,16 +246,16 @@ Modulus operator %:
 
 ↓
 
-#### 4.0.0.2. OPERATOR PRECEDENCE & ASSOCIATIVITY 
+#### 4.0.0.2. OPERATOR PRECEDENCE & ASSOCIATIVITY
 
 Operators Precedence and Associativity are two characteristics of operators that determine the evaluation order of sub-expressions in absence of brackets.
 - Operator precedence determines which operator is performed first in an expression with more than one operators with different precedence.
 
-Operators Associativity is used when two operators of same precedence appear in an expression. Associativity can be either Left to Right or Right to Left. 
+Operators Associativity is used when two operators of same precedence appear in an expression. Associativity can be either Left to Right or Right to Left.
 
 1. Associativity is only used when there are two or more operators of same precedence (i.e. precedence is evaluated first before associativity).
 2. All operators with the same precedence have same associativity.
-3. There is no chaining of comparison operators (e.g. `a < b < c`) in C; operators will be evaluated in based on precedence and associativity. 
+3. There is no chaining of comparison operators (e.g. `a < b < c`) in C; operators will be evaluated in based on precedence and associativity.
    ```c
    a < b && b < c // is equivalent to 'a < b < c'
    ```
@@ -306,7 +308,7 @@ sizeof(double) // 8 (B)
 sizeof(char)   // 1 (B)
 ```
 
-**PRACTICE**: 
+**PRACTICE**:
 1\. What is the order of operations for `i = j = k = 1`? {.p}
 
 Same relational operator (`=`) means they all have the same precedence, so we look at associativity. `=` is right-to-left, so order of operations is:
@@ -317,11 +319,11 @@ Same relational operator (`=`) means they all have the same precedence, so we lo
 
 2\. What is the order of operations for `! x > 5`? {.p}
 
-Arithmetic operators are lower precedence than relational operators, so: 
+Arithmetic operators are lower precedence than relational operators, so:
 
 1. `!x` is evaluated first
 2. `!x == false`, even if x = 0
-3. `false == 0` → `0 > 5` => evaluates to **`false`**{.lg} 
+3. `false == 0` → `0 > 5` => evaluates to **`false`**{.lg}
 
 3\. What is the order of operations for `a < b < c`? {.p}
 
@@ -348,10 +350,10 @@ double log10(double x); // log_10(x)
 double fabs(double x); // return absolute value of x
 //     ↓
 //     Q: Why use fabs() over abs()?
-//     A: abs() only returns int, so it will truncate doubles, unlike fabs() 
+//     A: abs() only returns int, so it will truncate doubles, unlike fabs()
 
 double fmax(double x, double y); // return largest of x, y
-double fmin(double x, double y); // return smallest of x, y 
+double fmin(double x, double y); // return smallest of x, y
 
 double floor(double x); // *round down* to integer
 double ceil(double x); // *round up* to integer
@@ -363,7 +365,7 @@ double fmod(double x, double y); // mod for floating points
 **PRACTICE:**
 1\. How can you round 2.18 to 2.20? {.p}
 
-A: 
+A:
 1. multiply by 10 (`2.18 * 10 = 21.8`)
 2. round up/to the nearest integer (`rint(21.8) = ceil(21.8) = 22.0`)
 3. divide by 10 (`22.0 / 10 = 2.20`)
@@ -374,12 +376,12 @@ A:
 A: use question 1 as a model for solving rounding problems:
 1. we recognize that we want to use `rint()`, because we need to round to the nearest number.
 2. **PROBLEM**: we are not rounding to the nearest int; we need to round to the nearest nickel (i.e. nearest 0.05).
-3. **SOLUTION**: 
-   1. **convert dollar amount to be decimal number of nickels:** 
+3. **SOLUTION**:
+   1. **convert dollar amount to be decimal number of nickels:**
    ($\text{2.94 dollars } \times \frac{\text{100 cents}}{\text{1 dollar}} \times \frac{\text{1 nickel}}{\text{5 cents}} =$ `2.94 * 100 / 5`)
-   2. round number of nickels to nearest integer: 
-   (`rint(58.8) = 59 nickels`) 
-   3. convert rounded number of nickels back to dollars: 
+   2. round number of nickels to nearest integer:
+   (`rint(58.8) = 59 nickels`)
+   3. convert rounded number of nickels back to dollars:
    ($\text{59 nickels } \times \frac{\text{5 cents}}{\text{1 nickel}} \times \frac{\text{1 dollar}}{\text{100 cents}} =$ `59 * 5 / 100`)
 4. now that we have a process for rounding, we can write it as a single expression: **`rint(price * 100/5) * 5/100)`**{.lg}
 
@@ -503,7 +505,7 @@ A: `char` is encoded by ASCII code. Each `char` is encoded as an integer that co
 
 We can use the [associativity](#4002-operator-precedence--associativity) of logic operators to avoid having to compare all logical expressions:
 ```c
-// e.g. 
+// e.g.
 if (x != 0 && y/x < 10) ...
 if (i == 'red' || i == 'blue') ...
 
@@ -548,7 +550,7 @@ if (...) {
   }
 } else { // will belong to first 'if' because of brackets
   ...
-} 
+}
 ```
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
@@ -633,7 +635,7 @@ Functions called in `main()` can either be:
 // prototype
 return_type function(parameter_1, parameter_2);
 // can also just give type; e.g.
-int function(int, bool); 
+int function(int, bool);
 
 int main(void){
   function(2, true);
@@ -705,7 +707,7 @@ b = &y;
 *b = 40; // now y = 30
 ```
 
-## 12.3. Memory Taken up by Addresses & Pointers 
+## 12.3. Memory Taken up by Addresses & Pointers
 
 Q: What is the value of an address of a variable? {.lr}
 
@@ -737,7 +739,7 @@ int main(void) {
   // because no pointer is actually initialized in main(), the function is given the 'address of' the int variables as parameters
   swap(&i, &j);
 }
-``` 
+```
 
 2\. If I have the following code... {.p}
 ```c
@@ -759,7 +761,7 @@ pd = &pi;
 Non-pointer variables cannot be assigned 'address of' values using `&`. Pointers of one type cannot be assigned addresses of pointers of a different type. {.lg}
 ```c
 // A:
-i = &pd; // INVALID: &pd is address of pd, which 
+i = &pd; // INVALID: &pd is address of pd, which
 pi = &i;
 pd = i;
 pd = &pi;
@@ -796,14 +798,14 @@ void *p = &a; // address of int 'i'
 
 ## 13.3. Returning Pointers in Functions
 
-Consider a function `largerAddress()` that returns the address of (i.e. a pointer to) the larger of x & y. 
+Consider a function `largerAddress()` that returns the address of (i.e. a pointer to) the larger of x & y.
 
 The `main()` function looks like:
 ```c
 int main(void) {
   int x = 1, y = 2;
   // since we want the address of the variable with the larger value, we will be storing the returned pointer in a pointer variable
-  int *l = largerAddress(&x, &y); 
+  int *l = largerAddress(&x, &y);
   // '&x', '&y' are parameters because we need to return the address of a variable, not the actual value
 }
 ```
@@ -820,7 +822,7 @@ int* largerAddress(int *x, int *y) {
 - Q: Why do we return `x` instead of `&x`, `*x`, or `&*x`? {.r}
 - A: After `largerAddress()` takes in addresses `&x` and `&y` as parameters, the function initalizes pointers `*x` and `*y` with those addresses. {.lg}
 - Since we just want the address of (i.e. a pointer to) the variable with the larger value, we can just return `x` or `y`. {.lg}
-- Since `x` is already a pointer, `*x` returns the value at the address, which is not what we want. 
+- Since `x` is already a pointer, `*x` returns the value at the address, which is not what we want.
 - `&x` returns the address of the pointer `x` itself, which is not what we want either (we want the address of the variable `x` in `main()`).
 - `&*x` is the same as returning the pointer `x`, because `&` and `*` are opposite operations.
 
@@ -831,7 +833,7 @@ int* largerAddress(int *x, int *y) {
 VARIABLE SCOPE: the set of C statements (example below) within which a variable is defined/visible/accessible.
 - variables declared inside function headers (e.g. `func(int x`) or compound statements (e.g. `{ {var} }`) are only available within their respective statement.
 - declaring a variable before initializing it results in compile-time error:
-- ```c 
+- ```c
   // e.g.
   i = 1; // compiler error
   int i;
@@ -901,7 +903,7 @@ A: Because the C compiler does not do range checking, this may result in a segme
 **PRACTICE:**
 1\. What is the address of a variable at an array index (e.g. for array `int a[]`)? {.p}
 
-`&a[n]` for variable at array index n. {.lg} 
+`&a[n]` for variable at array index n. {.lg}
 
 2\. Write a function that reverses an integer array. {.p}
 ```c
@@ -934,7 +936,7 @@ A: Pass the pointer to the 1st element (`a = &a[0]`) as a function argument. The
 - Because we are passing a pointer to a function, manipulating elements of the array changes the values directly in the memory (and thus in `main()` as well).
 ```c
 // all are same; argument given is always a pointer
-int func(int *list); 
+int func(int *list);
 int func(int list[]);
 int func(int list[100]); // size given doesn't matter, because it is ultimately a pointer
 
@@ -974,7 +976,7 @@ Q: What is the difference between `a[i]` and `*(a + i)`? {.lr}
 
 A: None; they compile to the same machine code. {.lg}
 
-We can also: 
+We can also:
 1. add/subtract pointers to/from each other (e.g. `q-p`)
    - e.g. if `int *p = a = &a[0]` and `int *q = &a[3]`, then `q-p = 3-0 = 3`{.lg}
 2. use relational operators to compare pointers to each other (e.g. `if (p <= q)`)
@@ -1037,7 +1039,7 @@ Q: How can we allocate memory (i.e. set the size) of an array if we don't know h
 
 A: Either...
 - set an arbitrarily high array size
-  - a waste of memory if left unused 
+  - a waste of memory if left unused
 - write code that allows us to allocate a specific size of memory (for an array) based on variable input using `malloc()` and `free`. {.lg}
 
 **HEAP:** a large amount of pre-reserved memory that a program can use to store data that won't be until the program is running.
@@ -1045,7 +1047,7 @@ A: Either...
 
 We can use the `malloc()` function to allocate memory for arrays:
 ```c
-// remember 
+// remember
 int *a = (int*) malloc(num_elements * sizeof(type))
 // while 'malloc' return type is void* and is implicitly typecasted to whatever data type it is being assigned to, typecasting as int* is easier to understand
 ```
@@ -1072,4 +1074,17 @@ When allocated memory is forgotten to be unallocated, **memory leaks** occur.
 
 # 18. ***_MIDTERM PREP_***
 
+ADD PAST MIDTERM + TUTORIAL PROBLEMS TO A SEPARATE FILE
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 19. Intro to 2D Arrays
+## Syntax for 2D Arrays
+```c
+//  arr[rows][cols] = { {row1}, {row2}, ...}
+// where each row has 'cols' # of columns
+
+// e.g.
+int arr[2][3] = {{0, 0, 0}, {1, 1, 1} } // 2 rows 3 cols
+```
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
