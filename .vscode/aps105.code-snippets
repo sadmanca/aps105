@@ -11,6 +11,7 @@
 		"prefix": "code",
 		"body": [
 			"```c",
+			"$code",
 			"```",
 		],
 		"description": "Insert markdown code block"
@@ -19,7 +20,7 @@
 		"scope": "markdown",
 		"prefix": "q-",
 		"body": [
-			"Q: {.r}",
+			"Q: $question {.r}",
 		],
 		"description": "Insert question block"
 	},
@@ -27,7 +28,7 @@
 		"scope": "markdown",
 		"prefix": "a-",
 		"body": [
-			"A: {.lg}",
+			"A: $answer {.lg}",
 		],
 		"description": "Insert answer block"
 	}
