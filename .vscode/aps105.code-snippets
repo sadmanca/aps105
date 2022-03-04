@@ -14,5 +14,21 @@
 			"```",
 		],
 		"description": "Insert markdown code block"
+	},
+	"Question": {
+		"scope": "markdown",
+		"prefix": "Q: ",
+		"body": [
+			"Q: {.r}",
+		],
+		"description": "Insert question block"
+	},
+	"Answer": {
+		"scope": "markdown",
+		"prefix": "A: ",
+		"body": [
+			"A: {.lg}",
+		],
+		"description": "Insert answer block"
 	}
 }
