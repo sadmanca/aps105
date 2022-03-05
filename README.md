@@ -54,9 +54,13 @@
   - [19.1. Initializing 2D Arrays](#191-initializing-2d-arrays)
   - [19.2. 2D Array Memory Addresses/Pointer Arithmetic](#192-2d-array-memory-addressespointer-arithmetic)
   - [19.3. Passing 2D Arrays to Functions](#193-passing-2d-arrays-to-functions)
-    - [19.3.1. Without Specifying Pointers](#1931-without-specifying-pointers)
-    - [19.3.2. With Specified Pointers](#1932-with-specified-pointers)
+    - [19.3.1. Without Pointers](#1931-without-pointers)
+    - [19.3.2. Passing Multidimensional Arrays](#1932-passing-multidimensional-arrays)
+    - [19.3.3. With Pointers](#1933-with-pointers)
+  - [19.4. Dereferencing 2D Arrays](#194-dereferencing-2d-arrays)
 - [20. 2D Arrays & Dynamic Memory Allocation](#20-2d-arrays--dynamic-memory-allocation)
+  - [20.1. `malloc` for 2D Arrays](#201-malloc-for-2d-arrays)
+  - [20.2. `free` for 2D Arrays](#202-free-for-2d-arrays)
 
 # 1. _Course Intro_
 
@@ -1137,18 +1141,81 @@ A: address of `arr[num_rows][num_cols]` = (address of `arr[0][0]`) `+ sizeof(TYP
 
 ## 19.3. Passing 2D Arrays to Functions
 
-### 19.3.1. Without Specifying Pointers
+### 19.3.1. Without Pointers
 The C compiler only needs the number of columns of a 2D array when passed as a parameter to a function.
 
 *NOTE: arrays (regardless of number of dimensions) are always passed to functions as pointers.*
 ```c
-void func(int arr[   ][3]);
-void func(int arr[ 2 ][3]); // row num is optional
+void func(int arr[ ][3]);
+void func(int arr[2][3]); // row num is ignored by compiler
 void func(int col, int arr[][col]); // can also input 'col' as a variable
 ```
 
-### 19.3.2. With Specified Pointers
-<<< INSERT NOTES REGARDING DEREFERENCING  >>>
+### 19.3.2. Passing Multidimensional Arrays
+
+We can initialize arrays of any number of dimensions:
+```c
+int a[1][2][3];     // 3D array
+int b[1][2][3][4];  // 4D array
+```
+
+When we pass any multidimensional array to function, *the 1st dimension ('row') is always ignored if passed* but **ALL other dimensions MUST be passed**{.lr}:
+```c
+// e.g.
+void func(int z[][2]);
+void func(int a[][2][3]);
+void func(int b[][2][3][4]);
+```
+
+### 19.3.3. With Pointers
+When passed as a **DOUBLE pointer**, we can access each element normally via `arr[i][j]`:
+```c
+void func(int **arr) {
+  for (row = 0; ...) {
+    for (col = 0; ...) {
+         arr[row][col] = ...;
+      // arr[ i ][ j ] = ...;
+    }
+  }
+}
+```
+Wwhen passed as a **SINGLE pointer**, we need to access each element by dereferencing the [specific address of each element](#192-2d-array-memory-addressespointer-arithmetic):
+
+```c
+void func(int *arr) {
+  for (row = 0; ...) {
+    for (col = 0; ...) {
+         arr[row * num_cols + col] = ...;
+      // arr[ i  * num_cols +  j ] = ...;
+      // *(arr + i * num_cols + j) = ...;
+    }
+  }
+}
+```
+
+## 19.4. Dereferencing 2D Arrays
+A 2D array is basically just an array of pointers ('rows'), with each pointer pointing to the 1st element of its row (enabling traversal of 'columns' in each row).
+
+Just like with 1D arrays, the identifier (`arr`) of a 2D array (`arr[2][3]`) is the address of `arr[0]` (`&arr[0]`).
+
+```c
+// points to first cell of first row
+arr <=> &arr[0] 
+```
+```c
+// since each row is a 1D array, the identifier of the first cell of the first row ('arr[0]') is **ALSO AN ADDRESS** of the first cell of the first row
+*arr <=> *&arr[0] <=> arr[0] // <=> &arr[0][0]
+```
+```c
+// dereference first cell of first row of array
+*arr[0] <=> *&arr[0][0] <=> arr[0][0]
+```
+```c
+// since we have to dereference 'arr' twice to dereference the value in the first cell of the first row,
+// we can simplify dereferencing using 2 '*'s:
+**arr <=> arr[0][0]
+```
+*Remember that 2D array identifiers are also not pointer variables that can be assigned a different address.*{.lr}
 
 ---
 PRACTICE:
@@ -1163,5 +1230,42 @@ int board[6][6] = ...;
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 20. 2D Arrays & Dynamic Memory Allocation
+
+## 20.1. `malloc` for 2D Arrays
+
+Q: How do we allocate memory for 2D arrays using `malloc`? {.r}
+
+A: 
+1. First, allocate memory via `malloc` for the number of rows.  {.lg}
+   ```c
+   int **arr = (int**) malloc(sizeof(int*) * num_rows);
+   ```
+
+2. Then, allocate memory via `malloc` for the number of columns, iterating through each row. {.lg}
+   ```c
+   for (int row = 0; row < num_rows; row++) {
+     arr[row] = (int*) malloc(sizeof(int) * num_cols);
+     // <=> *(arr + i) = ...
+   }
+   ```
+
+## 20.2. `free` for 2D Arrays
+
+We cannot just run `free(arr);` for 2D arrays because that only frees memory for the pointers to the array of each row -> *the pointers to the first element of each row are lost, so we are unable to unallocate all the values of those arrays, resulting in a memory leak.*{.lr}
+
+Instead, we need to iterate through each row and run `free()` on the pointer to each row:
+```c
+for (int row = 0; row < num_rows; row++) {
+     free(arr[row]);
+  // free(*(arr + row));
+}
+```
+
+Dyamically allocated arrays can only be passed to functions as pointers:
+```c
+void func(int **arr);
+void func(int *arr);
+```
+Remember that [passing as a double vs. single pointer means different methods must be used for dereferencing elements](#1933-with-pointers).
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
