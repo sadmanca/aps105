@@ -61,6 +61,12 @@
 - [20. 2D Arrays & Dynamic Memory Allocation](#20-2d-arrays--dynamic-memory-allocation)
   - [20.1. `malloc` for 2D Arrays](#201-malloc-for-2d-arrays)
   - [20.2. `free` for 2D Arrays](#202-free-for-2d-arrays)
+- [21. Strings](#21-strings)
+  - [21.1. String == `char` array](#211-string--char-array)
+  - [21.2. Initializing Strings](#212-initializing-strings)
+    - [21.2.1. As `char` Arrays](#2121-as-char-arrays)
+    - [21.2.2. As `char*` Pointers](#2122-as-char-pointers)
+      - [21.2.2.1. Empty Strings](#21221-empty-strings)
 
 # 1. _Course Intro_
 
@@ -1267,5 +1273,109 @@ void func(int **arr);
 void func(int *arr);
 ```
 Remember that [passing as a double vs. single pointer means different methods must be used for dereferencing elements](#1933-with-pointers).
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 21. Strings
+
+## 21.1. String == `char` array
+
+Strings in C are null-terminated\* `char` arrays.
+\*Null-terminated means the final element in each `char` array corresponding to a string is always the **null character** `'\0'`.
+
+## 21.2. Initializing Strings
+
+### 21.2.1. As `char` Arrays
+
+We can initialize a string as a `char` array with `char` values OR with a **STRING CONSTANT**{.b}:
+```c
+char s[] = {'H','e','l','l','o',\'0'}; // remember to include null character at end
+char s[] = "Hello"; // using string constant
+char s[5] = "Hello"; // size input is ignored by compiler
+
+// when size input is greater than characters required,
+// compiler inserts '0's which are converted to null characters
+char s[4] = "He"; // == {'H','e','\0','\0'};
+```
+
+Q: What happens if we initialize a `char` array without the null character at the end (e.g. `char s[] = {'H'}`)? {.r}
+
+A: Without the null character, the compiler is unable to identify it as a string, so the array is just initialized as a `char` array. {.lg}
+
+Q: What happens when we initialize a `char` array using a string constant? {.r}
+
+A: The compiler basically creates a string constant in the call stack and then copies over each character to each element in the `char` array; the memory for the string constant is then unallocated and free to be used. {.lg}
+
+### 21.2.2. As `char*` Pointers
+
+The main thing to remember is the while `char` arrays and `char*` pointers are similar (e.g. identifier of `char` array is address of `arr[0]`), `char` arrays are *NOT*{.lr} pointers and so there are differences in initialization and memory allocation.
+
+We can also initialize strings as `char*` pointers:
+```c
+char *s = "Hello";
+```
+
+Q: Is initializing a string as an array the same as initializing it as a pointer? {.r}
+```c
+char s[] = "Hello";
+s[1] = 'E'; 
+
+// is this the same as above?
+char *p = "Hello";
+p[1] = 'E';
+```
+A: **NO**{.lr} {.lg}
+- `char s[] = "Hello"` initializes an array in the CALL STACK, so array values can be mutated via `s[i] = ...`
+- `char *p = "Hello"` initializes an array in the GLOBAL VARS & CONSTANTS section of memory; `p` is a pointer to a literal STRING CONSTANT, so attempting to mutate any value of the array via `p[i] = ...` or `*(p+i) = ...` is an invalid access of memory (potential segmentation fault).
+  - Conversely, if `p` pointed to a `char` array in the call stack (e.g. `char *p = s`), then `p[i] = ...` would be legal because local variables in the call stack are being mutated.
+
+  - Q: Does `s` in the code below end up pointing to the same string constant in the GLOBAL VARS & CONSTANTS section of memory? {.r}
+  ```c
+  char *p = "Hello";
+  p = "Hello";
+  ```
+  - A: **NO**{.lr}; a second string constant is allocated in a different memory block of the GLOBAL VARS & CONSTANTS section and the address in the pointer just changes to point to that new second string constant. {.lg}
+
+  - Q: Is the following code legal? {.lr}
+  ```c
+  char s[] = "Hello";
+  s = "Hello";
+  ```
+  - A: **NO**{.lr}; `s` is not a pointer, it is just an address and we cannot change the value of its address. {.lg}
+
+#### 21.2.2.1. Empty Strings
+
+Since strings are `char` arrays with their end indicated by the null character `'\0'`, if the first element of a `char` array is the null character then the string is an EMPTY STRING `""`:
+```c
+char s[] = {\'0','H','e','l','l','o',\'0'}; // is same as '""'
+```
+Because every string in C is null-terminated, we don't need the size of the string's `char` array to iterate through its element without invalidly accessing memory; **we can just stop iterating when we reach an element with the null character:**
+```c
+char s[] = "Hello"; // same process for 'char s* = ...;'
+for (int i = 0; s[i] != '\0'; i++) {
+  ...
+}
+```
+
+- Q: If we initalize a pointer pointing to the 2nd element of the `char` array `s[] = {\'0','H','e','l','l','o',\'0'}` above, what will happen? {.r}
+- A: Because the C compiler only cares about the null character when terminating strings, this means that the pointer to the second value is basically pointing to string `"ello"`. {.lg}
+
+- Q: What is the difference between `'\0` and `NULL`? {.lr}
+- A: `'\0'` is a `char`-type constant with value `0`. `NULL` is a pointer-type constant with vlaue `0`. They are same value but different types. {.lg}
+
+---
+**PRACTICE:**
+1\. What will happen when the following code is run? {.p}
+```c
+char *p = (char*) malloc(sizeof(char) * 6);
+p[1] = 'e';
+p = "Hello";
+```
+- A `char` array with memory for 6 elements is initialized by `malloc` in the **HEAP**. {.lg}
+- The second element in the `char` array is changed to `'e'` (remember that the pointer to the second element is dereferenced: `p[1]` <=> `*&p[1]`). {.lg}
+- *`p = "Hello"` creates a string constant in the GLOBAL VARS & CONSTANTS memory and changes the pointer `p` to point to that new constant.*{.lg}
+
+  - *Because only the address assigned to the pointer has changed, the memory allocated using `malloc` has not been freed and is causing a memory leak.*{.lr}
+  - To free the memory allocated by `malloc`, you can initialize a new pointer pointing to p (`char *p2 = p`), which allows us to free it (`free(p2)`) after changing the address assigned to `p`.
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
