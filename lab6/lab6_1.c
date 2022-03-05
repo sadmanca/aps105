@@ -8,8 +8,7 @@ know, everyone in class decided to do this question.
 
 You are required to implement search2D function:
 
-        void search2D(char word[], int wordSize, const int Size, char
-grid[Size][Size]);
+    void search2D(char word[], int wordSize, const int Size, char grid[Size][Size]);
 
 search2D receives the word to look for char word[], the size of the word int
 wordSize, size of the grid const int Size and the puzzle grid char
@@ -27,9 +26,8 @@ and column count starts from 0.
 These are several tasks in one function; therefore you should implement these
 two helper functions that search2D will call.
 
-        1) bool search1D(char word[], int wordSize, const int Size, char
-grid[Size][Size], int row, int col, int rowDir, int colDir); 2) void
-printFoundLocation(int rowDir, int colDir);
+    1) bool search1D(char word[], int wordSize, const int Size, char grid[Size][Size], int row, int col, int rowDir, int colDir);
+    2) void printFoundLocation(int rowDir, int colDir);
 
 search1D should receive the word in char word[], word size in int wordSize, size
 of grid in const int Size and the puzzle grid in char grid[Size][Size], the row
@@ -50,28 +48,26 @@ or 3 letters.
 --------------------------SEE LAB 6 PDF FOR EXAMPLES ---------------------------
 */
 
-#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-// directions
-const int NORTH = -1;  // up
-const int SOUTH = 1;   // down
-const int WEST = -1;   // left
-const int EAST = 1;    // right
-// constant for only going left/right or up/down
-const int ONLY = 0;
+// directions for traversing through words at each row and col
+const int NORTH = 1;   // up
+const int SOUTH = -1;  // down
+const int WEST = 1;    // left
+const int EAST = -1;   // right
+const int ONLY = 0;    // for only going left/right or up/down
 
 void search2D(char word[], int wordSize, const int Size, char grid[Size][Size]);
 bool search1D(char word[], int wordSize, const int Size, char grid[Size][Size],
               int row, int col, int rowDir, int colDir);
 void printFoundLocation(int rowDir, int colDir);
-void printFound(int row, int col);
+void printFoundRowCol(int row, int col);
 
 int main() {
-    char grid[3][3] = {{'B', 'A', 'N'}, {'E', 'O', 'N'}, {'N', 'A', 'N'}};
-    search2D("BE", 2, 3, grid);
+    char grid[3][3] = {{'S', 'A', 'D'}, {'M', 'A', 'N'}, {'D', 'A', 'N'}};
+    search2D("AN", 2, 3, grid);
     return 0;
 }
 
@@ -81,15 +77,16 @@ bool search1D(char word[], int wordSize, const int Size, char grid[Size][Size],
     int curr_col = col;
     int word_i = 0;
 
-    while ((curr_row != row + rowDir * Size - 1 ||
-            curr_col != col + colDir * Size - 1) &&
-           (word_i < wordSize) && (curr_row < Size && curr_row >= 0) &&
-           (curr_col < Size && curr_col >= 0)) {
-        if (grid[curr_row][curr_col] == word[word_i]) {
-            curr_row += rowDir;
-            curr_col += colDir;
-        } else {
+    while ((curr_row != row + (rowDir * Size - 1) || curr_col != col + (colDir * Size - 1)) &&
+           word_i < wordSize &&
+           curr_row < Size && curr_row >= 0 &&
+           curr_col < Size && curr_col >= 0) {
+        if (grid[curr_row][curr_col] != word[word_i]) {
             return false;
+        } else {
+            curr_row -= rowDir;
+            curr_col -= colDir;
+            word_i++;
         }
     }
 
@@ -99,41 +96,40 @@ bool search1D(char word[], int wordSize, const int Size, char grid[Size][Size],
     return false;
 }
 
-void search2D(char word[], int wordSize, const int Size,
-              char grid[Size][Size]) {
+void search2D(char word[], int wordSize, const int Size, char grid[Size][Size]) {
     for (int row = 0; row < Size; row++) {
         for (int col = 0; col < Size; col++) {
             if (grid[row][col] == word[0]) {
                 if (search1D(word, wordSize, Size, grid, row, col, SOUTH, ONLY)) {
-                    printFound(row, col);
+                    printFoundRowCol(row, col);
                     printFoundLocation(SOUTH, ONLY);
                     return;
                 } else if (search1D(word, wordSize, Size, grid, row, col, SOUTH, WEST)) {
-                    printFound(row, col);
+                    printFoundRowCol(row, col);
                     printFoundLocation(SOUTH, WEST);
                     return;
                 } else if (search1D(word, wordSize, Size, grid, row, col, ONLY, WEST)) {
-                    printFound(row, col);
+                    printFoundRowCol(row, col);
                     printFoundLocation(ONLY, WEST);
                     return;
                 } else if (search1D(word, wordSize, Size, grid, row, col, NORTH, WEST)) {
-                    printFound(row, col);
+                    printFoundRowCol(row, col);
                     printFoundLocation(NORTH, WEST);
                     return;
                 } else if (search1D(word, wordSize, Size, grid, row, col, NORTH, ONLY)) {
-                    printFound(row, col);
+                    printFoundRowCol(row, col);
                     printFoundLocation(NORTH, ONLY);
                     return;
                 } else if (search1D(word, wordSize, Size, grid, row, col, NORTH, EAST)) {
-                    printFound(row, col);
+                    printFoundRowCol(row, col);
                     printFoundLocation(NORTH, EAST);
                     return;
                 } else if (search1D(word, wordSize, Size, grid, row, col, ONLY, EAST)) {
-                    printFound(row, col);
+                    printFoundRowCol(row, col);
                     printFoundLocation(ONLY, EAST);
                     return;
                 } else if (search1D(word, wordSize, Size, grid, row, col, SOUTH, EAST)) {
-                    printFound(row, col);
+                    printFoundRowCol(row, col);
                     printFoundLocation(SOUTH, EAST);
                     return;
                 }
@@ -142,7 +138,7 @@ void search2D(char word[], int wordSize, const int Size,
     }
 }
 
-void printFound(int row, int col) {
+void printFoundRowCol(int row, int col) {
     printf("Word found at row %d and column %d ", row, col);
 }
 
@@ -165,5 +161,3 @@ void printFoundLocation(int rowDir, int colDir) {
         printf("in the southeast direction.");
     }
 }
-
-int main() { return 0; }
