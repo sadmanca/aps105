@@ -46,70 +46,71 @@ numbers are found in the row and column of the square. This will help you know
 which number is missing.
 */
 
-#include <stdio.h>
 #include <stdbool.h>
-
-const int grid_size = 4;
+#include <stdio.h>
 
 int getNumsInRow(int nums_in_row[], int row, const int Size, int sudoko[Size][Size]);
 int getNumsInCol(int nums_in_col[], int col, const int Size, int sudoko[Size][Size]);
-int getMissingNum(int row_size, int col_size, int nums_in_row[row_size], int nums_in_col[col_size]);
+int getMissingNum(int row_size, int col_size, int nums_in_row[row_size], int nums_in_col[col_size], const int Sizw);
 void printSudoko(const int Size, int sudoko[Size][Size]);
 
-void fillSudoko(const int Size, int sudoko[Size][Size]){
+void fillSudoko(const int Size, int sudoko[Size][Size]) {
     for (int row = 0; row < Size; row++) {
         for (int col = 0; col < Size; col++) {
             if (sudoko[row][col] == 0) {
                 int nums_in_row[Size];
                 int nums_in_col[Size];
-                int row_size = getNumsInRow(nums_in_row, Size, row, sudoko);
-                int col_size = getNumsInCol(nums_in_col, Size, col, sudoko);
-                sudoko[row][col] = getMissingNum(row_size, col_size, nums_in_row, nums_in_col);
+                int row_size = getNumsInRow(nums_in_row, row, Size, sudoko);
+                int col_size = getNumsInCol(nums_in_col, col, Size, sudoko);
+                sudoko[row][col] = getMissingNum(row_size, col_size, nums_in_row, nums_in_col, Size);
             }
         }
     }
 }
 
 int getNumsInRow(int nums_in_row[], int row, const int Size, int sudoko[Size][Size]) {
-    int i = 0;
+    int row_size = 0;
     for (int col = 0; col < Size; col++) {
         if (sudoko[row][col] != 0) {
-            nums_in_row[i] = sudoko[row][col];
-            i++;
+            nums_in_row[row_size] = sudoko[row][col];
+            row_size++;
         }
     }
-    return i;
+    return row_size;
 }
 
 int getNumsInCol(int nums_in_col[], int col, const int Size, int sudoko[Size][Size]) {
-    int i = 0;
+    int col_size = 0;
     for (int row = 0; row < Size; row++) {
         if (sudoko[row][col] != 0) {
-            nums_in_col[i] = sudoko[row][col];
-            i++;
+            nums_in_col[col_size] = sudoko[row][col];
+            col_size++;
         }
     }
-    return i;
+    return col_size;
 }
 
-int getMissingNum(int row_size, int col_size, int nums_in_row[row_size], int nums_in_col[col_size]) {
-    for (int num = 1; num <= grid_size; num++) {
-        int row = 0;
-        int col = 0;
+int getMissingNum(int row_size, int col_size, int nums_in_row[row_size], int nums_in_col[col_size], const int Size) {
+    for (int num = 1; num <= Size; num++) {
+        bool found_in_row = false;
+        bool found_in_col = false;
 
-        while (num != nums_in_row[row] && row < row_size) {
-            row++;
-        }
-        while (num != nums_in_col[col] && col < col_size) {
-            col++;
+        for (int row = 0; row < row_size && !found_in_row; row++) {
+            if (nums_in_row[row] == num) {
+                found_in_row = true;
+            }
         }
 
-        if (row == row_size && col == col_size) {
+        for (int col = 0; col < col_size && !found_in_col; col++) {
+            if (nums_in_col[col] == num) {
+                found_in_col = true;
+            }
+        }
+
+        if (!found_in_row && !found_in_col) {
             return num;
         }
     }
-    // if no missing number found
-    return 0;
 }
 
 void printSudoko(const int Size, int sudoko[Size][Size]) {
@@ -121,9 +122,9 @@ void printSudoko(const int Size, int sudoko[Size][Size]) {
     }
 }
 
-int main(){
-    int grid[4][4] = {{0,3,4,0},{4,0,0,2},{1,0,0,3},{0,2,1,0}};
-    // int grid[4][4] = {{0,4,1,0},{1,0,0,4},{2,3,0,0},{0,0,2,3}};
+int main() {
+    // int grid[4][4] = {{0,3,4,0},{4,0,0,2},{1,0,0,3},{0,2,1,0}};
+    int grid[4][4] = {{0, 4, 1, 0}, {1, 0, 0, 4}, {2, 3, 0, 0}, {0, 0, 2, 3}};
 
     printf("The sudoko puzzle is:\n");
     printSudoko(4, grid);
