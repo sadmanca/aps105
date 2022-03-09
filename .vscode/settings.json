@@ -139,6 +139,15 @@
                 }
             ]
         },
+        "({\\.lr})": {
+            "filterLanguageRegex": "markdown",
+            "decorations": [
+                {
+                    "isWholeLine": "true",
+                    "color": "rgb(255, 138, 179)"
+                }
+            ]
+        },
         "({\\.g})": {
             "filterLanguageRegex": "markdown",
             "decorations": [
