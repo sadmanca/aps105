@@ -73,6 +73,11 @@
   - [22.3. String INPUT](#223-string-input)
     - [22.3.1. `scanf`](#2231-scanf)
     - [22.3.2. `fget(s)` & STRINGS (`char` ARRAYS) AS FUNCTION PARAMETERS](#2232-fgets--strings-char-arrays-as-function-parameters)
+- [23. More on Strings & String Library Functions](#23-more-on-strings--string-library-functions)
+  - [23.1. Small Details of Printing Strings](#231-small-details-of-printing-strings)
+  - [23.2. String Library Functions](#232-string-library-functions)
+  - [23.3. `strlen()`](#233-strlen)
+  - [23.4. `strcpy()`](#234-strcpy)
 
 # 1. _Course Intro_
 
@@ -1435,7 +1440,7 @@ A: `gets(s)` and `fget(s)`. {.lg}
   - e.g. `fgets(s, sizeof(s), stdin)` -- auto allocates memory (since `char` just takes up 1 B, we don't need to put in `... * sizeof(char)` like we have to do for `int` which takes up 4 B)
   - NOTE: `sizeof(s)` only returns the valid number of characters (i.e. space taken up by the string/`char` array) only if string `s` is initialized as character array `char s[6]`, **NOT** character pointer using `malloc` (`char *s = (char*) malloc(6))`; because size of an address for a pointer is 8 B) {.lr}
 
-PRACTICE:
+**PRACTICE:**
 1\. Will either of the lines of code below take in the right amount of characters into the function? {.p}
 ```c
 // Q:
@@ -1475,6 +1480,144 @@ int main(void) {
   char s[6];
   printf("%s", getStringSafely(s, s[6]));
 }
+```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 23. More on Strings & String Library Functions
+
+## 23.1. Small Details of Printing Strings
+
+Q: What will be printed for the code below? {.lr}
+```c
+// Q:
+char *s = "Sample";
+
+printf("%s", s);
+printf("%s", s + 2);
+```
+```c
+// A:
+Sample
+mple
+```
+A: ala pointer arithmetic, `s+2` points to the third cell in the array, and since strings are printed by iterating through a char array until null character is reached, printing `s+i` will just print string `s` starting from the `i`th cell to the end. {.lg}
+
+Q: How do you print a single character in a string? {.lr}
+
+A: String <=> `char` array, so can just dereference first cell of array {.lg}
+- `s[0]` <=> `*(s+0)` <=> `*s` --> 1st character of string
+- `s[2]` <=> `*(s+2)` --> (1st+2=) 3rd character of string
+
+Q: What is the value of `*s + 2` if `char *s = "Sample";`? {.r}
+
+A: Dereference operator `*` has higher precedence +/-, so the code will run as: `(*s) + 2` => `'S' + 2` => `'U'`{.lg}
+
+## 23.2. String Library Functions
+
+```c
+#include <string.h> // string library
+```
+
+## 23.3. `strlen()`
+```c
+int strlen(const char *s) // returns string length
+
+// 'const char *s' is used whenever we want to ensure that a function does not modify the input string or character
+```
+
+**PRACTICE:**
+1\. a) Write your own implementation of `strlen().` {.p}
+```c
+// STRATEGY
+// get each char & count++ until '\n' or '\0'
+
+// A:
+int strLength(const char *s) {
+  int size = 0;
+  // 's[size]' <=> '*(s+i)'
+  while (s[size] != '\0') {  // OR 'while (s[size])' bc value of '\0' is 0 <=> false
+    size++;
+  }
+  return size;
+}
+```
+
+b) Rewrite your implementation of `strlen()` _***using pointer arithmetic.***_ {.p}
+
+```c
+int strLength_PointerArithmetic(const char *s) {
+  // REMEMBER: 'const char *t' means constant char, changeable address
+  const char *t = s;
+  while (*t != '\0') {
+    t++; // works via pointer arithmetic
+
+    // 't' <=> 't + 0' <=> '&t + 0'
+    // 't + i' <=> '&t + i' (pointer arithmetic takes 't' to take next cell)
+    // 't[i]' <=> '*(t + i)'
+  }
+  return t-s; // at end, t points to last cell, s points to first cell,
+  // so number of cells = last - first
+}
+```
+
+## 23.4. `strcpy()`
+```c
+char* strcpy(char* dest, char* src);
+// could have been 'void' bc we are just manipulating pointers
+// returns string pointer via 'char*' return type for convenience
+```
+
+**PRACTICE:**
+1\. a) Write your own implementation of `strcpy().` {.p}
+```c
+// STRATEGY:
+// iterate through each char of 'src' and assign to current index of 'dest'
+
+char* strCopy(char* dest, char* src) {
+  int i = 0;
+  while (src[i] != '\0') {
+    src[i] = dest[i];
+  }
+  dest[i] = '\0'; // add null character bc loop is exited before \0 can be added
+  return dest;
+}
+```
+
+b) Rewrite your implementation of `strcpy().` _***using pointer arithmetic***_ {.p}
+```c
+// A:
+char* strCopy_PointerArithmetic(char* dest, char* src) {
+  // for returning pointer to `dest` string by returning address of first character
+  char *t = dest;
+
+  while (*src != '\0') {
+    *dest = *src;
+    src++;
+    dest++;
+  }
+
+  *dest = '\0';
+
+  ----return dest;---- // WRONG bc dest is now last character of string
+  return t; // need to return first character of dest
+}
+```
+```c
+// we could also write:
+
+// same as 'while ((*dest = *src))'
+while ((*dest = *src) != '\0') { // first assignment happens, then logic evaluation
+  dest++;
+  src++;
+}
+return t;
+
+
+// or:
+
+while ((*dest++ = *src++)) {} // first dereference, then assignment, then increment via pointer arithmetic
+return t;
 ```
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
