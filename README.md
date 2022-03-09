@@ -68,9 +68,11 @@
     - [21.2.2. As `char*` Pointers](#2122-as-char-pointers)
       - [21.2.2.1. Empty Strings](#21221-empty-strings)
 - [22. String I/O](#22-string-io)
-  - [22.1. const strings](#221-const-strings)
-  - [22.2. String output](#222-string-output)
+  - [22.1. `const` Characters & `const` Addresses](#221-const-characters--const-addresses)
+  - [22.2. String OUTPUT](#222-string-output)
   - [22.3. String INPUT](#223-string-input)
+    - [22.3.1. `scanf`](#2231-scanf)
+    - [22.3.2. `fget(s)` & STRINGS (`char` ARRAYS) AS FUNCTION PARAMETERS](#2232-fgets--strings-char-arrays-as-function-parameters)
 
 # 1. _Course Intro_
 
@@ -1210,7 +1212,7 @@ Just like with 1D arrays, the identifier (`arr`) of a 2D array (`arr[2][3]`) is 
 
 ```c
 // points to first cell of first row
-arr <=> &arr[0] 
+arr <=> &arr[0]
 ```
 ```c
 // since each row is a 1D array, the identifier of the first cell of the first row ('arr[0]') is **ALSO AN ADDRESS** of the first cell of the first row
@@ -1245,7 +1247,7 @@ int board[6][6] = ...;
 
 Q: How do we allocate memory for 2D arrays using `malloc`? {.r}
 
-A: 
+A:
 1. First, allocate memory via `malloc` for the number of rows.  {.lg}
    ```c
    int **arr = (int**) malloc(sizeof(int*) * num_rows);
@@ -1322,7 +1324,7 @@ char *s = "Hello";
 Q: Is initializing a string as an array the same as initializing it as a pointer? {.r}
 ```c
 char s[] = "Hello";
-s[1] = 'E'; 
+s[1] = 'E';
 
 // is this the same as above?
 char *p = "Hello";
@@ -1385,34 +1387,94 @@ p = "Hello";
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 22. String I/O
-## 22.1. const strings
+## 22.1. `const` Characters & `const` Addresses
 
-- const char *s <=> char const *s --- changeable address, constant char
-- sample question of trying to modify const char *s in main()
-- char * const s --- constant address, changeable char
-- const char* const s --- both are const
-- > first const means char are constant, second const means pointer `s` is constant
+- `const char *s` <=> `char const *s` --- changeable address, constant char
 
-## 22.2. String output
+PRACTICE:
+1\. Will the following code run? {.p}
+```c
+// Q:
+const char *s;
+s = malloc(10);
+s[0] = 'H';
+```
+A: **ERROR OCCURS**{.lr}; cannot change character that the pointer is pointing to because `const char *s` means the character initially assigned is a constant. {.lg}
 
-- printf("%s", s); --> auto finds null terminating character in an input string
-- printf("%0.5s", s) --> prints first 5 characters
-- puts(s) ---> print string s with new line appended at end
+- `char* const s` --- constant address, changeable char
+- `const char* const s` --- both address & character are constant
+  - `const char*` means character is constant
+  - `const s` means pointer `s` is constant
+
+## 22.2. String OUTPUT
+
+- `printf("%s", s);` --> auto finds null terminating character in an input string
+- `printf("%0.5s", s)` --> prints first 5 characters
+- `puts(s)` ---> print string s with new line appended at end
 
 ## 22.3. String INPUT
 
-- scanf("%s", s) -- skips leading white space, reads before next white space
-  - e.g. for "__Another_Example", input will be "Another"
-  - Q: what is the format for the variable s in scanf? {.r}
-  - A: char *s = (char*) malloc(NUMBER OF CHARACTERS); or char s[6]; {.lg}
-  - Q: what happens if input is larger than space in s? {.r}
-  - A: invalid access of memory; nondeterministic buffer overflow {.lg}
-    - thus, scanf is called an unsafe function bc it doesnt check the size of the input before assigning it to a variable/pointer
-    - Q: so what is a safe input function? {.r}
-    - A: gets(s); reads entire string (inc. leading and nonleading white spaces) until it reaches new line character. *however, still have problem of memory*{.lr} {.lg}
-      - fgets(s, NUMBER OF char, stdin); gets string input from file, but bc we are using stdin, it will get input from user in terminal
-      - e.g. fgets(s, 6, stdin) for __Another_Example will just get __Ano (5 char; last char is null character)
-      - e.g. fgets(s, sizeof(s), stdin) -- auto allocates
-      - ***29:00***
+### 22.3.1. `scanf`
+`scanf("%s", s)` -- skips leading white space, reads before next white space
+- e.g. for `"__Another_Example"`, input will be `"Another"`
+- Q: what is the format for the variable s in `scanf`? {.r}
+- A: `char *s = (char*) malloc(NUMBER OF CHARACTERS)` or `char s[6]`; {.lg}
+- Q: what happens if input is larger than space in s? {.r}
+- A: invalid access of memory; nondeterministic buffer overflow {.lg}
+
+`scanf` is an unsafe function bc it doesnt check the size of the input before assigning it to a variable/pointer.
+
+### 22.3.2. `fget(s)` & STRINGS (`char` ARRAYS) AS FUNCTION PARAMETERS
+
+Q: so what is a safe string input function? {.r}
+
+A: `gets(s)` and `fget(s)`. {.lg}
+- `get(s)` reads entire string (inc. leading and nonleading white spaces) until it reaches new line character. *however, still have problem of memory*{.lr}
+- `fgets(s, NUMBER OF CHARACTERS, stdin)`; gets string input from file, but bc we are using `stdin`, it will get input from user in terminal
+  - e.g. `fgets(s, 6, stdin)` for `"__Another_Example"` will just get `"__Ano"` (6-1 = 5 characters bc last character is null character)
+  - e.g. `fgets(s, sizeof(s), stdin)` -- auto allocates memory (since `char` just takes up 1 B, we don't need to put in `... * sizeof(char)` like we have to do for `int` which takes up 4 B)
+  - NOTE: `sizeof(s)` only returns the valid number of characters (i.e. space taken up by the string/`char` array) only if string `s` is initialized as character array `char s[6]`, **NOT** character pointer using `malloc` (`char *s = (char*) malloc(6))`; because size of an address for a pointer is 8 B) {.lr}
+
+PRACTICE:
+1\. Will either of the lines of code below take in the right amount of characters into the function? {.p}
+```c
+// Q:
+int f(char *s) {
+  fgets(s, sizeof(s), stdin);
+}
+
+int f(char s[]) {
+  fgets(s, sizeof(s), stdin);
+}
+```
+**No.**{.r} *`sizeof(s)` does not return the correct number of characters in the string if `s` is initialized as a character pointer.*{.lg} Since the array is being passed to a function, it is passed as a pointer (function parameters `s*` and `s[]` are equivalent to the compiler), so both lines of code have the wrong number of characters.
+- To take in the correct number of characters (i.e. prevent invalid access of memory); we need to add `int size` as a parameter to the function (`f(char *s, int size)`). {.lg}
+
+2\. Write your own function that takes safe string input. {.p}
+```c
+// A:
+// 'getchar()' -- returns character entered by user
+
+// could also be void
+char* getStringSafely(char *s, int size) {
+  int i = 0;
+  char c;
+
+  while (i < size - 1 && // size - 1 to leave 1 space for null character
+    (c = getchar()) != '\n') // stop taking input after new line; REMEMBER you can call functions & assign variables in loop headers {
+      s[i] = c;
+      i++;
+    }
+  s[i] = '\0';
+  return s;
+}
+```
+Because we are returning a char array pointer char *s, we can easily print out the input string: {.lg}
+```c
+int main(void) {
+  char s[6];
+  printf("%s", getStringSafely(s, s[6]));
+}
+```
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
