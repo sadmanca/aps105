@@ -67,6 +67,10 @@
     - [21.2.1. As `char` Arrays](#2121-as-char-arrays)
     - [21.2.2. As `char*` Pointers](#2122-as-char-pointers)
       - [21.2.2.1. Empty Strings](#21221-empty-strings)
+- [22. String I/O](#22-string-io)
+  - [22.1. const strings](#221-const-strings)
+  - [22.2. String output](#222-string-output)
+  - [22.3. String INPUT](#223-string-input)
 
 # 1. _Course Intro_
 
@@ -1327,7 +1331,7 @@ p[1] = 'E';
 A: **NO**{.lr} {.lg}
 - `char s[] = "Hello"` initializes an array in the CALL STACK, so array values can be mutated via `s[i] = ...`
 - `char *p = "Hello"` initializes an array in the GLOBAL VARS & CONSTANTS section of memory; `p` is a pointer to a literal STRING CONSTANT, so attempting to mutate any value of the array via `p[i] = ...` or `*(p+i) = ...` is an invalid access of memory (potential segmentation fault).
-  - Conversely, if `p` pointed to a `char` array in the call stack (e.g. `char *p = s`), then `p[i] = ...` would be legal because local variables in the call stack are being mutated.
+  - **Conversely, if `p` pointed to a `char` array in the call stack (e.g. `char *p = s`), then `p[i] = ...` would be legal because local variables in the call stack are being mutated.**{.lg}
 
   - Q: Does `s` in the code below end up pointing to the same string constant in the GLOBAL VARS & CONSTANTS section of memory? {.r}
   ```c
@@ -1377,5 +1381,38 @@ p = "Hello";
 
   - *Because only the address assigned to the pointer has changed, the memory allocated using `malloc` has not been freed and is causing a memory leak.*{.lr}
   - To free the memory allocated by `malloc`, you can initialize a new pointer pointing to p (`char *p2 = p`), which allows us to free it (`free(p2)`) after changing the address assigned to `p`.
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 22. String I/O
+## 22.1. const strings
+
+- const char *s <=> char const *s --- changeable address, constant char
+- sample question of trying to modify const char *s in main()
+- char * const s --- constant address, changeable char
+- const char* const s --- both are const
+- > first const means char are constant, second const means pointer `s` is constant
+
+## 22.2. String output
+
+- printf("%s", s); --> auto finds null terminating character in an input string
+- printf("%0.5s", s) --> prints first 5 characters
+- puts(s) ---> print string s with new line appended at end
+
+## 22.3. String INPUT
+
+- scanf("%s", s) -- skips leading white space, reads before next white space
+  - e.g. for "__Another_Example", input will be "Another"
+  - Q: what is the format for the variable s in scanf? {.r}
+  - A: char *s = (char*) malloc(NUMBER OF CHARACTERS); or char s[6]; {.lg}
+  - Q: what happens if input is larger than space in s? {.r}
+  - A: invalid access of memory; nondeterministic buffer overflow {.lg}
+    - thus, scanf is called an unsafe function bc it doesnt check the size of the input before assigning it to a variable/pointer
+    - Q: so what is a safe input function? {.r}
+    - A: gets(s); reads entire string (inc. leading and nonleading white spaces) until it reaches new line character. *however, still have problem of memory*{.lr} {.lg}
+      - fgets(s, NUMBER OF char, stdin); gets string input from file, but bc we are using stdin, it will get input from user in terminal
+      - e.g. fgets(s, 6, stdin) for __Another_Example will just get __Ano (5 char; last char is null character)
+      - e.g. fgets(s, sizeof(s), stdin) -- auto allocates
+      - ***29:00***
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
