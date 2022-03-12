@@ -78,6 +78,12 @@
   - [23.2. String Library Functions](#232-string-library-functions)
   - [23.3. `strlen()`](#233-strlen)
   - [23.4. `strcpy()`](#234-strcpy)
+- [24. More String Library Functions](#24-more-string-library-functions)
+  - [24.1. `strncpy()`](#241-strncpy)
+  - [24.2. `strcat()` / `strcat()`](#242-strcat--strcat)
+  - [24.3. `strcmp()` / `strncmp()`](#243-strcmp--strncmp)
+  - [24.4. `atoi()` / `atof()`](#244-atoi--atof)
+  - [24.5. `strchr()`](#245-strchr)
 
 # 1. _Course Intro_
 
@@ -1618,6 +1624,135 @@ return t;
 
 while ((*dest++ = *src++)) {} // first dereference, then assignment, then increment via pointer arithmetic
 return t;
+```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 24. More String Library Functions
+## 24.1. `strncpy()`
+
+**PROBLEM:**{.lr} `char* strcpy(char *dest, const char *src)` is an unsafe function (because if `src` has more memory allocated to it than `dest`, then buffer overflow will occur when running `strcpy(dest, src)`).
+**SOLUTION:**{.lg} use `char* strcpy(char *dest, const char *src, int n)`; allocates first `n` characters of `src` to `dest`.
+```c
+char* strcpy(char *dest, const char *src, int n);
+```
+```c
+// e.g.
+
+// if     'n' == number of characters in 'src' + 1...
+// then   copy 'src' into 'dest' AND add null character at end
+
+char s[6];
+strncpy(s, "Hello", 6);
+strncpy(s, "Hello", sizeof("Hello")); // same as above
+strncpy(s, "Hello", sizeof(s)); // same as above
+
+// if     'n' == number of characters in 'src'...
+// then   copy 'src' into 'dest'; null character is NOT ADDED at end
+
+char s[6] = "hELLOWorld";
+strncpy(s, "Hello", 5);
+// s is now "HelloWorld"
+// bc null character is not added, only the first n characters are replaced
+```
+
+**PRACTICE:**
+1\. a) Write your own implementation of `strncpy().` {.p}
+```c
+// A:
+char* strn_Copy(char* dest, const char* src, size_t/int n); {
+  for (int i = 0; i < n && (dest[i] = src[i]) != '\0'; i++) {
+    ; // do everything in header, so no actual code in loop
+  }
+  return dest;
+}
+```
+
+## 24.2. `strcat()` / `strcat()`
+```c
+// concatenates 'src' string to end of 'dest'
+char* strcat(char* dest, const char* src);
+char* strcat(char* dest, const char* src, size_t/int n); // n is number of char to append
+```
+```c
+// e.g.
+
+// 'a' needs 5 spaces to hold all characters from 'a' and 'b'
+char a[5] = "Ab"; // 2 char for 'a'
+char *b = "Cd";   // 2 char for 'b' + 1 null character
+
+strcat(a, b); // a is now "AbCd!"
+```
+
+## 24.3. `strcmp()` / `strncmp()`
+```c
+int strcmp(const char *a, const char *b);
+int strcmp(const char *a, const char *b, size_t/int n); // compares first n characters of each string
+```
+```c
+// if      strcmp(a, b) < 0
+// then    a precedes b
+
+// if      strcmp(a, b) > 0
+// then    b precedes a
+
+// if      strcmp(a, b) == 0
+// then    a and b are same string
+```
+Q: How are strings compared? {.r}
+
+A: via ASCII values of characters. {.lg}
+- e.g. "ab" precedes "bc"
+- e.g. "Ab" precedes "ab"
+  - NOTE: null character '\0' ASCII value is 0
+  - e.g. "abc" precedes "abca" bc null character (0) comes before any other ASCII value
+  - e.g. "Abcd" precedes "abc" bc comparison always starts from first character and then goes to next character if if both characters are the same
+
+Q: Why can't we just use `s1 == s2` to compare strings? {.r}
+
+A: for a string, `s1` <=> `&s2`, so by `s1 == s2` we are comparing the addresses of the char pointers, **NOT the string characters.**{.lr} {.lg}
+
+## 24.4. `atoi()` / `atof()`
+```c
+int atoi(const char *s); // converts string (ASCII) to int
+// e.g. atoi("314") = (int) 314;
+
+int atof(const char *s); // converts string (ASCII) to double
+// e.g. atof("3.14") = (double) 3.14;
+```
+
+## 24.5. `strchr()`
+```c
+char* int strchr(const char* str, char chr);
+// returns pointer to address of string/character array 'str' with FIRST OCCURENCE of 'chr'
+// if 'chr' not found, returns null character
+```
+```c
+// e.g.
+char* s = "Hello";
+strchr(s, 'e'); // returns &s[1]
+
+printf("%s", strchr(s, 'e')); // prints "ello" bc C reads strings until null character
+```
+
+**PRACTICE:**
+1\. a) Write a function that prints the index of each occurence of a character in a string (using `strchr()`). {.p}
+```c
+// A:
+void charOccurences(const char* str, char chr) {
+  char *p = strchr(s, chr);
+
+  while (p != '\0') {
+    printf("%d", p - s);
+
+    // p points to address of occurence
+    // s points to address of first character
+
+    // p - s is current index of array
+    // (e.g. if s is first char, then p - s == 0)
+  }
+}
+
 ```
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
