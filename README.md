@@ -87,6 +87,10 @@
   - [24.6. `strstr()`](#246-strstr)
 - [25. 2D Arrays of Strings](#25-2d-arrays-of-strings)
 - [26. Recursion](#26-recursion)
+- [27. Advanced Recursion](#27-advanced-recursion)
+  - [27.1. Using Backtracking](#271-using-backtracking)
+  - [27.2. Multiple Base Cases](#272-multiple-base-cases)
+  - [27.3. Recursion with Strings](#273-recursion-with-strings)
 
 # 1. _Course Intro_
 
@@ -1895,6 +1899,13 @@ void printRow(int n) {
 
 b) Using your `printRow()` function, write a recursive function that prints a half triangle. {.p}
 ```c
+// ?
+****
+***
+**
+*
+```
+```c
 // A:
 
 // STRATEGY:
@@ -1910,5 +1921,74 @@ void printTriangle(int n) {
   return;
 }
 ```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 27. Advanced Recursion
+## 27.1. Using Backtracking
+
+Q: How can we print an inverted half triangle (opposite of practice question 2. b) in last lecture)? {.r}
+```c
+// ?
+*
+**
+***
+****
+```
+A: use backtracking to our advantage; recursively call each function BEFORE printing row n; when we reach base case (n < 0), function calls will return starting by printing `printRow(1)`, then `printRow(1+1)`, then `printRow((1+1)+1)`, ... until `printRow(n-1)`, and finally `printRow(n)`. {.lg}
+```c
+// A:
+void printTriangle(int n) {
+  if (n > 0) {
+    printTriangle(n - 1);
+    printRow(n);
+  }
+  // don't need else bc if statement in parent function call is only reached
+  // AFTER all interior function calls have returned
+  return;
+}
+```
+
+Q: How can we print a normal AND an inverted half triangle (see below)? {.r}
+```c
+// ?
+****
+***
+**
+*
+**
+***
+****
+```
+A: our base case is n = 1 (only print 1 star); **we can use backtracking by combining both types of recursively calling functions from the past 2 questions:** {.lg}
+```c
+// A:
+void printTriangles(int n) {
+  if (n == 1) {
+    printRow(1);
+  } else {
+    printRow(n);
+    printTriangles(n - 1);
+    printRow(n);
+  }
+  return;
+}
+```
+- After the first `printRow(n)`, each time `printTriangles()` is called it runs `printRow()` and then recursively calls `printTriangles()` on and on (printing the upper inverted half triangle) until the base case. {.g}
+- After printing out a row of 1 star at the base case, all the functions now backtrack, so the deepest function call now runs `printRow(2)` *(because `printTriangle(2-1)` is the base case where n = 2-1 = 1)*{.r}, and then `printRow(3)`, and so on and so forth until `printRow(n)`, at which the parent function finally exits the if statement and returns. {.g}
+- Q: Will the program be identical if we replaced the base case to be at n == 0 with the following code below? {.r}
+  ```c
+  // ?
+  if (n == 0) {
+    return;
+  }
+  ```
+- A: **NO**{.lr}; this will result in two calls to `printRow(1)`, which means 2 rows of 1 star will be printed. **Consider the base case carefully when writing recursive functions.**{.r} {.lg}
+
+## 27.2. Multiple Base Cases
+vid min 21:00
+https://www.youtube.com/watch?v=Z7cmvRfNrIw&list=PLluf7eor18ddnVtUyJLEfTjGpWbfiDlkA&index=3
+
+## 27.3. Recursion with Strings
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
