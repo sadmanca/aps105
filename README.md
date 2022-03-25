@@ -99,6 +99,12 @@
     - [29.1.2. `typedef`](#2912-typedef)
     - [29.1.3. Initializing `struct` Variables](#2913-initializing-struct-variables)
   - [29.2. Member Access Operators](#292-member-access-operators)
+- [30. LINKED LISTS](#30-linked-lists)
+  - [30.1. Why use a Linked List?](#301-why-use-a-linked-list)
+  - [30.2. Linked List Interface](#302-linked-list-interface)
+  - [30.3. Abstract Description of How a Linked List Works](#303-abstract-description-of-how-a-linked-list-works)
+  - [30.4. Implementing a Linked List](#304-implementing-a-linked-list)
+  - [30.5. Problems with Linked Lists](#305-problems-with-linked-lists)
 
 # 1. _Course Intro_
 
@@ -2378,10 +2384,10 @@ Can access variables inside structs using...
 date_variable.year = 2022;
 ```
 
-2. ...dot-syntax on pointer pointing to struct <tag> variable:
+2. ...dot-syntax on dereferneced pointer (pointing to struct <tag> variable):
 ```c
 Date *p = &date_variable;
-p.year = 2000;
+(*p).year = 2000;
 ```
 
 3. ...arrow syntax on pointer to struct <tag> variable:
@@ -2389,9 +2395,79 @@ p.year = 2000;
 Date *p = &date_variable;
 p -> year = 1862;
 ```
-- Instead of using ampersand to assign address to pointer, we can also use `malloc()`:
+- Instead of using ampersand to assign address to pointer, we can also use `malloc()` (so we can free the memory later on):
   ```c
   p = (Date*) malloc(sizeof(Date));
+  ...
+  free(p);
   ```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 30. LINKED LISTS
+## 30.1. Why use a Linked List?
+
+Problems with arrays:
+- can't insert an element in middle of array without shifting all elements to the right
+- can't delete an element without shifting all elements to the left
+- can't insert elements without creating a new array and copying elements
+
+Solution: use **LINKED LIST**
+- dynamically allocated data structure
+- can easily change/add/delete elements
+
+## 30.2. Linked List Interface
+
+**Interface** --- collection of functions for our data structure.
+- It is a good idea to separate function interface from implementation such that changes in implementation do not affect older code using the same interface.
+
+*Interface for Linked List:*
+- create a new empty list
+- insert element into list
+  - beginning
+  - end
+  - middle
+- delete element from list
+  - beginning
+  - end
+  - middle
+- search for element
+- delete all elements
+- print all elements
+- ...
+
+## 30.3. Abstract Description of How a Linked List Works
+
+We can think of a linked list as a series of nodes (can store a single data type or multiple) that point to the cell after it.
+- First cell is called 'head'
+- Last cell is called 'tail'
+```c
+head [] -> [] -> [] -> [] -> tail [] -> NULL
+```
+
+## 30.4. Implementing a Linked List
+```c
+typdef struct node {
+  int data; // can add multiple data types
+  struct node *next; // pointer pointing to next node
+} Node;
+```
+
+Q: How can we create a new empty linked list? {.lr}
+
+A: Since the last (tail) node in a linked list points to NULL, we can easily and memory-efficiently declare a new linked list simply by pointing head to NULL: {.lg}
+```c
+// A:
+head [] -> NULL
+```
+
+Q: How can we insert a new node in a linked list? {.lr}k
+
+A: We can simply point the `*next` pointer of the previous node to the inserted node and point the `*next` pointer of the current node to the node that the previous one pointed to. {.lg}
+
+## 30.5. Problems with Linked Lists
+
+1. **Random access** --- while we can easily access any element in an array with the given index, in linked lists we need to traverse through multiple nodes (which can be slow).
+2. Storing pointers in memory (is minor problem) --- with singly linked lists, each node needs a pointer to the next node which takes up memory. Ultimately, this is worth the tradeoff for speed when inserting/deleting nodes.
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
