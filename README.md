@@ -84,6 +84,8 @@
   - [24.3. `strcmp()` / `strncmp()`](#243-strcmp--strncmp)
   - [24.4. `atoi()` / `atof()`](#244-atoi--atof)
   - [24.5. `strchr()`](#245-strchr)
+  - [24.6. `strstr()`](#246-strstr)
+- [25. 2D Arrays of Strings](#25-2d-arrays-of-strings)
 
 # 1. _Course Intro_
 
@@ -1752,7 +1754,62 @@ void charOccurences(const char* str, char chr) {
     // (e.g. if s is first char, then p - s == 0)
   }
 }
-
 ```
+
+## 24.6. `strstr()`
+```c
+char* strstr(const char *s1, const char *s2);
+// finds FIRST OCCURRENCE of string 's2' in string 's1'
+// returns pointer to address of FIRST CHARACTER of 's2' in 's1'
+```
+
+**PRACTICE:**
+1\. a) Write your own implementation of `strstr().` {.p}
+```c
+// STRATEGY:
+// starting at index 0 and ending at index 'n - strlen(s2)',
+// iterate through each index i of 's1' and compare substring of size 'len_s2' to 's2'
+// use `strncmp()` to compare string 's2' to each substring of 's1'
+
+// A:
+char *p = s1;
+while (*p != '\0' && strncmp(p, s2, strlen(s2)) != 0) {
+  p++;
+}
+
+if (*p == '\0') {
+  return NULL;
+}
+
+return p;
+```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 25. 2D Arrays of Strings
+
+While we can have 2D `char` arrays for strings, it is inefficient to do so if strings have different sizes because the same space is allocated for each subarray.
+```c
+// 10 because longest month (September) needs 9 characters + 1 for null char
+char months[][10] = {"January",
+                     "February",
+                     ...,
+                     "December"};
+```
+Instead, we can use an **array of pointers**, and set the pointer at each index to be a string constant.
+This way, each string "in" the array only as much space as required to store it (in GLOBAL VARS & CONSTANTS) and we can easily change what the string at each index in the array by simply pointing to a different address.
+```c
+char *months[12];
+months[0] = "January";
+// OR
+char *months[10] = {"January",
+                   "February",
+                   ...,
+                   "December"};
+```
+
+Q: Can we change the string values for both initializing as a 2D string array and as an array of pointers? {.r}
+
+A: **NO**{.r}: a 2D `char` array stores each string as characters in an array (which we can alter), but an array of pointers points to literal string constants stored in the GLOBAL VARS & CONSTANTS section of memory. {.lg}
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
