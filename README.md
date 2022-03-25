@@ -86,6 +86,7 @@
   - [24.5. `strchr()`](#245-strchr)
   - [24.6. `strstr()`](#246-strstr)
 - [25. 2D Arrays of Strings](#25-2d-arrays-of-strings)
+- [26. Recursion](#26-recursion)
 
 # 1. _Course Intro_
 
@@ -1811,5 +1812,103 @@ char *months[10] = {"January",
 Q: Can we change the string values for both initializing as a 2D string array and as an array of pointers? {.r}
 
 A: **NO**{.r}: a 2D `char` array stores each string as characters in an array (which we can alter), but an array of pointers points to literal string constants stored in the GLOBAL VARS & CONSTANTS section of memory. {.lg}
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 26. Recursion
+
+**Recursion** (divide-and-conquer) -- break down ("divide") a bigger problem into smaller problems until they are small enough to be solved easily ("conquer") and then combine solutions of smaller problems to form solution to bigger problem.
+
+EXAMPLE: Write a function for factorial using recursion. {.r}
+```c
+// non-recursive implementation
+int factorial(int n) {
+  int f = 1;
+  for (int i = 1; i <= n; i++) {
+    f *= i;
+  }
+  return f;
+}
+```
+We know that $n! = n * (n - 1)!$. Thus, we can recursively call the factorial function, eliminating the `for` loop and explicit storing of variables.
+```c
+// RECURSIVE implementation
+int factorial(int n) {
+  // base case
+  if (n == 0) {
+    return 0;
+  }
+  // recursive call
+  return n * factorial(n - 1);
+
+  // e.g. 4! = 4 * 3! = 4 * (3 * 2!) =  4 * (3 * (2 * 1!)) = 4 * (3 * (2 * (1 * 0!)))
+  // '0!' is base case for factorial, and need to explicitly return 1
+}
+```
+- Q: What is the ***base case?*** {.r}
+- A: The base case is the (simplest) case when for the recursion should stop and the solution should be computed/combined. For factorial, this is when n equals 0 for n!. {.lg}
+
+Q: How does the program store the return values of recursively called functions? {.r}
+A: Each time a function is called, a new *frame* for the function is created in memory, with each frame having its own variables. {.lg}
+
+Recursion is typically suboptimal because it consumes stack by:
+- taking up time to call each function
+- taking up space
+- can cause stack overflow if problem is too big
+
+**PRACTICE:**
+1\. a) Write a recursive function for the piecewise function f(x) = { 2f(n-1) + 1 for n > 0 AND = { 3 for n = 0. {.p}
+```c
+// A:
+int f(int n) {
+  // base case
+  if (n == 0) {
+    return 3;
+  }
+  return 2 * f(n - 1) + 1;
+}
+```
+
+2\. a) Write a recursive function that prints a row of asterisks. {.p}
+```c
+// A:
+void printRow(int n) {
+  // base case --  stop printing at row 0
+  if (n <= 0) {
+    printf("\n");
+  } else {
+    printf("*");
+    printRow(n - 1);
+  }
+  return;
+}
+```
+- Q: What would happen if we switched the 2 following lines of code around? {.r}
+  ```c
+  ...
+  printRow(n - 1);
+  printf("*)
+  ...
+  ```
+- A: In our initial answer, we printed '*' before each function call so that when the base case was reached, the function call for the base case returned, which then allowed the second-last function call to return, and so on and so forth until the parent function call was returned (`void` return type, so its just exiting the functions).
+- By switching the lines around, now we call each function, and then only backtrack and print '*' from each function call AFTER the base case has returned. {.lg}
+
+b) Using your `printRow()` function, write a recursive function that prints a half triangle. {.p}
+```c
+// A:
+
+// STRATEGY:
+// first print the row with the most stars,
+// then recursively print the row with ...-1 stars
+
+void printTriangle(int n) {
+  if (n > 0) {
+    printRow(n);
+    printTriangle(n - 1);
+  }
+  // base case -- n <= 0 (nothing happens, so we can just return)
+  return;
+}
+```
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
