@@ -90,7 +90,7 @@
 - [27. Advanced Recursion](#27-advanced-recursion)
   - [27.1. Using Backtracking](#271-using-backtracking)
   - [27.2. Multiple Base Cases](#272-multiple-base-cases)
-  - [27.3. Recursion with Strings](#273-recursion-with-strings)
+  - [27.3. Storing Repeated Function Calls](#273-storing-repeated-function-calls)
 
 # 1. _Course Intro_
 
@@ -1887,11 +1887,11 @@ void printRow(int n) {
   return;
 }
 ```
-- Q: What would happen if we switched the 2 following lines of code around? {.r}
+- Q: What would happen if we switched the 2 following lines of code around as seen below? {.r}
   ```c
   ...
-  printRow(n - 1);
-  printf("*)
+  printRow(n - 1);  // previously 'printf("*");'
+  printf("*");      // previously 'printRow(n - 1);'
   ...
   ```
 - A: In our initial answer, we printed '*' before each function call so that when the base case was reached, the function call for the base case returned, which then allowed the second-last function call to return, and so on and so forth until the parent function call was returned (`void` return type, so its just exiting the functions).
@@ -1927,7 +1927,7 @@ void printTriangle(int n) {
 # 27. Advanced Recursion
 ## 27.1. Using Backtracking
 
-Q: How can we print an inverted half triangle (opposite of practice question 2. b) in last lecture)? {.r}
+Q: How can we print an inverted half triangle (opposite of practice question 2. b) in last lecture)? {.lr}
 ```c
 // ?
 *
@@ -1949,7 +1949,7 @@ void printTriangle(int n) {
 }
 ```
 
-Q: How can we print a normal AND an inverted half triangle (see below)? {.r}
+Q: How can we print a normal AND an inverted half triangle (see below)? {.lr}
 ```c
 // ?
 ****
@@ -1974,8 +1974,9 @@ void printTriangles(int n) {
   return;
 }
 ```
-- After the first `printRow(n)`, each time `printTriangles()` is called it runs `printRow()` and then recursively calls `printTriangles()` on and on (printing the upper inverted half triangle) until the base case. {.g}
-- After printing out a row of 1 star at the base case, all the functions now backtrack, so the deepest function call now runs `printRow(2)` *(because `printTriangle(2-1)` is the base case where n = 2-1 = 1)*{.r}, and then `printRow(3)`, and so on and so forth until `printRow(n)`, at which the parent function finally exits the if statement and returns. {.g}
+- After the first `printRow(n)`, each time `printTriangles()` is called it runs `printRow()` and then recursively calls `printTriangles()` on and on (printing the upper inverted half triangle) until the base case. {.lg}
+- After printing out a row of 1 star at the base case, all the functions now backtrack, so the deepest function call now runs `printRow(2)` *(because `printTriangle(2-1)` is the base case where n = 2-1 = 1)*{.lr}, and then `printRow(3)`, and so on and so forth until `printRow(n)`, at which the parent function finally exits the if statement and returns. {.lg}
+
 - Q: Will the program be identical if we replaced the base case to be at n == 0 with the following code below? {.r}
   ```c
   // ?
@@ -1983,12 +1984,99 @@ void printTriangles(int n) {
     return;
   }
   ```
-- A: **NO**{.lr}; this will result in two calls to `printRow(1)`, which means 2 rows of 1 star will be printed. **Consider the base case carefully when writing recursive functions.**{.r} {.lg}
+- A: **NO**{.r}; this will result in two calls to `printRow(1)`, which means 2 rows of 1 star will be printed. **Consider the base case carefully when writing recursive functions.**{.r} {.lg}
 
 ## 27.2. Multiple Base Cases
-vid min 21:00
-https://www.youtube.com/watch?v=Z7cmvRfNrIw&list=PLluf7eor18ddnVtUyJLEfTjGpWbfiDlkA&index=3
 
-## 27.3. Recursion with Strings
+Q: How should you go about writing a recursive function for: {.r}
+```c
+double power(double x, int n); // ?
+```
+
+A: find all relevant base cases and recursive cases, and then implement via code. {.lg}
+
+**RECURSIVE CASE:**
+- inefficient but simple/obvious: $x^n = x * x^(n - 1)$
+- more efficient but also more complex
+  - $x^n = x^{n/2} \cdot x^{n/2}$ if `n % 2 == 0` (even #s)
+  - $x^n = x^{n/2} \cdot x^{n/2} \cdot x$ if `n % 2 != 0` (odd #s)
+
+**BASE CASE(S):**
+- **n = 0** ($x^n = x^0$) => `return 1`
+- **n < 0** ($x^n = x^{-n}$) => return $1 / x^n$
+  - Q: Why is this not a recursive case? {.r}
+  - A: Because this does not reduce the size of the problem we are trying to solve (i.e. is not diivide-and-conquer). We still have to run through the same number of steps (just with a different process for each step). {.lg}
+  - Because $x^{-n} = 1 / x^n$, we can use backtracking and simply run `return 1.0 / power(x, -n)`, allowing the rest of our function to remain unchanged.
+- **x = 0** => `return 0` if `n != 0` AND ERROR if `n == 0`;
+
+**IMPLEMENTATION:**
+```c
+// A:
+double power(double x, int n) {
+  // BASE CASES
+  if (x == 0) {
+    if (n == 0) { // 0^0 = undefiend
+      printf("ERROR");
+      return 0;
+    } else { // 0^n = 1 if n != 0
+      return 0;
+    }
+  }
+  if (n < 0) {
+    return 1.0 / power(x, -n);
+  }
+  if (n == 0) {
+    return 1.0;
+  }
+  // remember to use double constants in arithmetic expressions!
+
+  // RECURSIVE CASE -- inefficient
+  // return x * power(x, n - 1);
+
+  // RECURSIVE CASE -- efficient
+  if (n % 2 == 0) {
+    return power(x, n/2) * power(x, n/2);
+  } else {
+    return power(x, n/2) * power(x, n/2) * x;
+  }
+}
+```
+## 27.3. Storing Repeated Function Calls
+While our `power()` function does work, when we track all the function calls for a single parent call, we see that *we call the same function multiple times (as a result of calling `power(x, n/2)` twice per function call).*{.lr}
+```
+// #        indicates when each function call occurred
+// # -> #   indicates which function is called after return value
+
+power(2,5) // 1
+├── power(2,2) // 2 -> 6
+│   └── power(2,1) // 3 -> 2
+│       ├── power(2,0) // 4 -> 3*
+│       └── power(2,0) // 5 -> 3*
+└── power(2,2) // 6
+    └── power(2,1) // 7 -> 6
+        ├── power(2,0) // 8 -> 7*
+        └── power(2,0) // 9 -> 7*
+
+*after returning first `power(2,0)`, go back to current parent function call and call second `power(2,0)` in statement
+```
+
+Since we are calling the same function (that will return the same value) multiple times, we can **save function values in a temporary variable and simply return that when the function call is repeated.**
+```c
+// STORING FUNCTION RETURNS
+
+// base cases stay the same
+...
+if (n % 2 == 0) {
+  double temp = power(x, n/2);
+  return temp * temp;
+} else {
+  double temp = power(x, n/2);
+  return temp * temp * x;
+}
+```
+
+Q: Is it a good idea to further divide x (e.g. by 3, 10, etc.) in order to make our function faster? {.lr}
+
+A: Unless speed is critical, NO, because that would mean we need to add more base cases that would increase complexity of our code and would only marginally increase the speed. {.lg}
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
