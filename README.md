@@ -86,13 +86,19 @@
   - [24.5. `strchr()`](#245-strchr)
   - [24.6. `strstr()`](#246-strstr)
 - [25. 2D Arrays of Strings](#25-2d-arrays-of-strings)
-- [26. Recursion](#26-recursion)
-- [27. Advanced Recursion](#27-advanced-recursion)
+- [26. RECURSION](#26-recursion)
+- [27. Advanced RECURSION](#27-advanced-recursion)
   - [27.1. Using Backtracking](#271-using-backtracking)
   - [27.2. Multiple Base Cases](#272-multiple-base-cases)
   - [27.3. Storing Repeated Function Calls](#273-storing-repeated-function-calls)
-- [28. Recursion With Strings](#28-recursion-with-strings)
-    - [Helper Functions](#helper-functions)
+- [28. RECURSION With Strings](#28-recursion-with-strings)
+    - [28.0.1. Helper Functions](#2801-helper-functions)
+- [29. STRUCTURES](#29-structures)
+  - [29.1. Structures](#291-structures)
+    - [29.1.1. Declaring `struct`](#2911-declaring-struct)
+    - [29.1.2. `typedef`](#2912-typedef)
+    - [29.1.3. Initializing `struct` Variables](#2913-initializing-struct-variables)
+  - [29.2. Member Access Operators](#292-member-access-operators)
 
 # 1. _Course Intro_
 
@@ -1821,7 +1827,7 @@ A: **NO**{.r}: a 2D `char` array stores each string as characters in an array (w
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
-# 26. Recursion
+# 26. RECURSION
 
 **Recursion** (divide-and-conquer) -- break down ("divide") a bigger problem into smaller problems until they are small enough to be solved easily ("conquer") and then combine solutions of smaller problems to form solution to bigger problem.
 
@@ -1926,7 +1932,7 @@ void printTriangle(int n) {
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
-# 27. Advanced Recursion
+# 27. Advanced RECURSION
 ## 27.1. Using Backtracking
 
 Q: How can we print an inverted half triangle (opposite of practice question 2. b) in last lecture)? {.lr}
@@ -2083,7 +2089,7 @@ A: Unless speed is critical, NO, because that would mean we need to add more bas
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
-# 28. Recursion With Strings
+# 28. RECURSION With Strings
 
 *Note:* final exam recursion problems commonly involve strings (instead of more complex problems like Tower of Hanoi or Chess Knights).
 
@@ -2174,7 +2180,7 @@ Consider the string `"racecar"`.
   }
   ```
 
-### Helper Functions
+### 28.0.1. Helper Functions
 Since it can be inconvenient to call a function with multiple arguments, it is better to consolidate our actual function (with all the required arguments) into a helper function that only takes the string as an argument.
 ```c
 bool isPalindrome(char *s) {
@@ -2287,4 +2293,105 @@ int recursiveOddCountHelper(int *arr, int left, int left, int right) {
   }
 }
 ```
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 29. STRUCTURES
+## 29.1. Structures
+ Arrays allow us to define variables that can hold several data items of the type.
+
+ **STRUCTURES** all us to hold several data items of different types.
+### 29.1.1. Declaring `struct`
+We can initialize `struct` variables...:
+1. ...in `main()`
+2. ...in the `struct` definition
+ ```c
+// e.g. to represent info about a warehouse item in a database
+struct entry { // struct name is called a 'tag'
+int quantity;
+char size;
+char area[5];
+
+}; // nothing before semicolon means we are not declaring any variables of the 'entry' struct type
+
+// vs.
+
+} item1, item2, items[100]; // declare variables of type struct here
+// can access globally
+
+int main() {
+  // declare variables of struct type in main()
+  struct entry item3, item4, items2[100];
+
+  ...
+
+  // can access struct variables via 'member operators':
+  item1.quantity = 7;
+  strcpy(items[3].area, "AnItem");
+
+  return 0;
+}
+```
+### 29.1.2. `typedef`
+
+Instead of writing `struct entry` every time to intialize a new struct variable of this type, we can use `typedef` to set a custom name for this combined type:
+```c
+// typedef [old type] [new type]
+struct entry {
+  ...
+}
+
+typedef struct entry Entry;
+```
+```c
+// another way of using typedef for structs
+typedef struct entry {
+  ...
+} Entry;
+```
+
+We can also use `typedef` to make working with primitives easier:
+```c
+// e.g. custom unsigned int for non-negative variables
+typedef unsigned int size_t
+```
+```c
+// e.g. custom int pointer
+typedef int* int_pointer
+```
+
+### 29.1.3. Initializing `struct` Variables
+```c
+// suppose we had a struct for a date:
+typedef struct date {
+  int year, month, day;
+} Date;
+
+// we can declare and initialize the data within the struct by:
+Date date_variable = {1867, 12, 30};
+```
+
+## 29.2. Member Access Operators
+
+Can access variables inside structs using...
+1. ...dot-syntax on variable:
+```c
+date_variable.year = 2022;
+```
+
+2. ...dot-syntax on pointer pointing to struct <tag> variable:
+```c
+Date *p = &date_variable;
+p.year = 2000;
+```
+
+3. ...arrow syntax on pointer to struct <tag> variable:
+```c
+Date *p = &date_variable;
+p -> year = 1862;
+```
+- Instead of using ampersand to assign address to pointer, we can also use `malloc()`:
+  ```c
+  p = (Date*) malloc(sizeof(Date));
+  ```
+
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
