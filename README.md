@@ -105,6 +105,14 @@
   - [30.3. Abstract Description of How a Linked List Works](#303-abstract-description-of-how-a-linked-list-works)
   - [30.4. Implementing a Linked List](#304-implementing-a-linked-list)
   - [30.5. Problems with Linked Lists](#305-problems-with-linked-lists)
+- [31. LINKED LIST Implementation](#31-linked-list-implementation)
+  - [31.1. `struct` Node](#311-struct-node)
+  - [31.2. `createNode()`](#312-createnode)
+    - [31.2.1. Manually Initializing Head & Adding Nodes](#3121-manually-initializing-head--adding-nodes)
+  - [31.3. `insertAtFront()`](#313-insertatfront)
+    - [31.3.1. Manually Initializing Head & Adding Nodes via `insertAtFront()`](#3131-manually-initializing-head--adding-nodes-via-insertatfront)
+  - [31.4. `struct` linkedList](#314-struct-linkedlist)
+    - [31.4.1. Initializing Head & Adding Nodes to our linkedList `struct`](#3141-initializing-head--adding-nodes-to-our-linkedlist-struct)
 
 # 1. _Course Intro_
 
@@ -2055,6 +2063,7 @@ double power(double x, int n) {
   }
 }
 ```
+
 ## 27.3. Storing Repeated Function Calls
 While our `power()` function does work, when we track all the function calls for a single parent call, we see that *we call the same function multiple times (as a result of calling `power(x, n/2)` twice per function call).*{.lr}
 ```
@@ -2461,7 +2470,7 @@ A: Since the last (tail) node in a linked list points to NULL, we can easily and
 head [] -> NULL
 ```
 
-Q: How can we insert a new node in a linked list? {.lr}k
+Q: How can we insert a new node in a linked list? {.lr}
 
 A: We can simply point the `*next` pointer of the previous node to the inserted node and point the `*next` pointer of the current node to the node that the previous one pointed to. {.lg}
 
@@ -2469,5 +2478,149 @@ A: We can simply point the `*next` pointer of the previous node to the inserted 
 
 1. **Random access** --- while we can easily access any element in an array with the given index, in linked lists we need to traverse through multiple nodes (which can be slow).
 2. Storing pointers in memory (is minor problem) --- with singly linked lists, each node needs a pointer to the next node which takes up memory. Ultimately, this is worth the tradeoff for speed when inserting/deleting nodes.
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 31. LINKED LIST Implementation
+## 31.1. `struct` Node
+0. We have already defined the node struct for our linked list:
+```c
+typedef struct node {
+  int data;
+  struct node *next;
+} Node;
+```
+Q: Is the following replacement code valid? {.r}
+```c
+struct node next; // a) ?
+// OR
+Node *next; // b) ?
+```
+A: *a) causes compile-time error* because it results in never-ending recursion in allocating space for a node. *b) causes compile-time error* because alias 'Node' does not exist within the struct definition. {.lg}
+
+## 31.2. `createNode()`
+1. Write a function for our linked list interface to create a node:
+```c
+Node* createNode(int data) {
+  Node* newNode = malloc(sizeof(Node));
+  if (newNode != NULL) { // only assign data if memory is available to avoid segmentation faults
+    newNode -> data = data;
+    // same as (*newNode).data = data;
+    newNode -> next = NULL; // initialize next node to NULL bc its not in a linked list yet
+    return newNode;
+  }
+}
+```
+
+### 31.2.1. Manually Initializing Head & Adding Nodes
+Now, we can separately initialize the `head` pointer of our linked list (in `main()` for now) to NULL:
+- *Just like with arrays, we only need a pointer to the first element because we can get to any other element by traversing through the list.*
+```c
+int main() {
+  Node *head = NULL;
+  ...
+}
+```
+
+Now that we can create nodes and have initialized our head pointer, we can start (manually) adding nodes to our linked list:
+```c
+// set head to a new node
+*head = createNode(0);
+// head -> [0] -> NULL
+
+// add nodes to head
+head -> next = createNode(1);
+// head -> [0] -> [1] -> NULL
+head -> next -> next = createNode(2);
+// head -> [0] -> [1] -> [2] -> NULL
+head -> next -> next = createNode(3);
+// head -> [0] -> [1] -> [2] -> [3] -> NULL
+```
+Q: Do we need to assign to `head` using the dereference operator? {.r}
+
+A: YES! If we just use `head = createNode(0)`, we are entirely reassigning head and lose access to the past node (causing memory leak). {.lg}
+
+## 31.3. `insertAtFront()`
+
+Manually adding nodes is inefficient and unscaleable; instead let's...
+
+1. ...write a function to insert a node at the front of a linked list (later, we'll look at inserting at the end):
+```c
+// return true/false in the event that we cannot insert
+bool insertAtFront(Node **head, int data) {
+  // head is a already a pointer, so we need to have a double pointer be our function argument in order to actually change the address of head in the program
+  // recall not using pointers in our swap() function
+
+  Node *newNode = createNode(data);
+  // avoid segmentation fault by not invalidly accessing memory because none is available
+  if (newNode == NULL) {
+    return false;
+  }
+
+  // make newNode point to the node that head is currently pointing to
+  newNode -> next = *head;
+  // make head now point to newNode
+  *head = newNode;
+
+  // have inserted, so return true
+  return true;
+}
+```
+Q: Can we switch the two lines of code changing the pointer addresses for the nodes (as below)? {.r}
+```c
+// ?
+*head = newNode;          // previously ↓
+newNode -> next = *head;  // previously ↑
+```
+A: NO; if we point head to the newNode first, we are unable to point the newNode next pointer to the node that head was originally pointing to! {.lg}
+
+### 31.3.1. Manually Initializing Head & Adding Nodes via `insertAtFront()`
+Now, we can create a linked list from NULL again using our insert-at-beginning function:
+```c
+Node *head = NULL;
+insertAtFront(&head, 1); // need to use '&head' bc head parameter is a double pointer
+// head -> [1]
+insertAtFront(&head, 2);
+// head -> [2] -> [1]
+```
+
+## 31.4. `struct` linkedList
+
+Instead of manually initializing a Node pointer for the head, we can...
+
+3. **...write a struct for a linked list containing the head pointer:**
+```c
+struct linkedList {
+  Node *head = NULL;
+} LinkedList;
+```
+
+### 31.4.1. Initializing Head & Adding Nodes to our linkedList `struct`
+
+Now, we can change the parameter of our insertAtFront() function to take in a pointer to the linked list data type and get the head from there:
+```c
+// previously '**head'
+bool insertAtFront(LinkedList *list, int data) {
+  if (newNode == NULL) {
+    return false;
+  }
+
+  newNode -> next = list -> head; // point next to pointer to head of list
+  list -> head = newNode // point head of list to newNode
+}
+```
+
+With our linked list struct, we can more explcitly create linked lists in our programs:
+```c
+LinkedList list;
+// 'list -> head = NULL' is not needed bc head is already NULL
+
+insertAtFront(&list, 1);
+// head -> [1]
+insertAtFront(&list, 2);
+// head -> [2] -> [1]
+```
+
+Finally, we've abstracted away any refernece to the head in the interface, which is good because it means we don't need to understand the implementation in order to use the linked list interface (just like real-life APIs)!
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
