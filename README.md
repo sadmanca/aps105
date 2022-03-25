@@ -91,6 +91,8 @@
   - [27.1. Using Backtracking](#271-using-backtracking)
   - [27.2. Multiple Base Cases](#272-multiple-base-cases)
   - [27.3. Storing Repeated Function Calls](#273-storing-repeated-function-calls)
+- [28. Recursion With Strings](#28-recursion-with-strings)
+    - [Helper Functions](#helper-functions)
 
 # 1. _Course Intro_
 
@@ -2079,4 +2081,210 @@ Q: Is it a good idea to further divide x (e.g. by 3, 10, etc.) in order to make 
 
 A: Unless speed is critical, NO, because that would mean we need to add more base cases that would increase complexity of our code and would only marginally increase the speed. {.lg}
 
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 28. Recursion With Strings
+
+*Note:* final exam recursion problems commonly involve strings (instead of more complex problems like Tower of Hanoi or Chess Knights).
+
+Q: How can we write a recursive function for.. {.r}
+```c
+bool isPalindrome(char *s) // ?
+```
+
+**BASE CASE(S):**
+- empty string (`""`) -- `return true`
+- one character (`"a"`) --  `return true`
+
+**RECURSIVE CASE:**
+
+Consider the string `"racecar"`.
+- Q: What is next smallest problem we can solve? {.r}
+- A: string w/o first and last characters -- "~~r~~`aceca`~~r~~" {.lg}
+
+- Q: How do we solve each subproblem? {.r}
+- *A: Consider first and last character of each string. If they are the same, then check palindrome for substring.*{.lg}
+
+**IMPLEMENTATION:**
+
+- Q: How can we get the substring w/o first & last characters of string? {.r}
+- While we could use `malloc()` and `strcpy()` to another string, this is really inefficient.
+- *A: Instead, use variables `int low` and `int high` to store the index of the first and last character of each substring.*{.lg}
+
+  - Q: Can we just use variables `int low, high` in our function? {.r}
+  - A: **NO**{.r}; if we just run the following code... {.lg}
+  ```c
+  // ?
+  bool isPalindrome(char *s) {
+    int low = 0;
+    int high = strlen(s) - 1;
+    ... // recursive case
+    low++;
+    high--;
+    return isPalindrome(SUBSTRING);
+  }
+  ```
+  - ...the values of low and high reset to that for base string for each function call. {.lr}
+  - Instead, we need to have `low` and `high` be parameters to the function such that we are able to manipulate them when calling subfunctions: {.lg}
+  ```c
+  // values that need to be remembered between function calls MUST be passed as function parameters
+
+  bool isPalindrome(char *s, int low, int high) {
+    ... // recursive case
+    return isPalindrome(SUBSTRING, low + 1, high - 1);
+  }
+  ```
+
+***ANY VALUES THAT NEED TO BE REMEMBERED IN RECURSIVE CASE NEED TO BE PASSED AS PARAMETERS TO THE FUNCTION!***
+
+- *Q: What is the condition where the base case (single character) returns `true`/`false`?*{.r}
+  - Q: Can it be `if (strlen(s) == 0)`? {.lr}
+  - A: **NO**{.lr}; because we are calling recursively, we cannot find the length of the current substring.
+- A: We need to use our `low` and `high` variables. That leaves us with 2 possible cases: {.lg}
+  - if in a function call `low > high`, then parent string has even length.
+    - Since this point is only reached if the current parent string of 2 characters has the same first and last character (e.g. `"aa"`), we **only need to consider how to `return true` when `low` is greater than `high`.**{.g}
+  - If in a function call `low == high`, then the parent string has odd length and current substring is just a single character.
+    - Since **a single character is palindromic and this point is only reached when all parent strings have the same first and last characters**{.g}, this means we can `return true`.
+  - We can combine the two conditions when base case is true as `!(low < high)
+  ```c
+  // A:
+  bool isPalindrome(char *s, int low, int high) {
+    if (!(low < high)) {
+      return true;
+    }
+    ...
+  }
+  ```
+- Q: What is the condition where the RECURSIVE CASE returns `true`/`false`? {.r}
+- A: we can just return false if the first character is not equal to the last character; if they are equal, simply recursively call the function (when base case is reached, function will return true)... {.lg}
+  ```c
+  // A:
+  bool isPalindrome(char *s, int low, int high) {
+    // BASE CASE
+    if (!(low < high)) {
+      return true;
+    }
+
+    // RECURSIVE CASE
+    if (s[low] != s[high]) {
+      return false;
+    } else { // recursively call until base case (true) or returned false
+      return isPalindrome(s, low + 1, high - 1);
+    }
+  }
+  ```
+
+### Helper Functions
+Since it can be inconvenient to call a function with multiple arguments, it is better to consolidate our actual function (with all the required arguments) into a helper function that only takes the string as an argument.
+```c
+bool isPalindrome(char *s) {
+  isPalindromeHelper(s, 0, strlen(s) - 1);
+  // extrapolate other parameters from single parameter
+}
+
+bool isPalindromeHelper(char *s, int low, int high) {
+  ... // actual function implementation
+}
+```
+**PRACTICE:**
+1. ***(FINAL EXAM 2018, Q14)*** --- Write a recursive function for `strchr()` (take a string and a character and return index of 1st occurrence of character in string). {.p}
+```c
+// function prototype
+int recursiveFindIndex(char *str, char c) {
+  // ?
+}
+```
+STEPS: consider examples -> determine base cases & recursive call -> implement base cases & recursive calls. {.lg}
+
+**EXAMPLE:**
+- `str`: `"apple\0"`
+- `c`: `'l'`
+- returns: 4
+
+**RECURSIVE CALL:**
+- first, we check if the first letter of the current string is required character.
+- If not, smaller problem is to look at remaining substring from current position to end (e.g. `"pple\0"`).
+
+**BASE CASE:**
+- when we find character --- return current index
+- have reached end of string & have not found character
+
+**IMPLEMENTATION:**
+```c
+// A:
+
+// remember to consolidate with helper function that has actual arguments and abstract function with single argument!
+
+int recursiveFindIndexHelper(char *str, char c, int index) {
+  // BASE CASES
+  // c is found
+  if (str[index] == c) {
+    return index;
+
+  // reached string end & c is not found
+  } else if (str[index] == '\0') {
+    return -1;
+
+  // RECURSIVE CALL
+  } else {
+    // c not found,
+    // but not yet end of string, so increment index
+    index++;
+    return recursiveFindIndexHelper(str, c, index);
+  }
+}
+
+// abstract function with single argument
+int recursiveFindIndex(char *str, char c) {
+  // start at index 0
+  return recursiveFindIndexHelper(str, c, 0);
+}
+```
+
+2. Write a recursive function that counts the number of odd numbers in an array. {.p}
+
+EXAMPLE:
+- arr: `[3,2,1]`
+- returns: 3
+
+RECURSIVE CALL:
+- check if `arr[i]` at first index is odd, then add to count of odd numbers in rest of array.
+  - since `true == 1` and `false == 0`, we can just add the function calls.
+- use `low`/`left` and `high`/`right` variables to signify current and end indices.
+- number is odd if `num % 2 == 1) is true.
+
+BASE CASE:
+- reached end of array
+- only need to see if number is odd and add to count (just return int of whether number is odd)
+
+e.g.
+- arr: `[3,2,1]`
+- INITIAL (1ST) CALL
+  - left = 0, right = 2
+  - `return (arr[left] % 2 == 1) + recursiveOddCount(arr, left + 1, right);`
+- 2ND CALL:
+  - left = 1, right = 2
+  - `return (arr[left] % 2 == 1) + recursiveOddCount(arr, left + 1, right);`
+- 3RD CALL:
+  - left = 2, right = 2
+  - only `return (arr[left] % 2 == 1)`
+
+```c
+// remember strings need to be taken as pointers!
+
+int recursiveOddCountHelper(int *arr, int left, int left, int right) {
+  // BASE CASE
+
+  // reached end of array
+  if (right == left) {
+    return (arr[left] % 2 == 1);
+
+  // RECURSIVE CALL
+
+  // add whether current odd number to count
+  } else {
+    return (arr[left] % 2 == 1) + recursiveOddCountHelper(arr, left + 1, right);
+  }
+}
+```
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
