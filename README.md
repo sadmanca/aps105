@@ -111,8 +111,16 @@
     - [31.2.1. Manually Initializing Head & Adding Nodes](#3121-manually-initializing-head--adding-nodes)
   - [31.3. `insertAtFront()`](#313-insertatfront)
     - [31.3.1. Manually Initializing Head & Adding Nodes via `insertAtFront()`](#3131-manually-initializing-head--adding-nodes-via-insertatfront)
-  - [31.4. `struct` linkedList](#314-struct-linkedlist)
+  - [31.4. `struct linkedList`](#314-struct-linkedlist)
     - [31.4.1. Initializing Head & Adding Nodes to our linkedList `struct`](#3141-initializing-head--adding-nodes-to-our-linkedlist-struct)
+- [32. More Linked List Function Implementations](#32-more-linked-list-function-implementations)
+  - [32.1. `initList()`](#321-initlist)
+  - [32.2. `isEmpty()`](#322-isempty)
+  - [32.3. `printList()`](#323-printlist)
+  - [32.4. `findFirstNodeSearch()`](#324-findfirstnodesearch)
+  - [32.5. `insertAtBack()`](#325-insertatback)
+
+**Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31 -> LEC 30).*
 
 # 1. _Course Intro_
 
@@ -2311,6 +2319,9 @@ int recursiveOddCountHelper(int *arr, int left, int left, int right) {
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 29. STRUCTURES
+
+*Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31 -> LEC 30).*
+
 ## 29.1. Structures
  Arrays allow us to define variables that can hold several data items of the type.
 
@@ -2451,7 +2462,7 @@ We can think of a linked list as a series of nodes (can store a single data type
 - First cell is called 'head'
 - Last cell is called 'tail'
 ```c
-head [] -> [] -> [] -> [] -> tail [] -> NULL
+head -> [] -> [] -> [] -> [] -> [tail] -> NULL
 ```
 
 ## 30.4. Implementing a Linked List
@@ -2499,8 +2510,9 @@ Node *next; // b) ?
 A: *a) causes compile-time error* because it results in never-ending recursion in allocating space for a node. *b) causes compile-time error* because alias 'Node' does not exist within the struct definition. {.lg}
 
 ## 31.2. `createNode()`
-1. Write a function for our linked list interface to create a node:
+1. Write a function for our linked list interface to create a node: {.lr}
 ```c
+// A:
 Node* createNode(int data) {
   Node* newNode = malloc(sizeof(Node));
   if (newNode != NULL) { // only assign data if memory is available to avoid segmentation faults
@@ -2522,7 +2534,7 @@ int main() {
 }
 ```
 
-Now that we can create nodes and have initialized our head pointer, we can start (manually) adding nodes to our linked list:
+Now that we can create nodes and have initialized our head pointer, we can start (manually) adding nodes to our linked list: {.lr}
 ```c
 // set head to a new node
 *head = createNode(0);
@@ -2544,7 +2556,7 @@ A: YES! If we just use `head = createNode(0)`, we are entirely reassigning head 
 
 Manually adding nodes is inefficient and unscaleable; instead let's...
 
-1. ...write a function to insert a node at the front of a linked list (later, we'll look at inserting at the end):
+1. ...write a function to insert a node at the front of a linked list (later, we'll look at inserting at the end): {.lr}
 ```c
 // return true/false in the event that we cannot insert
 bool insertAtFront(Node **head, int data) {
@@ -2575,7 +2587,7 @@ newNode -> next = *head;  // previously ↑
 A: NO; if we point head to the newNode first, we are unable to point the newNode next pointer to the node that head was originally pointing to! {.lg}
 
 ### 31.3.1. Manually Initializing Head & Adding Nodes via `insertAtFront()`
-Now, we can create a linked list from NULL again using our insert-at-beginning function:
+Now, we can create a linked list from NULL again using our insert-at-beginning function: {.lr}
 ```c
 Node *head = NULL;
 insertAtFront(&head, 1); // need to use '&head' bc head parameter is a double pointer
@@ -2584,7 +2596,7 @@ insertAtFront(&head, 2);
 // head -> [2] -> [1]
 ```
 
-## 31.4. `struct` linkedList
+## 31.4. `struct linkedList`
 
 Instead of manually initializing a Node pointer for the head, we can...
 
@@ -2622,5 +2634,130 @@ insertAtFront(&list, 2);
 ```
 
 Finally, we've abstracted away any refernece to the head in the interface, which is good because it means we don't need to understand the implementation in order to use the linked list interface (just like real-life APIs)!
+
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 32. More Linked List Function Implementations
+## 32.1. `initList()`
+
+Suppose we needed to reset a linkedlist. Right now, we have to point head of a linked list to NULL in main(). Instead, we can...
+
+4. ...write a function that initializes a new linkedlist (taking an input of list pointer): {.lr}
+```c
+// A:
+void initList(LinkedList *list) {
+  list -> head = NULL;
+}
+```
+
+## 32.2. `isEmpty()`
+5. Write a function to check if a linked list is empty (i.e. head points to null). {.lr}
+```c
+// A:
+void isEmpty(LinkedList *list) {
+  return (list -> head == NULL);
+}
+```
+
+For final exams, NEVER assume a linked list input is never empty; empty linked lists are often edge cases you need to consider. {.r}
+
+## 32.3. `printList()`
+6. Write a function to print each node of a linked list in order. {.lr}
+
+```c
+void printList(LinkedLIst *list) {
+  // A:
+
+  // create current node pointer to head
+  Node *curr = list -> head;
+
+  while (curr != NULL) {
+    // print data of current node
+    printf("%d\n", curr -> data);
+
+    // point current node pointer to next node
+    curr = curr -> next;
+  }
+}
+
+```
+
+## 32.4. `findFirstNodeSearch()`
+7. Write a function to find the first node that matches search data. {.lr}
+```c
+// iterate through each node starting at head
+// want to RETURN the NODE that matches search data
+
+Node* findFirstNodeSearch(LinkedList *list, int data) {
+  Node *curr = list -> head;
+  while (curr != NULL) {
+    if (curr -> data == data) {
+      return curr;
+    }
+    curr = curr -> next;
+  }
+
+  // if not found
+  return NULL;
+}
+```
+
+## 32.5. `insertAtBack()`
+8. Write a function to insert a node at the tail of a linked list. {.lr}
+```c
+// return T/F if possible
+bool insertAtBack(LinkedList *list, int data) {
+  // STRATEGY:
+  // traverse list until reached tail node pointing to null
+  // then point tail node to new node
+  // and new node to NULL
+
+  Node *newNode = createNode(data);
+  Node *curr = list -> head;
+
+  // while (curr != NULL) {
+  // WRONG! bc that means curr ends up pointing to NULL
+  // instead of a node that points to NULL
+
+  // SOLUTION: check if NEXT node is NULL
+  while (curr -> next != NULL) {
+    curr = curr -> next;
+  }
+
+  // curr now points to tail node
+  curr -> next = newNode; // point tail node to new node
+  // newNode -> next = NULL; // point new node to NULL
+  // DONT NEED THIS BC newNode already points to NULL when initialized
+}
+```
+
+*Remember to consider edge cases with your functions!*{.lr} For our` insertAtBack()` function, if a list is empty (no nodes), then the current node is NULL which means we get a segmentation fault trying to assign `curr -> next` to the new node.
+
+SOLUTION: insert a new node (at front) when list is empty (i.e. head points to null; JUST USE OUR BUILT FUNCTION!): {.lg}
+```c
+// A:
+bool insertAtBack(LinkedList *list, int data) {
+  if (isEmpty(list)) {
+    // can just return insert function bc we have bool for that too
+    return insertAtFront(list, data);
+  }
+
+  Node *curr = head;
+  while (curr -> next != NULL) {
+    curr = curr -> next;
+  }
+
+  Node *newNode = createNode(data);
+  curr -> next = newNode;
+
+  // even this is only reached if newNode is successfully added,
+  // it is good practice to recheck to catch errors in code changes
+  if (curr -> next != NULL) {
+    return true;
+  }
+  return false;
+}
+```
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
