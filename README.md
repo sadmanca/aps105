@@ -103,9 +103,9 @@
   - [30.1. Why use a Linked List?](#301-why-use-a-linked-list)
   - [30.2. Linked List Interface](#302-linked-list-interface)
   - [30.3. Abstract Description of How a Linked List Works](#303-abstract-description-of-how-a-linked-list-works)
-  - [30.4. Implementing a Linked List](#304-implementing-a-linked-list)
+  - [30.4. Implementing Linked Lists (0/4)](#304-implementing-linked-lists-04)
   - [30.5. Problems with Linked Lists](#305-problems-with-linked-lists)
-- [31. LINKED LIST Implementation](#31-linked-list-implementation)
+- [31. Implmenting Linked Lists (1/4)](#31-implmenting-linked-lists-14)
   - [31.1. `struct` Node](#311-struct-node)
   - [31.2. `createNode()`](#312-createnode)
     - [31.2.1. Manually Initializing Head & Adding Nodes](#3121-manually-initializing-head--adding-nodes)
@@ -113,12 +113,19 @@
     - [31.3.1. Manually Initializing Head & Adding Nodes via `insertAtFront()`](#3131-manually-initializing-head--adding-nodes-via-insertatfront)
   - [31.4. `struct linkedList`](#314-struct-linkedlist)
     - [31.4.1. Initializing Head & Adding Nodes to our linkedList `struct`](#3141-initializing-head--adding-nodes-to-our-linkedlist-struct)
-- [32. More Linked List Function Implementations](#32-more-linked-list-function-implementations)
+- [32. Implementing Linked Lists (2/4)](#32-implementing-linked-lists-24)
   - [32.1. `initList()`](#321-initlist)
   - [32.2. `isEmpty()`](#322-isempty)
   - [32.3. `printList()`](#323-printlist)
   - [32.4. `findFirstNodeSearch()`](#324-findfirstnodesearch)
   - [32.5. `insertAtBack()`](#325-insertatback)
+- [33. Implementating Linked Lists (3/4)](#33-implementating-linked-lists-34)
+  - [33.1. `insertIntoOrderedList()`](#331-insertintoorderedlist)
+  - [33.2. `deleteFront()`](#332-deletefront)
+  - [33.3. `deleteLast()`](#333-deletelast)
+  - [33.4. `deleteAllNodes()`](#334-deleteallnodes)
+  - [33.5. (Linked List) Final Exam Strategies](#335-linked-list-final-exam-strategies)
+- [34. Implementing Linked Lists (4/4)](#34-implementing-linked-lists-44)
 
 **Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31 -> LEC 30).*
 
@@ -2465,7 +2472,7 @@ We can think of a linked list as a series of nodes (can store a single data type
 head -> [] -> [] -> [] -> [] -> [tail] -> NULL
 ```
 
-## 30.4. Implementing a Linked List
+## 30.4. Implementing Linked Lists (0/4)
 ```c
 typdef struct node {
   int data; // can add multiple data types
@@ -2492,7 +2499,7 @@ A: We can simply point the `*next` pointer of the previous node to the inserted 
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
-# 31. LINKED LIST Implementation
+# 31. Implmenting Linked Lists (1/4)
 ## 31.1. `struct` Node
 0. We have already defined the node struct for our linked list:
 ```c
@@ -2638,7 +2645,7 @@ Finally, we've abstracted away any refernece to the head in the interface, which
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
-# 32. More Linked List Function Implementations
+# 32. Implementing Linked Lists (2/4)
 ## 32.1. `initList()`
 
 Suppose we needed to reset a linkedlist. Right now, we have to point head of a linked list to NULL in main(). Instead, we can...
@@ -2759,5 +2766,193 @@ bool insertAtBack(LinkedList *list, int data) {
   return false;
 }
 ```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 33. Implementating Linked Lists (3/4)
+
+Note: in the final exam, function implementations for linked lists will NOT be provided for questions (except for those explicitly stated; commonly `createNode()`). You will need to be able to create helper functions as necessary to write the function that actually answers the question.
+
+## 33.1. `insertIntoOrderedList()`
+9. Write a function to insert a node (with an `int` data value) into a sorted linked list: {.lr}
+```c
+// ?
+
+// e.g. insert [2] into...
+// head -> [0] -> [1] -> [3] -> NULL
+```
+```c
+// STRATEGY:
+// iterate through each node until the data value of the
+// NEXT node is greater than that of the node to be inserted
+
+void insertIntoOrderedList(LinkedList *list, int data) {
+  Node *curr = list -> head;
+  while (curr -> next -> data < data) {
+    curr = curr -> next;
+  }
+  // now at: ... -> [1] -> [3] -> ...
+
+  Node *newNode = createNode(data);
+  newNode -> next = curr -> next;
+  curr -> next = newNode;
+}
+```
+PROBLEM: need to account for edge cases! {.lr}
+- if new node data is greater than all list data
+  - just need to stop while loop when next node is null -> *needs to be before checking data of next node bc otherwise that would be invalid access of memory the other way around*{.lr}
+- if new node data is smaller than all list data
+  - while loop will never run
+  - use an if statement to check if first node data is greater than to-be-inserted data
+  - can just use our `insertAtFront()` function instead of writing a separate implementation
+- if list is empty
+  - can just use our `insertAtFront()` function instead of writing a separate implementation
+
+```c
+// A:
+
+// 'bool' so we can return SUCCESS/FAILURE
+bool insertIntoOrderedList(LinkedList *list, int data) {
+  Node *curr = list -> head;
+  // if new node data is greater than all list data
+  while (curr -> next != NULL && curr -> next -> data < data) {
+    curr = curr -> next;
+  }
+
+  if (isEmpty(list) || data < curr -> data) {
+    return insertAtFront(list, data);
+  }
+
+  Node *newNode = createNode(data);
+
+  if (newNode == NULL) { // if no more memory is available
+    return false;
+  }
+
+  newNode -> next = curr -> next;
+  curr -> next = newNode;
+}
+```
+
+## 33.2. `deleteFront()`
+10. Write a function to delete the FIRST node in a list: {.lr}
+**General case: **
+```c
+// 1 - set tmp pointer to new head (next node after head node)
+Node *newHead = list -> head -> next;
+// 2 - can free current head pointer
+free(list -> head);
+// 3 - set head to tmp new head pointer
+list -> head = newHead;
+```
+**Edge cases:**
+- if list is empty
+  - can just return (true if `bool` return type)
+```c
+// A:
+
+void deleteFront(LinkedList *list) {
+  if (isEmpty(list)) {
+    return;
+  }
+
+  Node *newHead = list -> head -> next;
+  free(list -> head);
+  list -> head = newHead;
+}
+```
+
+## 33.3. `deleteLast()`
+11. Write a function to delete the LAST node in a list: {.lr}
+```
+e.g. want to delete last node of:
+head -> [1] -> [2] -> NULL
+```
+**General case:**
+- traverse through list until node after next node is NULL
+  - bc we need to set the 'next' pointer of the second last node to NULL
+```c
+while (curr -> next -> next != NULL) {
+  curr = curr -> next;
+}
+```
+- when node after next node is null, free next node and set next of current node to NULL
+```c
+free(curr -> next);
+curr -> next = NULL;
+```
+**Edge cases:**
+ - empty list
+   - catch when: `isEmpty()` is true
+   - nothing needs to be done: `return void`
+```c
+if (isEmpty(list)) {
+  return;
+}
+```
+- list only has 1 node *(visualize using examples!)*{.r}
+```
+head -> [1] -> NULL
+...
+head -> NULL
+```
+  - catch when: `next` pointer after `head` points to NULL
+  - handle by: ~free head and set head to NULL~ can just use `deleteFront()`!
+```c
+if (list -> head -> next == NULL) {
+  deleteFront(list);
+}
+```
+Putting it all together...
+```c
+// A:
+void deleteLast(LinkedList *list) {
+  if (isEmpty(list)) { // empty list
+    return;
+  }
+  if (list -> head -> next == NULL) { // single node in list
+    deleteFront(list);
+  }
+
+  Node *curr = list -> head;
+  while (curr -> next -> next != NULL) {
+    curr = curr -> next;
+  }
+  free(curr -> next);
+  curr -> next = NULL;
+}
+```
+
+## 33.4. `deleteAllNodes()`
+12. Write a function to delete all nodes in a list {.lr}
+We can just use our `deleteFront()` or `deleteLast()` functions and simply call them on the list until the list is empty.
+NOTE: since `deleteLast()` needs to traverse through entire list while `deleteFront()` doesn't, using `deleteFront()` will make our function more efficient. {.lr}
+
+We can add additional functionality (that could come into use later on) by returning the number of deleted nodes:
+```c
+// A:
+int deleteAllNodes(LinkedList *list) {
+  int deleted = 0;
+  while (!isEmpty(list)) {
+    deleteFront(list);
+    deleted++;
+  }
+  return deleted;
+}
+```
+
+## 33.5. (Linked List) Final Exam Strategies
+- Consider whether list traversal is needed
+- Generate an example for each general and edge case
+- Create an initial implementation for the general case
+- For each edge case, check whether it is...
+  - ...caught by the general case (if not, need logic for when it occurs)
+  - ...is handled by the general case (if not, add code to handle it)
+- Write helper functions to break up functionality and for repetitive tasks
+- Combine all required code into a single function
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 34. Implementing Linked Lists (4/4)
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
