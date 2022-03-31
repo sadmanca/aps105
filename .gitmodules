@@ -1,0 +1,3 @@
+[submodule "lab8/reversi-ai"]
+	path = lab8/reversi-ai
+	url = https://github.com/sadmanca/reversi-ai
