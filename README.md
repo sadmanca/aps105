@@ -103,9 +103,9 @@
   - [30.1. Why use a Linked List?](#301-why-use-a-linked-list)
   - [30.2. Linked List Interface](#302-linked-list-interface)
   - [30.3. Abstract Description of How a Linked List Works](#303-abstract-description-of-how-a-linked-list-works)
-  - [30.4. Implementing Linked Lists (0/4)](#304-implementing-linked-lists-04)
+  - [30.4. Implementing Linked Lists (0/3)](#304-implementing-linked-lists-03)
   - [30.5. Problems with Linked Lists](#305-problems-with-linked-lists)
-- [31. Implmenting Linked Lists (1/4)](#31-implmenting-linked-lists-14)
+- [31. Implmenting Linked Lists (1/3)](#31-implmenting-linked-lists-13)
   - [31.1. `struct` Node](#311-struct-node)
   - [31.2. `createNode()`](#312-createnode)
     - [31.2.1. Manually Initializing Head & Adding Nodes](#3121-manually-initializing-head--adding-nodes)
@@ -113,19 +113,23 @@
     - [31.3.1. Manually Initializing Head & Adding Nodes via `insertAtFront()`](#3131-manually-initializing-head--adding-nodes-via-insertatfront)
   - [31.4. `struct linkedList`](#314-struct-linkedlist)
     - [31.4.1. Initializing Head & Adding Nodes to our linkedList `struct`](#3141-initializing-head--adding-nodes-to-our-linkedlist-struct)
-- [32. Implementing Linked Lists (2/4)](#32-implementing-linked-lists-24)
+- [32. Implementing Linked Lists (2/3)](#32-implementing-linked-lists-23)
   - [32.1. `initList()`](#321-initlist)
   - [32.2. `isEmpty()`](#322-isempty)
   - [32.3. `printList()`](#323-printlist)
   - [32.4. `findFirstNodeSearch()`](#324-findfirstnodesearch)
   - [32.5. `insertAtBack()`](#325-insertatback)
-- [33. Implementating Linked Lists (3/4)](#33-implementating-linked-lists-34)
+- [33. Implementating Linked Lists (3/3)](#33-implementating-linked-lists-33)
   - [33.1. `insertIntoOrderedList()`](#331-insertintoorderedlist)
   - [33.2. `deleteFront()`](#332-deletefront)
   - [33.3. `deleteLast()`](#333-deletelast)
   - [33.4. `deleteAllNodes()`](#334-deleteallnodes)
-  - [33.5. (Linked List) Final Exam Strategies](#335-linked-list-final-exam-strategies)
-- [34. Implementing Linked Lists (4/4)](#34-implementing-linked-lists-44)
+  - [`deleteFirstMatch()`](#deletefirstmatch)
+  - [`deleteAllMatches()`](#deleteallmatches)
+  - [33.5. (Linked List) FINAL EXAM STRATEGIES](#335-linked-list-final-exam-strategies)
+- [34. Searching Algorithms](#34-searching-algorithms)
+  - [Sequential Search](#sequential-search)
+  - [Binary Search](#binary-search)
 
 **Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31 -> LEC 30).*
 
@@ -2472,7 +2476,7 @@ We can think of a linked list as a series of nodes (can store a single data type
 head -> [] -> [] -> [] -> [] -> [tail] -> NULL
 ```
 
-## 30.4. Implementing Linked Lists (0/4)
+## 30.4. Implementing Linked Lists (0/3)
 ```c
 typdef struct node {
   int data; // can add multiple data types
@@ -2499,7 +2503,7 @@ A: We can simply point the `*next` pointer of the previous node to the inserted 
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
-# 31. Implmenting Linked Lists (1/4)
+# 31. Implmenting Linked Lists (1/3)
 ## 31.1. `struct` Node
 0. We have already defined the node struct for our linked list:
 ```c
@@ -2645,7 +2649,7 @@ Finally, we've abstracted away any refernece to the head in the interface, which
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
-# 32. Implementing Linked Lists (2/4)
+# 32. Implementing Linked Lists (2/3)
 ## 32.1. `initList()`
 
 Suppose we needed to reset a linkedlist. Right now, we have to point head of a linked list to NULL in main(). Instead, we can...
@@ -2769,7 +2773,7 @@ bool insertAtBack(LinkedList *list, int data) {
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
-# 33. Implementating Linked Lists (3/4)
+# 33. Implementating Linked Lists (3/3)
 
 Note: in the final exam, function implementations for linked lists will NOT be provided for questions (except for those explicitly stated; commonly `createNode()`). You will need to be able to create helper functions as necessary to write the function that actually answers the question.
 
@@ -2941,7 +2945,69 @@ int deleteAllNodes(LinkedList *list) {
 }
 ```
 
-## 33.5. (Linked List) Final Exam Strategies
+## `deleteFirstMatch()`
+13. Write a function to search for a data value in a linked list and delete the first matching node: {.lr}
+```
+e.g. want to delete node with data 3:
+head -> [1] -> [2] -> [3] -> NULL
+```
+General case:
+- traverse through each node
+- check whether next node data value matches input
+- if node data matches input, set current node pointer to 'next' pointer of next node
+- free the deleted node pointer
+
+Special cases:
+- if matching node is not found, simply stop traversing through list (avoid calling 'data' for NULL)
+- if memory is unavailable, ensuer that invalid access of memory does not occur (*guard condition*)
+- if first node in list matches input, we can simply call our `deleteAtFront()` function on the list (instead of re-implementing)
+- if list is empty, we can set our first condition be checking if 'curr' node pointer is NULL immediately after pointing it to the head OR we could simply just use our `isEmpty()` function.
+
+```c
+// A:
+bool deleteFirstMatch(LinkedList *list, int data) {
+  Node *curr = list -> head;
+
+  // needs to be first to avoid segmentation faults
+  if (isEmpty(list)) { // curr == NULL
+    return false;
+  }
+
+  if (curr -> data == data) { // i.e. head node = match
+    deleteFront(list);
+    return true;
+  }
+
+  while ((curr -> next != NULL) && (curr -> next -> data != data)) {
+    curr = curr -> next;
+  }
+
+  if (curr -> next != NULL) {
+    curr -> next = curr -> next -> next;
+  }
+}
+```
+
+## `deleteAllMatches()`
+14. Write a function to delete **all** nodes with the matching input data value: {.lr}
+
+Instead of re-implementing, we can simply call our `deleteFirstMatch()` function repeatedly on the list until it returns false.
+- If the first call to `deleteFirstMatch()` returns false, we can return false to the parent function. If not, this indicates that at least 1 node was deleted, so we must return true.
+
+```c
+// A:
+int deleteAllMatches(LinkedList *list, int data) {
+  int numDeleted = 0;
+
+  while (deleteFirstMatch(list, data)) {
+    numDeleted++;
+  }
+
+  return numDeleted;
+}
+```
+
+## 33.5. (Linked List) FINAL EXAM STRATEGIES
 - Consider whether list traversal is needed
 - Generate an example for each general and edge case
 - Create an initial implementation for the general case
@@ -2953,6 +3019,53 @@ int deleteAllNodes(LinkedList *list) {
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
-# 34. Implementing Linked Lists (4/4)
+# 34. Searching Algorithms
+## Sequential Search
+
+The simplest search algorithm we can create (for an array of integers) involves simply iterating through each index sequentially (one-by-one):
+
+```c
+// return index at which search is found; -1 if not found
+int sequentialSearch(int list[], int length, int data) {
+  for (int i = 0; i < length, i++) {
+    if (list[i] == data) {
+      return i;
+    }
+  }
+  return -1;
+}
+```
+
+This is inefficient (in Big O notation, the time complexity of sequential search is $O(n)$).
+
+## Binary Search
+
+If we have a sorted list, we can speed up searching using binary search (cutting the number of indices we need to search through in half for each iteration) with a time complexity of $O(log_2{n})$.
+
+```c
+int binarySearch(int list[], int length, int data) {
+  // indices that we will be searching through
+  int low = 0, high = length - 1;
+
+  while (low < high) {
+    int mid = (low + high) / 2;
+    if (list[mid] == data) {
+      return mid;
+
+    } else if (data < list[mid]) {
+      // start of index search stays same
+      // change end of index search to be below mid
+      high = mid - 1;
+
+    } else { // data > list[mid]
+      // end of index search stays same
+      // change start of index search to be above mid
+      low = mid + 1;
+    }
+
+    return -1; // if no match
+  }
+}
+```
 
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
