@@ -124,12 +124,16 @@
   - [33.2. `deleteFront()`](#332-deletefront)
   - [33.3. `deleteLast()`](#333-deletelast)
   - [33.4. `deleteAllNodes()`](#334-deleteallnodes)
-  - [`deleteFirstMatch()`](#deletefirstmatch)
-  - [`deleteAllMatches()`](#deleteallmatches)
-  - [33.5. (Linked List) FINAL EXAM STRATEGIES](#335-linked-list-final-exam-strategies)
+  - [33.5. `deleteFirstMatch()`](#335-deletefirstmatch)
+  - [33.6. `deleteAllMatches()`](#336-deleteallmatches)
+  - [33.7. (Linked List) FINAL EXAM STRATEGIES](#337-linked-list-final-exam-strategies)
 - [34. Searching Algorithms](#34-searching-algorithms)
-  - [Sequential Search](#sequential-search)
-  - [Binary Search](#binary-search)
+  - [34.1. Sequential Search](#341-sequential-search)
+  - [34.2. Binary Search (non-recursive)](#342-binary-search-non-recursive)
+  - [34.3. Binary Search (recursive)](#343-binary-search-recursive)
+- [35. Sorting Algorithms](#35-sorting-algorithms)
+  - [35.1. Insertion Sort](#351-insertion-sort)
+  - [35.2. Selection Sort](#352-selection-sort)
 
 **Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31 -> LEC 30).*
 
@@ -2945,7 +2949,7 @@ int deleteAllNodes(LinkedList *list) {
 }
 ```
 
-## `deleteFirstMatch()`
+## 33.5. `deleteFirstMatch()`
 13. Write a function to search for a data value in a linked list and delete the first matching node: {.lr}
 ```
 e.g. want to delete node with data 3:
@@ -2988,7 +2992,7 @@ bool deleteFirstMatch(LinkedList *list, int data) {
 }
 ```
 
-## `deleteAllMatches()`
+## 33.6. `deleteAllMatches()`
 14. Write a function to delete **all** nodes with the matching input data value: {.lr}
 
 Instead of re-implementing, we can simply call our `deleteFirstMatch()` function repeatedly on the list until it returns false.
@@ -3007,7 +3011,7 @@ int deleteAllMatches(LinkedList *list, int data) {
 }
 ```
 
-## 33.5. (Linked List) FINAL EXAM STRATEGIES
+## 33.7. (Linked List) FINAL EXAM STRATEGIES
 - Consider whether list traversal is needed
 - Generate an example for each general and edge case
 - Create an initial implementation for the general case
@@ -3020,7 +3024,7 @@ int deleteAllMatches(LinkedList *list, int data) {
 <hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 34. Searching Algorithms
-## Sequential Search
+## 34.1. Sequential Search
 
 The simplest search algorithm we can create (for an array of integers) involves simply iterating through each index sequentially (one-by-one):
 
@@ -3038,7 +3042,7 @@ int sequentialSearch(int list[], int length, int data) {
 
 This is inefficient (in Big O notation, the time complexity of sequential search is $O(n)$).
 
-## Binary Search
+## 34.2. Binary Search (non-recursive)
 
 If we have a sorted list, we can speed up searching using binary search (cutting the number of indices we need to search through in half for each iteration) with a time complexity of $O(log_2{n})$.
 
@@ -3064,6 +3068,136 @@ int binarySearch(int list[], int length, int data) {
     }
 
     return -1; // if no match
+  }
+}
+```
+
+## 34.3. Binary Search (recursive)
+Base cases:
+- if found, middle index between low and high will have value being searched -> return that index
+- if not found, low will become greater than high -> when this happens, return -1
+
+Recursive case(s):
+- if middle index is greater than searched value, set high to be middle index - 1
+- if middle index is less than searched value, set low to be middle index + 1
+- call binarySearchHelper with new low & high parameters
+```c
+// A:
+int binarySearchHelper(int list[], int data, int low, int high) {
+  if (low > high) {
+    return -1;
+  }
+
+  int mid = (low + high) / 2;
+  if (list[mid] == data) {
+    return mid;
+  }
+
+  if (data < list[mid]) {
+    return binarySearchHelper(list, data, low, mid - 1);
+  } else { // list[mid] < data
+    return binarySearchHelper(list, data, mid + 1, high);
+  }
+}
+```
+- Q: Why use `...Helper()?` {.r}
+- A: Add parameters for recursive case(s) in helper function and auto-get those parameters in the interface function so that user doesn't need to care about implementation. {.lg}
+
+```c
+int binarySearch(int list[], int data, int length) {
+  return binarySearchHelper(list, data, 0, length - 1);
+}
+```
+
+<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 35. Sorting Algorithms
+
+Q: Why care about sorting algorithms? {.r}
+
+A: Using binary search (which is much more efficient than sequential search) requires a sorted array. {.lg}
+
+## 35.1. Insertion Sort
+
+Array is virtually split into a sorted and an unsorted part. Values from the unsorted part are picked and placed at the correct position in the sorted part.
+
+Steps:
+To sort an array of size n in ascending order:
+1. Iterate from arr[1] to arr[n] over the array.
+2. Compare the current element (key) to its predecessor.
+3. If the key element is smaller than its predecessor, compare it to the elements before. Move the greater elements one position up to make space for the swapped element.
+
+```c
+4 3 2 10 12 1 5 6
+[3 4] 2 10 12 1 5 6
+[2 3 4] 10 12 1 5 6
+[2 3 4 10] 12 1 5 6
+[2 3 4 10 12] 1 5 6
+[1 2 3 4 10 12] 5 6
+[1 2 3 4 5 10 12] 6
+[1 2 3 4 5 10 12 6]
+```
+
+How can we implement? {.lr}
+1. Loop over all elements in the array we want to insert
+2. Every step we "insert" a number to the previously sorted array
+
+```c
+// A:
+void insertionSort(int list[], int length) {
+  // iterate through each index of the list
+  for (int top = 1; top < length; top++) {
+    int item = list[top];
+    int emptyIndex = top;
+
+    // keep shifting item at 'list[top]' to the left until it fits in position or the next item is smaller than the current item
+    while (emptyIndex > 0 && list[emptyIndex-1] > item) {
+      list[emptyIndex] = list[emptyIndex - 1];
+      emptyIndex--;
+    }
+    list[emptyIndex] = item;
+  }
+}
+```
+
+## 35.2. Selection Sort
+- Search entire array to find largest value & move largest value to end (by swapping with end)
+- Search for largest element excluding last element (which was placed in correct position in last step)
+
+```c
+9 5 18 8 5 2
+9 5 8 5 2 [18]
+5 8 5 2 [9 18]
+5 5 2 [8 9 18]
+2 5 [5 8 9 18]
+2 [5 5 8 9 18]
+[2 5 5 8 9 18]
+```
+- Q: # of times we looked for largest Number? {.r}
+- A: size of array - 1 {.lg}
+- Q: How many items did we have to compare in each search? {.r}
+  1. 6
+  2. 5
+  - ...
+  - last time: 2
+
+```c
+//A:
+void selectionSort(int list[], int length) {
+  for (int top = length - 1; top > 0; top--) {
+    // assume first element is largest
+    int indexOfLargest == 0;
+
+    for (int i = 1; i < top; i++) {
+      if (list[i] > list[indexOfLargest]) {
+        indexOfLargest = i;
+      }
+    }
+
+    // swap largest element found with top
+    int tmp = list[top];
+    list[top] = list[indexOfLargest];
+    list[indexOfLargest] = tmp;
   }
 }
 ```
