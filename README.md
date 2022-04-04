@@ -156,7 +156,7 @@ GRADING: 30% labs, 30% midterm, 40% final exam
 - manage hardware resources
 - provide interface for applications
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 2. _Intro to Computers_
 ## 2.1. ***_HOW ARE PROGRAMS STORED IN MEMORY?_***
@@ -281,7 +281,7 @@ printf(%.4f, double) // print double with 4 decimal values
 printf(%3.4f, double) // same as above + right aligned taking up 3 spaces
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 3. Variable Types & I/O
 ## 3.1. `#define`
@@ -298,7 +298,7 @@ int main() {
 }
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 4. Arithmetic Operators & Order of Operations
 
@@ -413,7 +413,7 @@ Arithmetic operators are lower precedence than relational operators, so:
 
 All operators have same precedence, so we look at associativity (which is left-to-right for `<`). Thus, expression is evaluated as `(a < b) < c`{.lg}
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 5. Math Functions
 ## 5.1. Math Library Functions
@@ -553,7 +553,7 @@ c) ...numbers from -51 to 201 that are divisible by 3. {.p}
 
 -51 to 201 DIV3 <=> (0 to 252 DIV3) - 51 <=> ((0 to $\frac{252}{3}=$ 84) * 3) - 51 => `(rand() % 85) * 3 - 51`{.lg}
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 6. Relational & Logic Operators
 ## 6.1. Relational Operators
@@ -637,11 +637,11 @@ if (...) {
 }
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 7. See 6. (De Morgan's Law, dangling `else`)
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 8. While Loops
 ## 8.1. do-while Loops
@@ -704,7 +704,7 @@ for (int i = 1, double j = 2; i != j && !done; printf("*"), k++) {
 
 PRINT FULL TRIANGLE OF STARS
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 11. Functions
 
@@ -732,7 +732,7 @@ int function(int num, bool truth) {
 
 Variables in functions are different from variables in `main()` even if they have the same name because they have different scopes.
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 12. Intro to Pointers
 ## 12.1. Why we need pointers ('Call by value')
@@ -854,7 +854,7 @@ pd = &pi;
 ????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 13. More on Pointers
 ## 13.1. Void Pointers
@@ -910,7 +910,7 @@ int* largerAddress(int *x, int *y) {
 - `&x` returns the address of the pointer `x` itself, which is not what we want either (we want the address of the variable `x` in `main()`).
 - `&*x` is the same as returning the pointer `x`, because `&` and `*` are opposite operations.
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 14. Variable Scopes
 
@@ -960,7 +960,7 @@ When variable with the same name is declared in a statement inside another state
   // OUTPUT: 1 10 0
   ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 15. 1D Arrays
 ## 15.1. Ways to Declare/Initalize 1D Arrays
@@ -994,7 +994,7 @@ A: Because the C compiler does not do range checking, this may result in a segme
 see lecture 15: 02-11-2022_Lecture
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 16. Array Pointers & Pointer Arithmetic
 ## 16.1. Array Pointers
@@ -1115,7 +1115,7 @@ void swap(int *a, int i, int j) {
 }
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 17. Dynamic Memory Allocation
 ## 17.1. `malloc()`
@@ -1154,7 +1154,7 @@ a = NULL;
 
 When allocated memory is forgotten to be unallocated, **memory leaks** occur.
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 18. ***_MIDTERM PREP_***
 
@@ -1164,7 +1164,7 @@ Material prior to the midterm will NOT BE TESTED ON THE FINAL EXAM. {.lr}
 
 Obviously, however, you are going to need to understand pre-midterm concepts in order to understand the concepts that will be tested on the final exam.
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 19. Intro to 2D Arrays
 ## 19.1. Initializing 2D Arrays
@@ -1302,7 +1302,7 @@ int board[6][6] = ...;
 
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 20. 2D Arrays & Dynamic Memory Allocation
 
@@ -1343,7 +1343,7 @@ void func(int *arr);
 ```
 Remember that [passing as a double vs. single pointer means different methods must be used for dereferencing elements](#1933-with-pointers).
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 21. Strings
 
@@ -1447,7 +1447,7 @@ p = "Hello";
   - *Because only the address assigned to the pointer has changed, the memory allocated using `malloc` has not been freed and is causing a memory leak.*{.lr}
   - To free the memory allocated by `malloc`, you can initialize a new pointer pointing to p (`char *p2 = p`), which allows us to free it (`free(p2)`) after changing the address assigned to `p`.
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 22. String I/O
 ## 22.1. `const` Characters & `const` Addresses
@@ -1540,7 +1540,7 @@ int main(void) {
 }
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 23. More on Strings & String Library Functions
 
@@ -1678,7 +1678,7 @@ while ((*dest++ = *src++)) {} // first dereference, then assignment, then increm
 return t;
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 24. More String Library Functions
 ## 24.1. `strncpy()`
@@ -1834,7 +1834,7 @@ if (*p == '\0') {
 return p;
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 25. 2D Arrays of Strings
 
@@ -1862,7 +1862,7 @@ Q: Can we change the string values for both initializing as a 2D string array an
 
 A: **NO**{.r}: a 2D `char` array stores each string as characters in an array (which we can alter), but an array of pointers points to literal string constants stored in the GLOBAL VARS & CONSTANTS section of memory. {.lg}
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 26. RECURSION
 
@@ -1967,7 +1967,7 @@ void printTriangle(int n) {
 }
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 27. Advanced RECURSION
 ## 27.1. Using Backtracking
@@ -2125,7 +2125,7 @@ Q: Is it a good idea to further divide x (e.g. by 3, 10, etc.) in order to make 
 
 A: Unless speed is critical, NO, because that would mean we need to add more base cases that would increase complexity of our code and would only marginally increase the speed. {.lg}
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 28. RECURSION With Strings
 
@@ -2331,7 +2331,7 @@ int recursiveOddCountHelper(int *arr, int left, int left, int right) {
   }
 }
 ```
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 29. STRUCTURES
 
@@ -2437,7 +2437,7 @@ p -> year = 1862;
   free(p);
   ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 30. LINKED LISTS
 ## 30.1. Why use a Linked List?
@@ -2505,7 +2505,7 @@ A: We can simply point the `*next` pointer of the previous node to the inserted 
 1. **Random access** --- while we can easily access any element in an array with the given index, in linked lists we need to traverse through multiple nodes (which can be slow).
 2. Storing pointers in memory (is minor problem) --- with singly linked lists, each node needs a pointer to the next node which takes up memory. Ultimately, this is worth the tradeoff for speed when inserting/deleting nodes.
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 31. Implmenting Linked Lists (1/3)
 ## 31.1. `struct` Node
@@ -2651,7 +2651,7 @@ insertAtFront(&list, 2);
 Finally, we've abstracted away any refernece to the head in the interface, which is good because it means we don't need to understand the implementation in order to use the linked list interface (just like real-life APIs)!
 
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 32. Implementing Linked Lists (2/3)
 ## 32.1. `initList()`
@@ -2775,7 +2775,7 @@ bool insertAtBack(LinkedList *list, int data) {
 }
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 33. Implementating Linked Lists (3/3)
 
@@ -3021,7 +3021,7 @@ int deleteAllMatches(LinkedList *list, int data) {
 - Write helper functions to break up functionality and for repetitive tasks
 - Combine all required code into a single function
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 34. Searching Algorithms
 ## 34.1. Sequential Search
@@ -3109,7 +3109,7 @@ int binarySearch(int list[], int data, int length) {
 }
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 35. Sorting Algorithms
 
@@ -3202,4 +3202,4 @@ void selectionSort(int list[], int length) {
 }
 ```
 
-<hr style="border:4px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
