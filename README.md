@@ -134,6 +134,7 @@
 - [35. Sorting Algorithms](#35-sorting-algorithms)
   - [35.1. Insertion Sort](#351-insertion-sort)
   - [35.2. Selection Sort](#352-selection-sort)
+  - [35.3. Quicksort](#353-quicksort)
 
 **Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31 -> LEC 30).*
 
@@ -3202,4 +3203,73 @@ void selectionSort(int list[], int length) {
 }
 ```
 
+## 35.3. Quicksort
+
+Recursively sorts an array by dividing the array into 2 subarrays (one with all integers less than pivot, other where all is greater than pivot).
+
+The quicksort algorithm requires us to choose a pivot element in the array. The pivot can be at any point, such as the start, middle, or end. Next, we sort all of the elements that are less than the pivot to the left of the pivot, and all of the elements that are greater than the pivot to the right. Once this is done, the pivot is at the correct location. We then recursively repeat this process on the left and right subarrays until the whole list is sorted.
+
+- iterate from left to right (start at first element, increase index until ending at pivot) and if current element is greater than pivot, swap with element found going from right to left (start at last element, decrease index until ending at pivot) that is less than pivot.
+
+```c
+// IMPLEMENTATION 1
+void swap(int *a, int *b); // swap elements
+
+// WE CAN ALSO PARTITION FROM LEFT TO RIGHT!
+int partition(int list[], int low, int high) {
+
+  // select the rightmost element as pivot
+  int pivot = list[high];
+
+  // pointer for greater element
+  int i = (low - 1);
+
+  // traverse each element of the list
+  // compare them with the pivot
+  for (int j = low; j < high; j++) {
+    if (list[j] <= pivot) {
+
+      // if element smaller than pivot is found
+      // swap it with the greater element pointed by i
+      i++;
+
+      // swap element at i with element at j
+      swap(&list[i], &list[j]);
+    }
+  }
+
+  // swap the pivot element with the greater element at i
+  swap(&list[i + 1], &list[high]);
+
+  // return the partition point
+  return (i + 1);
+}
+
+void quickSort(int list[], int low, int high) {
+  if (low < high) {
+
+    // find the pivot element such that
+    // elements smaller than pivot are on left of pivot
+    // elements greater than pivot are on right of pivot
+    int pi = partition(list, low, high);
+
+    // recursive call on the left of pivot
+    quickSort(list, low, pi - 1);
+
+    // recursive call on the right of pivot
+    quickSort(list, pi + 1, high);
+  }
+}
+```
+
+```c
+// IMPLEMENTATION 2
+int partition(int list[], int low, int high) {
+  // set pivot to be first element
+  int pivot = low, left = low + 1, right = high;
+  while () {
+    while (left < right && list[left] < >)
+  }
+}
+```
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
