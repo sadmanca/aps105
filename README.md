@@ -3211,11 +3211,15 @@ The quicksort algorithm requires us to choose a pivot element in the array. The 
 
 - iterate from left to right (start at first element, increase index until ending at pivot) and if current element is greater than pivot, swap with element found going from right to left (start at last element, decrease index until ending at pivot) that is less than pivot.
 
+**IMPLEMENTATION 1**
 ```c
-// IMPLEMENTATION 1
 void swap(int *a, int *b); // swap elements
 
 // WE CAN ALSO PARTITION FROM LEFT TO RIGHT!
+
+// purpose of partition is to divide list into 2 subarrays
+// where one contains all elements less than pivot
+// and the other contains all elements greater than pivot
 int partition(int list[], int low, int high) {
 
   // select the rightmost element as pivot
@@ -3244,7 +3248,8 @@ int partition(int list[], int low, int high) {
   // return the partition point
   return (i + 1);
 }
-
+```
+```c
 void quickSort(int list[], int low, int high) {
   if (low < high) {
 
@@ -3262,13 +3267,44 @@ void quickSort(int list[], int low, int high) {
 }
 ```
 
+**IMPLEMENTATION 2**
 ```c
-// IMPLEMENTATION 2
 int partition(int list[], int low, int high) {
   // set pivot to be first element
   int pivot = low, left = low + 1, right = high;
-  while () {
-    while (left < right && list[left] < >)
+  while (true) {
+
+    while (left <= right && list[left] < list[pivot]) {
+      left++; // go to next index from left while element is less than pivot
+    }
+
+    while (left <= right && list[right] > list[pivot]) {
+      right--; // go to previous index from right while element is greater than pivot
+    }
+
+    if (left < right) {
+      swap(list, left, right);
+    } else {
+      // when 'right < left'
+      // means that we have iterated through half the array and so
+      // we now need to set the lower value ('right') as the pivot
+      swap(list, right, pivot);
+    }
+
+    return right;
+  }
+}
+```
+```c
+void quickSort(int list[], int length) {
+  return quickSortHelper(list, 0, length - 1);
+}
+
+void quickSortHelper(int list[], int low, int high) {
+  if (low < high) {
+    int pivot = partition(list, low, high);
+    quickSortHelper(list, low, pivot -1);
+    quickSortHelper(list, pivot + 1, high);
   }
 }
 ```
