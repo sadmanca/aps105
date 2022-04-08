@@ -135,6 +135,12 @@
   - [35.1. Insertion Sort](#351-insertion-sort)
   - [35.2. Selection Sort](#352-selection-sort)
   - [35.3. Quicksort](#353-quicksort)
+  - [35.4. Bubble Sort](#354-bubble-sort)
+- [36. Binary Search Trees](#36-binary-search-trees)
+  - [36.1. Binary Tree Implementation](#361-binary-tree-implementation)
+    - [36.1.1. `createNode()`](#3611-createnode)
+    - [36.1.2. `isEmpty()`](#3612-isempty)
+    - [36.1.3. `printTree()`](#3613-printtree)
 
 **Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31 -> LEC 30).*
 
@@ -3207,7 +3213,7 @@ void selectionSort(int list[], int length) {
 
 Recursively sorts an array by dividing the array into 2 subarrays (one with all integers less than pivot, other where all is greater than pivot).
 
-The quicksort algorithm requires us to choose a pivot element in the array. The pivot can be at any point, such as the start, middle, or end. Next, we sort all of the elements that are less than the pivot to the left of the pivot, and all of the elements that are greater than the pivot to the right. Once this is done, the pivot is at the correct location. We then recursively repeat this process on the left and right subarrays until the whole list is sorted.
+The quicksort algorithm requires us to choose a pivot element in the array. The pivot can be at any point, such as the start, middle, or end. Next, we sort all of the elements that are less than the pivot to the left of the pivot, and all of the elements that are greater than the pivot to the right. Once this is done, the pivot is at the correct position (i.e. pivot is sorted; all other elements are initially unsorted). We then recursively repeat this process on the left and right subarrays until the whole list is sorted.
 
 - iterate from left to right (start at first element, increase index until ending at pivot) and if current element is greater than pivot, swap with element found going from right to left (start at last element, decrease index until ending at pivot) that is less than pivot.
 
@@ -3308,4 +3314,132 @@ void quickSortHelper(int list[], int low, int high) {
   }
 }
 ```
+
+## 35.4. Bubble Sort
+
+Steps:
+1. iterate through array from left to right
+2. compare two elements next to each other & swap them if out of order
+3. after one "loop" through array, the largest element will have "bubbled" its way to the right
+4. <REPEAT> **(no longer need to compare with the elements that have "bubbled" their way to the correct position, starting with the largest element)**
+
+```
+2 5 3 1
+[2 5] 3 1 -- no swap
+2 [5 3] 1 -- SWAP
+2 [3 5] 1 -- swapped
+2 3 [5 1] --  SWAP
+2 3 [1 5] --  SWAP
+// REPEAT!
+[2 3] 1 5 -- no swap
+2 [3 1] 5 -- SWAP
+2 [1 3] 5 -- swapped
+// DONT NEED TO COMPARE LAST ELEMENT, BC IT IS ALREADY IN CORRECT POSITION
+[2 1] 3 5 -- SWAP
+[1 2] 3 5 -- swapped
+// DONT NEED TO COMPARE LAST ELEMENT, BC IT IS ALREADY IN CORRECT POSITION
+// sorted!
+```
+
+**IMPLEMENTING BUBBLE SORT**
+```c
+void bubbleSort(int list[], int length) {
+  bool sorted = false;
+
+  for (int top = length - 1; top > 0 && !sorted), top-- {
+    sorted = true;
+    for (int i = 0, i < top, i++) {
+      if (list[i] > list [i + 1]) {
+        swap(list[i], list[i + 1]);
+        sorted = false; // if need to swap before end of for loop,
+        // then need to iterate through array to recheck order
+
+        // no swaps will happen if array is sorted
+      }
+    }
+  }
+}
+```
+
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 36. Binary Search Trees
+Sequential search was a slow searching algorithm. We were able to speed up searching using binary search.
+
+Similarly, inserting elements in an array or sorted linked list can be slow as we need to traverse every element sequentially. We can make this insertion more efficient by using binary search (trees) to reduce the number of comparisons we have to do.
+
+## 36.1. Binary Tree Implementation
+Similar to a linked list, except each node points to 2 items:
+1. *left --- all values of nodes on left subtree are smaller than parent node
+2. *right --- all values of nodes on right subtree
+
+```c
+typedef struct node {
+  int data;
+  struct node* left, right;
+}
+
+typedef struct binarySearchTree {
+  Node *root;
+} BSTree;
+
+int main() {
+  BSTree tree;
+  tree -> root = (Node*) malloc(sizeof(Node));
+  tree -> root -> data = 23;
+  tree -> root -> left = NULL;
+  tree -> root -> right = NULL;
+}
+```
+
+### 36.1.1. `createNode()`
+```c
+Node* createNode(int data) {
+  Node* newNode = (Node*) malloc(sizeof(Node));
+  if (newNode != NULL) {
+    newNode -> data = data;
+    newNode -> left = NULL;
+    newNode -> right = NULL;
+  }
+  return newNode;
+}
+
+initBSTree(BSTree *tree) {
+  tree -> root = NULL;
+}
+
+int main() {
+  BSTree tree;
+  initBSTree(tree);
+  tree -> root = createNode(23);
+}
+```
+
+### 36.1.2. `isEmpty()`
+```c
+bool isEmpty(BSTree *tree)
+```
+
+### 36.1.3. `printTree()`
+Q: How can we efficiently print all elements of a binary search tree in order? {.r}
+
+A: Instead of printing iteratively, we can print recursively by simply printing `*left` of each element and then `*right` immediately after (such that all the calls to the `*left` pointer of each array occur until NULL is reached at which point the `*right` pointers are called). {.lg}
+- this type of traversal is called *"In-Order Traversal"*
+
+```c
+// helper function for printing tree!
+void printNode(Node *node) {
+  if (node != NULL) {
+    // recursive case
+    printNode(node -> left);
+    printf("%d ", node -> data);
+    printNode(node -> right);
+  }
+}
+
+void printTree(BSTree *tree) {
+  printNode(tree -> root);
+}
+```
+
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
