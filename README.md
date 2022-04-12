@@ -136,11 +136,17 @@
   - [35.2. Selection Sort](#352-selection-sort)
   - [35.3. Quicksort](#353-quicksort)
   - [35.4. Bubble Sort](#354-bubble-sort)
-- [36. Binary Search Trees](#36-binary-search-trees)
+- [36. Binary Search Trees (1/2)](#36-binary-search-trees-12)
   - [36.1. Binary Tree Implementation](#361-binary-tree-implementation)
     - [36.1.1. `createNode()`](#3611-createnode)
     - [36.1.2. `isEmpty()`](#3612-isempty)
     - [36.1.3. `printTree()`](#3613-printtree)
+- [37. Binary Search Trees (2/2)](#37-binary-search-trees-22)
+  - [37.1. Tree Traversal-Specific Implementation](#371-tree-traversal-specific-implementation)
+    - [37.1.1. `nonRecursiveSearch()`](#3711-nonrecursivesearch)
+    - [37.1.2. `recursiveSearch()`](#3712-recursivesearch)
+    - [37.1.3. `recursiveInsert()`](#3713-recursiveinsert)
+    - [37.1.4. `nonRecursiveInsert()`](#3714-nonrecursiveinsert)
 
 **Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31 -> LEC 30).*
 
@@ -3363,7 +3369,7 @@ void bubbleSort(int list[], int length) {
 
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
-# 36. Binary Search Trees
+# 36. Binary Search Trees (1/2)
 Sequential search was a slow searching algorithm. We were able to speed up searching using binary search.
 
 Similarly, inserting elements in an array or sorted linked list can be slow as we need to traverse every element sequentially. We can make this insertion more efficient by using binary search (trees) to reduce the number of comparisons we have to do.
@@ -3373,6 +3379,7 @@ Similar to a linked list, except each node points to 2 items:
 1. *left --- all values of nodes on left subtree are smaller than parent node
 2. *right --- all values of nodes on right subtree
 
+1\. Write struct definitions for a binary search and its nodes: {.r}
 ```c
 typedef struct node {
   int data;
@@ -3393,6 +3400,7 @@ int main() {
 ```
 
 ### 36.1.1. `createNode()`
+2\. Write a function to create an empty node for the BS tree: {.r}
 ```c
 Node* createNode(int data) {
   Node* newNode = (Node*) malloc(sizeof(Node));
@@ -3404,27 +3412,32 @@ Node* createNode(int data) {
   return newNode;
 }
 
-initBSTree(BSTree *tree) {
+void initBSTree(BSTree *tree) {
   tree -> root = NULL;
 }
 
 int main() {
   BSTree tree;
-  initBSTree(tree);
+  initBSTree(&tree);
+  // or `tree.root = NULL;`
   tree -> root = createNode(23);
 }
 ```
 
 ### 36.1.2. `isEmpty()`
 ```c
-bool isEmpty(BSTree *tree)
+bool isEmpty(BSTree *tree) {
+  return (tree -> root == NULL);
+}
 ```
 
 ### 36.1.3. `printTree()`
-Q: How can we efficiently print all elements of a binary search tree in order? {.r}
+3\. Write a function to print all nodes of a BS tree: {.r}
 
-A: Instead of printing iteratively, we can print recursively by simply printing `*left` of each element and then `*right` immediately after (such that all the calls to the `*left` pointer of each array occur until NULL is reached at which point the `*right` pointers are called). {.lg}
-- this type of traversal is called *"In-Order Traversal"*
+Q: How can we efficiently print all elements of a binary search tree in order? {.lr}
+
+A: Instead of printing iteratively, we can print ***RECURSIVELY***{.g} by simply printing `*left` of each element and then `*right` immediately after (such that all the calls to the `*left` pointer of each array occur until NULL is reached at which point the `*right` pointers are called). {.lg}
+- remember that this type of traversal is called *"In-Order Traversal"*
 
 ```c
 // helper function for printing tree!
@@ -3441,5 +3454,139 @@ void printTree(BSTree *tree) {
   printNode(tree -> root);
 }
 ```
+# 37. Binary Search Trees (2/2)
+## 37.1. Tree Traversal-Specific Implementation
+### 37.1.1. `nonRecursiveSearch()`
+
+4\. Write a function to ***NON-RECURSIVELY*** search for a node in BS tree: {.r}
+```c
+Node* nonRecursiveSearch(BSTree *tree, int data) {
+  Node *curr = tree -> root;
+  while (curr != NULL & curr -> data != data) {
+    if (data < curr -> data) {
+      curr = curr -> left;
+    } else {
+      curr = curr -> right;
+    }
+  }
+  // curr is either NULL (not found)
+  // or curr -> data == data (found)
+  return curr;
+}
+```
+
+### 37.1.2. `recursiveSearch()`
+
+5\. Write a function to ***RECURSIVELY*** search for a node in BS tree: {.r}
+
+**RECURSIVELY**
+- **base case**: item is found OR reached bottom of tree
+- **recursive case**:
+  - traverse through left subtree if curr node data (starting at root) is less than curr node
+  - traverse through right subtree if curr node data (starting at root) is greater than curr node
+
+```c
+Node* recursiveSearchHelper(Node *n, int data) {
+  if (n == NULL || n -> data == data) {
+    // not found if `NULL`
+    // found if node data equals search data
+    // either way, can just return node
+    return n;
+  }
+
+  // search data is less than node data -> traverse through left subtree
+  if (data < n -> data) {
+    return recursiveSearchHelper(n -> left, data);
+  // search data is greater than node data -> traverse through right subtree
+  } else {
+    return recursiveSearchHelper(n -> right, data);
+  }
+}
+
+// need helper function bc recursive case is based on current node
+// but we want interface to input `tree` as parameter
+Node* recursiveSearch(BSTree *tree, int data) {
+  return recursiveSearchHelper(tree -> root, data);
+}
+```
+
+### 37.1.3. `recursiveInsert()`
+
+6\. Write a function to ***NON-RECURSIVELY*** insert a node in BS tree: {.r}
+
+- similar to `nonRecursiveSearch()`; traverse tree until reached end of a subtree
+- will always insert a node at a 'leaf' (end of a subtree) when current node will equal NULL
+
+- while for linked lists we used `curr -> next != NULL` in order to determine the end of a list (so we can insert a node), we CANNOT use the same expression for binary search trees bc **each node has both a left and a right pointer**.
+- instead, what we can do is look backwards: look at a pointer to the `parent` of the current node
+
+```c
+// bool returns if insertion was successful
+bool nonRecursiveInsert(BSTree *tree, int data) {
+  Node *curr = tree -> root;
+
+  Node *parent = NULL;
+
+  // if(isEmpty(tree)) {
+  if (tree -> root == NULL) {
+    tree -> root = createNode(data);
+    return tree -> root != NULL;
+  }
+
+  while (curr != NULL) {
+
+    parent = curr;
+
+    if (data < curr -> data) {
+      curr = curr -> left;
+    } else {
+      curr = curr -> right;
+    }
+  }
+
+  // if input data is less than `leaf`,
+  // insert to left of `leaf`
+  if (data < parent -> data) {
+    parent -> left = createNode(data);
+    return parent -> left != NULL;
+
+  // if input data is greater than `leaf`,
+  // insert to right of `leaf`
+  } else {
+    parent -> right = createNode(data);
+    return parent -> right != NULL;
+  }
+}
+```
+
+### 37.1.4. `nonRecursiveInsert()`
+
+7\. Write a function to ***RECURSIVELY*** insert a node in BS tree: {.r}
+
+**RECURSIVELY**
+- **base case(s)**:
+  - encountered node with same data as insert data
+  - `curr` node has reached end of subtree where we are at `left == NULL` or `right == NULL` depending on if insert data is greater than or less than leaf
+    - similar to `recursiveSearch()`, need a helper function that takes in `*node` as an argument bc our base cases involve checking whether the current pointer is at end of a subtree (and not the same as the insert data)
+- **recursive case**:
+  - if insert data is less than current node (starting at root), call helper function on left subtree
+  - if insert data is greaer than current node (starting at root), call helper function on right subtree
+
+```c
+Node* recursiveInsertHelper(Node *n, int data) {
+  if (n == NULL) {
+    createNode(data);
+  }
+
+  if (data < n -> left) {
+    n -> left = insertHelper(n -> left, data);
+  } else {
+    n -> right = insertHelper(n -> right, data);
+  }
+
+  return n;
+}
+```
+
 
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
