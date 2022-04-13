@@ -147,6 +147,9 @@
     - [37.1.2. `recursiveSearch()`](#3712-recursivesearch)
     - [37.1.3. `recursiveInsert()`](#3713-recursiveinsert)
     - [37.1.4. `nonRecursiveInsert()`](#3714-nonrecursiveinsert)
+- [38. Final Exam Strategies](#38-final-exam-strategies)
+  - [38.1. Generating Ideas](#381-generating-ideas)
+  - [38.2. Questions that will appear on the Final Exam](#382-questions-that-will-appear-on-the-final-exam)
 
 **Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31 -> LEC 30).*
 
@@ -3454,6 +3457,8 @@ void printTree(BSTree *tree) {
   printNode(tree -> root);
 }
 ```
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
 # 37. Binary Search Trees (2/2)
 ## 37.1. Tree Traversal-Specific Implementation
 ### 37.1.1. `nonRecursiveSearch()`
@@ -3588,5 +3593,34 @@ Node* recursiveInsertHelper(Node *n, int data) {
 }
 ```
 
+<hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
+
+# 38. Final Exam Strategies
+## 38.1. Generating Ideas
+1. Regular Cases
+   - How can we handle the recursive case to make the problem smaller?
+   - Work through examples before starting your code
+   - e.g. How can a node be inserted into a sorted, non-empty list?
+2. Special Cases
+   - Test out your existing solution to see if it can handle each special case.
+   - For special cases your code cannot handle, add additional code (mainly logic for detecting special cases and reacting accordingly) to handle each special case
+   - e.g. empty list/tree, list/tree with only one node, inserting at end of list/bottom of tree
+
+## 38.2. Questions that will appear on the Final Exam
+```
+7 short answer questions:   4 mark x 5 questions
+                          + 6 mark x 2 questions
+------------------------------------------------------
+7 programming questions:    8 mark x 1 question (easy)
+                         + 10 mark x 6 questionss (med -> very hard)
+```
+
+- will not be testing deletion of nodes in binary search trees
+- material not covered in lectures will not be in the exam
+- questions may require use of recursion for anything, including:
+  - linked lists
+  - binary search trees
+  - strings
+  - course content prior to strings (e.g. static arrays, loops, if/else, primitive types)
 
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
