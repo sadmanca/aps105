@@ -1199,7 +1199,7 @@ arr[3][4] = { 0 }; // COMPILE-TIME ERROR!
 
 // ↓
 
-// need to intialize 2D array via nexted 'for' loop
+// need to intialize 2D array via nested 'for' loop
 for (int i = 0; i < num_rows; i++) {
   for (j = 0; j < num_cols; j++) {
     arr[i][j] = ...;
@@ -1700,27 +1700,27 @@ return t;
 ## 24.1. `strncpy()`
 
 **PROBLEM:**{.lr} `char* strcpy(char *dest, const char *src)` is an unsafe function (because if `src` has more memory allocated to it than `dest`, then buffer overflow will occur when running `strcpy(dest, src)`).
-**SOLUTION:**{.lg} use `char* strcpy(char *dest, const char *src, int n)`; allocates first `n` characters of `src` to `dest`.
+**SOLUTION:**{.lg} use `char* strncpy(char *dest, const char *src, int n)`; allocates first `n` characters of `src` to `dest`.
 ```c
-char* strcpy(char *dest, const char *src, int n);
+char* strncpy(char *dest, const char *src, int n);
 ```
 ```c
 // e.g.
 
-// if     'n' == number of characters in 'src' + 1...
-// then   copy 'src' into 'dest' AND add null character at end
+// if       'n' == number of characters in 'src' + 1...
+// then     copy 'src' into 'dest' AND add null character at end
 
 char s[6];
 strncpy(s, "Hello", 6);
 strncpy(s, "Hello", sizeof("Hello")); // same as above
 strncpy(s, "Hello", sizeof(s)); // same as above
 
-// if     'n' == number of characters in 'src'...
-// then   copy 'src' into 'dest'; null character is NOT ADDED at end
+// if      'n' == number of characters in 'src'...
+// then    copy 'src' into 'dest'; null character is NOT ADDED at end
 
 char s[6] = "hELLOWorld";
-strncpy(s, "Hello", 5);
-// s is now "HelloWorld"
+strncpy(s, "Somet", 5);
+// s is now "SometWorld"
 // bc null character is not added, only the first n characters are replaced
 ```
 
@@ -1758,14 +1758,14 @@ int strcmp(const char *a, const char *b);
 int strcmp(const char *a, const char *b, size_t/int n); // compares first n characters of each string
 ```
 ```c
-// if      strcmp(a, b) < 0
-// then    a precedes b
+if      strcmp(a, b) < 0
+then    a precedes b
 
-// if      strcmp(a, b) > 0
-// then    b precedes a
+if      strcmp(a, b) > 0
+then    b precedes a
 
-// if      strcmp(a, b) == 0
-// then    a and b are same string
+if      strcmp(a, b) == 0
+then    a and b are same string
 ```
 Q: How are strings compared? {.r}
 
@@ -1778,7 +1778,7 @@ A: via ASCII values of characters. {.lg}
 
 Q: Why can't we just use `s1 == s2` to compare strings? {.r}
 
-A: for a string, `s1` <=> `&s2`, so by `s1 == s2` we are comparing the addresses of the char pointers, **NOT the string characters.**{.lr} {.lg}
+A: for a string, `s1` <=> `&s1`, so by `s1 == s2` we are comparing the addresses of the char pointers, **NOT the string characters.**{.lr} {.lg}
 
 ## 24.4. `atoi()` / `atof()`
 ```c
@@ -1914,6 +1914,7 @@ int factorial(int n) {
 - A: The base case is the (simplest) case when for the recursion should stop and the solution should be computed/combined. For factorial, this is when n equals 0 for n!. {.lg}
 
 Q: How does the program store the return values of recursively called functions? {.r}
+
 A: Each time a function is called, a new *frame* for the function is created in memory, with each frame having its own variables. {.lg}
 
 Recursion is typically suboptimal because it consumes stack by:
@@ -2332,7 +2333,7 @@ e.g.
 ```c
 // remember strings need to be taken as pointers!
 
-int recursiveOddCountHelper(int *arr, int left, int left, int right) {
+int recursiveOddCountHelper(int *arr, int left, int right) {
   // BASE CASE
 
   // reached end of array
@@ -2351,7 +2352,7 @@ int recursiveOddCountHelper(int *arr, int left, int left, int right) {
 
 # 29. STRUCTURES
 
-*Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31 -> LEC 30).*
+*Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31. -> LEC 30).*
 
 ## 29.1. Structures
  Arrays allow us to define variables that can hold several data items of the type.
@@ -2631,10 +2632,11 @@ insertAtFront(&head, 2);
 
 Instead of manually initializing a Node pointer for the head, we can...
 
-3. **...write a struct for a linked list containing the head pointer:**
+3. ...write a struct for a linked list containing the head pointer: {.lr}
 ```c
 struct linkedList {
-  Node *head = NULL;
+  // 'Node *head = NULL;' -> CANNOT do this; need to initialize struct vars separately
+  Node *head;
 } LinkedList;
 ```
 
@@ -2860,7 +2862,9 @@ bool insertIntoOrderedList(LinkedList *list, int data) {
 
 ## 33.2. `deleteFront()`
 10. Write a function to delete the FIRST node in a list: {.lr}
-**General case: **
+
+
+**General case:**
 ```c
 // 1 - set tmp pointer to new head (next node after head node)
 Node *newHead = list -> head -> next;
@@ -2979,9 +2983,9 @@ General case:
 
 Special cases:
 - if matching node is not found, simply stop traversing through list (avoid calling 'data' for NULL)
-- if memory is unavailable, ensuer that invalid access of memory does not occur (*guard condition*)
+- if memory is unavailable, ensure that invalid access of memory does not occur (*guard condition*)
 - if first node in list matches input, we can simply call our `deleteAtFront()` function on the list (instead of re-implementing)
-- if list is empty, we can set our first condition be checking if 'curr' node pointer is NULL immediately after pointing it to the head OR we could simply just use our `isEmpty()` function.
+- if list is empty, we can set our first condition be checking if `curr` node pointer is NULL immediately after pointing it to the head OR we could simply just use our `isEmpty()` function.
 
 ```c
 // A:
@@ -3004,6 +3008,7 @@ bool deleteFirstMatch(LinkedList *list, int data) {
 
   if (curr -> next != NULL) {
     curr -> next = curr -> next -> next;
+    return true;
   }
 }
 ```
@@ -3164,14 +3169,14 @@ void insertionSort(int list[], int length) {
   // iterate through each index of the list
   for (int top = 1; top < length; top++) {
     int item = list[top];
-    int emptyIndex = top;
+    int curr = top;
 
     // keep shifting item at 'list[top]' to the left until it fits in position or the next item is smaller than the current item
-    while (emptyIndex > 0 && list[emptyIndex-1] > item) {
-      list[emptyIndex] = list[emptyIndex - 1];
-      emptyIndex--;
+    while (curr > 0 && list[curr-1] > item) {
+      list[curr] = list[curr - 1];
+      curr--;
     }
-    list[emptyIndex] = item;
+    list[curr] = item;
   }
 }
 ```
@@ -3192,13 +3197,14 @@ void insertionSort(int list[], int length) {
 - Q: # of times we looked for largest Number? {.r}
 - A: size of array - 1 {.lg}
 - Q: How many items did we have to compare in each search? {.r}
+- A:
   1. 6
   2. 5
   - ...
   - last time: 2
 
 ```c
-//A:
+// A:
 void selectionSort(int list[], int length) {
   for (int top = length - 1; top > 0; top--) {
     // assume first element is largest
@@ -3417,12 +3423,12 @@ Node* createNode(int data) {
 
 void initBSTree(BSTree *tree) {
   tree -> root = NULL;
+  // or `tree.root = NULL;`
 }
 
 int main() {
   BSTree tree;
   initBSTree(&tree);
-  // or `tree.root = NULL;`
   tree -> root = createNode(23);
 }
 ```
@@ -3532,7 +3538,7 @@ bool nonRecursiveInsert(BSTree *tree, int data) {
 
   Node *parent = NULL;
 
-  // if(isEmpty(tree)) {
+  // or 'if(isEmpty(tree)) {'
   if (tree -> root == NULL) {
     tree -> root = createNode(data);
     return tree -> root != NULL;
@@ -3608,11 +3614,11 @@ Node* recursiveInsertHelper(Node *n, int data) {
 
 ## 38.2. Questions that will appear on the Final Exam
 ```
-7 short answer questions:   4 mark x 5 questions
-                          + 6 mark x 2 questions
-------------------------------------------------------
-7 programming questions:    8 mark x 1 question (easy)
-                         + 10 mark x 6 questionss (med -> very hard)
+7 short answer questions:       4 mark x 5 questions
+                              + 6 mark x 2 questions
+-----------------------------------------------------------
+7 programming questions:        8 mark x 1 question (easy)
+                             + 10 mark x 6 questionss (med -> very hard)
 ```
 
 - will not be testing deletion of nodes in binary search trees
