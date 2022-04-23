@@ -11,8 +11,14 @@
 - [3. Variable Types & I/O](#3-variable-types--io)
   - [3.1. `#define`](#31-define)
 - [4. Arithmetic Operators & Order of Operations](#4-arithmetic-operators--order-of-operations)
-      - [4.0.0.1. WARNINGS](#4001-warnings)
-      - [4.0.0.2. OPERATOR PRECEDENCE & ASSOCIATIVITY](#4002-operator-precedence--associativity)
+  - [4.1. Implicit Type Conversion](#41-implicit-type-conversion)
+  - [4.2. WARNINGS](#42-warnings)
+  - [4.3. OPERATOR PRECEDENCE & ASSOCIATIVITY](#43-operator-precedence--associativity)
+    - [4.3.1. Precedence](#431-precedence)
+    - [4.3.2. Associativity](#432-associativity)
+    - [4.3.3. Precedence & Associativity Table](#433-precedence--associativity-table)
+    - [4.3.4. Prefix vs. Postfix Operators](#434-prefix-vs-postfix-operators)
+  - [4.4. `sizeof()`](#44-sizeof)
 - [5. Math Functions](#5-math-functions)
   - [5.1. Math Library Functions](#51-math-library-functions)
   - [5.2. Generating Random Numbers](#52-generating-random-numbers)
@@ -59,14 +65,14 @@
     - [19.3.3. With Pointers](#1933-with-pointers)
   - [19.4. Dereferencing 2D Arrays](#194-dereferencing-2d-arrays)
 - [20. 2D Arrays & Dynamic Memory Allocation](#20-2d-arrays--dynamic-memory-allocation)
-  - [20.1. `malloc` for 2D Arrays](#201-malloc-for-2d-arrays)
+  - [20.1. `malloc()` for 2D Arrays](#201-malloc-for-2d-arrays)
   - [20.2. `free` for 2D Arrays](#202-free-for-2d-arrays)
 - [21. Strings](#21-strings)
   - [21.1. String == `char` array](#211-string--char-array)
   - [21.2. Initializing Strings](#212-initializing-strings)
     - [21.2.1. As `char` Arrays](#2121-as-char-arrays)
     - [21.2.2. As `char*` Pointers](#2122-as-char-pointers)
-      - [21.2.2.1. Empty Strings](#21221-empty-strings)
+    - [21.2.3. Empty Strings](#2123-empty-strings)
 - [22. String I/O](#22-string-io)
   - [22.1. `const` Characters & `const` Addresses](#221-const-characters--const-addresses)
   - [22.2. String OUTPUT](#222-string-output)
@@ -74,7 +80,7 @@
     - [22.3.1. `scanf`](#2231-scanf)
     - [22.3.2. `fget(s)` & STRINGS (`char` ARRAYS) AS FUNCTION PARAMETERS](#2232-fgets--strings-char-arrays-as-function-parameters)
 - [23. More on Strings & String Library Functions](#23-more-on-strings--string-library-functions)
-  - [23.1. Small Details of Printing Strings](#231-small-details-of-printing-strings)
+  - [23.1. Nuances in Printing Strings](#231-nuances-in-printing-strings)
   - [23.2. String Library Functions](#232-string-library-functions)
   - [23.3. `strlen()`](#233-strlen)
   - [23.4. `strcpy()`](#234-strcpy)
@@ -148,8 +154,8 @@
     - [37.1.3. `recursiveInsert()`](#3713-recursiveinsert)
     - [37.1.4. `nonRecursiveInsert()`](#3714-nonrecursiveinsert)
 - [38. Final Exam Strategies](#38-final-exam-strategies)
-  - [38.1. Generating Ideas](#381-generating-ideas)
-  - [38.2. Questions that will appear on the Final Exam](#382-questions-that-will-appear-on-the-final-exam)
+  - [38.1. Generating Solution Ideas](#381-generating-solution-ideas)
+  - [38.2. Questions on the Final Exam](#382-questions-on-the-final-exam)
 
 **Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31 -> LEC 30).*
 
@@ -205,10 +211,10 @@ A: $23 MB\times 2^{10} KB/1MB \times 2^{10} B/KB \times 2^3\ bits/B = 23\times 2
 
 Q: How much memory does each variable type in C take up? {.r}
 
-| TYPE    | MEMORY SPACE {.lg} |
-| ------- | ------------------ |
-| pointer | 1 B                |
-| `char`  | 1 B                |
+| TYPE      | MEMORY SPACE {.lg} |
+| -------   | ------------------ |
+| pointer   | 1 B                |
+| `char`    | 1 B                |
 | `int`     | 4 B                |
 | `double`  | 8 B                |
 
@@ -235,12 +241,12 @@ Q: How are numbers represented in BINARY?{.r}
 
 Q: How is main memory organized?{.r}
 
-A: Main memory is divided into cells, each holding 1 Byte and with an address (making memory “Byte-addressable”). {.lg}
+A: Main memory is divided into cells, each with an address (making memory “Byte-addressable”) and holding 1 Byte of memory. {.lg}
 
 **PRACTICE:**
 1\. a) If we choose to represent addresses using 32-bits, how many different addresses can we have and what is the total memory that can be stored?{.p}
 
-The question is effectively asking how many different numbers we can store with 32 bits. The answer is $2^{32}-1 + 1$ Bytes (we use the equation $2^n - 1$ & the knowledge that representing 0 requires 0 bits). {.lg}
+The question is effectively asking how many different numbers we can store with 32 bits. The answer is $2^{32}-1 + 1$ Bytes (we use the equation $2^n - 1$ + representing 0 requires 0 bits). {.lg}
 - Since each address takes up/accesses 1 Byte, the total memory that can be stored is: $2^{32} \text{addresses} \cdot 1 \text{ Byte} = 2^{32} \text{ Bytes} = 2^{32} \text{ B} \cdot \frac{1 \text{ KB}}{2^{10} \text{ B}} \cdot \frac{1 \text{ MB}}{2^{10} \text{ KB}} \cdot \frac{1 \text{ GB}}{2^{10} \text{ MB}} = \frac{2^{32}}{2^{30}} \text{ GB} = 4 \text{ GB}$.
 
 b) How big can my memory be if I have a 64-bit address?{.p}
@@ -317,39 +323,41 @@ int main() {
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 4. Arithmetic Operators & Order of Operations
-
-Implicit Type Conversion
-- int y = sqrt(x) + 1;
+## 4.1. Implicit Type Conversion
+- `int y = sqrt(x) + 1;`
   - sqrt function returns a double; is truncated when assigned to int y
-- int i = 8.3;
+- `int i = 8.3;`
   - 8.3 is being typecast from double to int (is truncated)
 
-9/5 - int divided by int; result is truncated int (w/o decimal)
-1 + 2.5 - int + double is double
+`9/5` - int divided by int; result is truncated int (w/o decimal)
+`1 + 2.5` - int + double is double
 
-#### 4.0.0.1. WARNINGS
+## 4.2. WARNINGS
 
 Division by 0:
-- (int) / 0
+- `(int) / 0`
   - compile-time warning, runtime error (floating point exception)
-  - e.g. 1/0
-- (double) / 0
-  - results in inf
-  - e.g. 1.0/0
+  - e.g. `1/0`
+- `(double) / 0`
+  - results in 'inf' (is a value, not error)
+  - e.g. `1.0/0`
 
 Modulus operator %:
-- 3 % 0
+- `3 % 0`
   - runtime error
 - if operand is not int
-  - e.g. 5.0 % 5 OR 5 % 5.0
+  - e.g. `5.0 % 5` OR `5 % 5.0`
   - compile-time error
 
-↓
-
-#### 4.0.0.2. OPERATOR PRECEDENCE & ASSOCIATIVITY
+## 4.3. OPERATOR PRECEDENCE & ASSOCIATIVITY
 
 Operators Precedence and Associativity are two characteristics of operators that determine the evaluation order of sub-expressions in absence of brackets.
-- Operator precedence determines which operator is performed first in an expression with more than one operators with different precedence.
+
+### 4.3.1. Precedence
+
+Precedence determines which operator is performed first in an expression with more than one operators with different precedence. Use [precedence (& associativity) table](#43-operator-precedence--associativity) to determine rankings of precedence.
+
+### 4.3.2. Associativity
 
 Operators Associativity is used when two operators of same precedence appear in an expression. Associativity can be either Left to Right or Right to Left.
 
@@ -361,6 +369,8 @@ Operators Associativity is used when two operators of same precedence appear in 
    ```
 
 Q: What is the hierarchy of precedence and associativity for operators in C?{.r}
+
+### 4.3.3. Precedence & Associativity Table
 
 | PRECEDENCE | OPERATOR            | DESCRIPTION                                    | ASSOCIATIVITY |
 | ---------- | ------------------- | ---------------------------------------------- | ------------- |
@@ -386,26 +396,38 @@ Q: What is the hierarchy of precedence and associativity for operators in C?{.r}
 
 <!-- | 8          | `||`                | OR                                             |               | -->
 
-Expressions with *$^1$postfix are evaluated first using original value of variable and then variable value is modified.*{.lr}
-Expressions with *$^2$prefix are evaluated after variable value is modified.*{.lr}
+### 4.3.4. Prefix vs. Postfix Operators
+
+NOTE: "*pre- / post-*" indicates location of `++`/`--`, NOT variable being mutated.
+
+Expressions with *$^1$postfix (`i++`) are evaluated first using original value of variable and THEN variable value is modified.*{.lr}
+Expressions with *$^2$prefix (`++i`) have variable values modified first and THEN expression is valuated.*{.lr}
 ```c
 // e.g.
-b = a++; // a++,   THEN b = a
-b = ++a; // b = a, THEN a++
+b = a++; // a++,   THEN b = a   ---   1. postfix
+b = ++a; // b = a, THEN a++     ---   2. prefix
 ```
+```c
+// e.g.
+f(i++); // i++,   THEN f(i)    ---   1. postfix
+f(++i); // f(i),   THEN i++    ---   2. prefix
+```
+*NOTE:* technically variable is actually modified first, but then either ORIGINAL (postfix; `i++`) or NEW value (prefix; `++i`) is used in expression.
 
 - Q: Why is prefix and postfix still in the table then? {.lr}
 - A: Because they are higher in precedence than pointer `*` and `%`.{.lg}
   - e.g. `*p++` is evaluated as `*(p++)`
+
+## 4.4. `sizeof()`
 
 $^3$ Q: What is `sizeof()`? {.r}
 
 A: `sizeof()` returns the size (in B) of the type given as an argument. **`sizeof()` is NOT a function**{.lr} because it takes in type (not variables) as an argument (when you pass in a variable as an argument, it only takes in the variable's type). {.lg}
 ```c
 // e.g.
-sizeof(int)    // 4 (B)
-sizeof(double) // 8 (B)
-sizeof(char)   // 1 (B)
+sizeof(int)      // returns '4' (B)
+sizeof(double)   // returns '8' (B)
+sizeof(char)     // returns '1' (B)
 ```
 
 **PRACTICE**:
@@ -467,7 +489,7 @@ double fmod(double x, double y); // mod for floating points
 
 A:
 1. multiply by 10 (`2.18 * 10 = 21.8`)
-2. round up/to the nearest integer (`rint(21.8) = ceil(21.8) = 22.0`)
+2. round up/to the nearest integer (`ceil(21.8) = rint(21.8) = 22.0`)
 3. divide by 10 (`22.0 / 10 = 2.20`)
 4. written as a single operation: **`rint(num * 10) / 10`**{.lg}
 
@@ -532,9 +554,11 @@ A: Using mod (`%`): {.lg}
 4 % 5 = 4 //       ↑
 5 % 5 = 0 // REPEATS
 6 % 5 = 1
+...
 ```
 `% 5` will always return a number between `0 to 4`
 `% 2` will always return a number between `0 to 1`
+...
 **`% n` will always return a number between `0 to n-1`**
 
 Thus, we can use `rand() % n` to generate a number from `0 to n-1` {.lg}
@@ -544,7 +568,7 @@ Thus, we can use `rand() % n` to generate a number from `0 to n-1` {.lg}
 
 | RANGE                        | EQUIVALENT RANGE                                                                                         | CODE                             |
 | ---------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| 0 to 100 {.r}                |                                                                                                          | `rand() % 101`                   |
+| 0 to 100 {.r}                | ---                                                                                                      | `rand() % 101`                   |
 | -100 to 100 {.r}             | (0 to 200) - 100                                                                                         | `(rand() % 201) - 100`           |
 | 0 to 100 EVEN {.r}           | (0 to 50) * 2                                                                                            | `(rand() % 51) * 2`              |
 | 0 to 100 ODD {.r}            | (0 to 49) * 2 + 1                                                                                        | `(rand() % 50) * 2 + 1`          |
@@ -586,7 +610,7 @@ A: NUMBERS and CHARACTERS:{.lg}
 2. compare `int/double` with `ARITHMETIC OPERATORS`* (e.g. `a <= b+5`)
    - works because arithmetic operators have higher [precedence](#4002-operator-precedence--associativity) than relational operators.
 3. compare `char` ASCII* codes (e.g. `'A' < 'a'`)
-   - ASCII code of numbers < uppercase letters < lowercase letters:
+   - **ASCII code of numbers < uppercase letters < lowercase letters**:
    `' ' < '0' < '1' < ... < '9' < 'A' < 'B' < ... < 'Z' < 'a' < 'b' < ... < 'z'`
 4. compare `int` & `char` (e.g. `'2' != 2`)
 
@@ -718,7 +742,7 @@ for (int i = 1, double j = 2; i != j && !done; printf("*"), k++) {
 
 # 10. See 8. & 9. (Nested Loops)
 
-PRINT FULL TRIANGLE OF STARS
+**PRACTICE:** PRINT FULL TRIANGLE OF STARS
 
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
@@ -736,7 +760,9 @@ Functions called in `main()` can either be:
 return_type function(parameter_1, parameter_2);
 // can also just give type; e.g.
 int function(int, bool);
-
+```
+```c
+// e.g.
 int main(void){
   function(2, true);
 }
@@ -771,7 +797,7 @@ void swap(int x, int y) {
 
 Q: What are pointers? {.r}
 
-A: Pointers are variables (of type *pointer*) that store an address/location of another variable.
+A: Pointers are variables (of type `pointer`) that store an address/location of another variable.
  {.lg}
 
 - in memory, pointer variables store the address of another variable instead of an actual value.
@@ -789,7 +815,7 @@ pointer = &x; // & = 'address of' operator
 int y = *pointer // * = 'dereference' operator
 ```
 
-Q: How does changing the dereferenced value (e.g. `*a = 2`) of a pointer affect the value of the variable it is pointing to {.r}
+Q: How does changing the dereferenced value (e.g. `*a = 2`) of a pointer affect the value of the variable it is pointing to? {.r}
 
 A: The value of the variable being pointed to changes, but the pointer variable does not change (still holds the address of the variable). {.lg}
 
@@ -809,9 +835,9 @@ b = &y;
 
 ## 12.3. Memory Taken up by Addresses & Pointers
 
-Q: What is the value of an address of a variable? {.lr}
+Q: What is the value of an address (e.g. of a variable)? {.lr}
 
-A: Addresses are non-negative integers (includes NULL pointer 0) that correspond to a memory location within the computer.  {.lg}
+A: Addresses are non-negative integers (including NULL pointer 0) that correspond to a memory location within the computer.  {.lg}
 - For a specific instance of a running program, variables in the same scope have the same address (obviously, different variables will have different addresses).
 - Each time a program is run, it may or may not store variables in the same addresses/memory locations.
 
@@ -819,9 +845,9 @@ Q: How much space in memory does a pointer take up? {.r}
 
 A: Pointers take up the space needed to hold an address; since we simplify each address to identify 1 B of data for this course, that means each pointer takes up 1 B of memory.{.lg}
 
-Q: Can we declare a pointer variable that pointers to a pointer? {.r}
+Q: Can we declare a pointer variable that points to a pointer? {.r}
 
-A: Yes; `int **p2 = &p1`, where `p2` is a pointer that points to pointer `p1`. {.lg}
+A: Yes; `int **p2 = &p1`, where `p2` is a **DOUBLE pointer** (that points to pointer `p1`). {.lg}
 
 **PRACTICE:**{.p}
 1\. Write a C function that swaps 2 variables. {.p}
@@ -861,13 +887,14 @@ pd = &pi;
 Non-pointer variables cannot be assigned 'address of' values using `&`. Pointers of one type cannot be assigned addresses of pointers of a different type. {.lg}
 ```c
 // A:
-i = &pd; // INVALID: &pd is address of pd, which
-pi = &i;
-pd = i;
-pd = &pi;
-*pi = &i;
-*pd = 7.0;
-????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
+i = &pd;     // VALID; address of 'pd' is just an integer
+pi = &i;     // VALID; assigning address of integer to integer pointer
+pd = i;      // VALID... BUT randomly assigning an integer to integer pointer means randomly assigning ANY piece of memory (could be address of a random variable or simply memory that hasn't been allocated at all)
+pd = &pi;    // ?*
+*pi = &i;    // ?*
+*pd = 7.0;   // INVALID; address is integer, not double
+
+// *You can't dereference a pointer once you've set it to the address of something that is not a double type.
 ```
 
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
@@ -890,11 +917,12 @@ void *p = &a; // address of int 'i'
 **NULL POINTER:** is a constant pointer (pointing to address 0) used...
 - ...to initialize pointers w/o assigning a valid memory address
   - e.g. `int *p = NULL;`
-  - uninitialized pointers have arbitrary values & we don't know whether they are valid or not (which is why sometimes segmentation faults might occur, while other times they may not; the fault is nondeterministic)
+  - uninitialized pointers have arbitrary values & we don't know whether they are valid or not (which is why sometimes segmentation faults might occur, while other times they may not; the fault is nondeterministic); assigning a valid memory address via `NULL` helps us avoid seg faults.
 - ...to check for valid pointer address before dereferencing
-  - e.g. `p != NULL`
+  - e.g. `if (p != NULL) {...}`
   - this helps prevent **Runtime Segmentation Faults** (invalid access of memory) by allowing us to check if a pointer has been assigned an address
 - ...as a function argument (instead of passing a valid memory address)
+  - e.g. `function(NULL);`
 
 ## 13.3. Returning Pointers in Functions
 
@@ -904,8 +932,10 @@ The `main()` function looks like:
 ```c
 int main(void) {
   int x = 1, y = 2;
+
   // since we want the address of the variable with the larger value, we will be storing the returned pointer in a pointer variable
   int *l = largerAddress(&x, &y);
+
   // '&x', '&y' are parameters because we need to return the address of a variable, not the actual value
 }
 ```
@@ -919,8 +949,9 @@ int* largerAddress(int *x, int *y) {
   return y;
 }
 ```
-- Q: Why do we return `x` instead of `&x`, `*x`, or `&*x`? {.r}
-- A: After `largerAddress()` takes in addresses `&x` and `&y` as parameters, the function initalizes pointers `*x` and `*y` with those addresses. {.lg}
+Q: Why do we return `x` instead of `&x`, `*x`, or `&*x`? {.r}
+
+A: After `largerAddress()` takes in addresses `&x` and `&y` as parameters, the function initalizes pointers `*x` and `*y` with those addresses. {.lg}
 - Since we just want the address of (i.e. a pointer to) the variable with the larger value, we can just return `x` or `y`. {.lg}
 - Since `x` is already a pointer, `*x` returns the value at the address, which is not what we want.
 - `&x` returns the address of the pointer `x` itself, which is not what we want either (we want the address of the variable `x` in `main()`).
@@ -963,6 +994,7 @@ When variable with the same name is declared in a statement inside another state
 - the value assigned to the interior scoped variable is limited to the interior statement; in the surrounding statement, the value of the variable goes back to its original value.
   ```c
   // e.g.
+  // Q: What is printed?
   int i = 1;
   printf("%d", i);
   {
@@ -970,10 +1002,10 @@ When variable with the same name is declared in a statement inside another state
     printf("%d", i);
   }
   printf("%d", i);
-  // what is the output?
-
-
-  // OUTPUT: 1 10 0
+  ```
+  ```c
+  // A:
+  1 10 0
   ```
 
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
@@ -991,11 +1023,13 @@ int individual_values[] = {0,1,2,3,4}
 int individual_values[5] = {0,1,2,3,4}
 
 int individual_values[10] = {0,1,2,3,4} // first 5 indices are unique values; rest are 0
+// i.e. 'individual_values[6]' is 0
 
-int size_less_than_values[3] = {0,1,2,3,4} // compile-time error
+int size_less_than_values[3] = {0,1,2,3,4} // COMPILE-TIME ERROR!
 ```
 
 ## 15.2. Writing into Unallocated Memory
+
 Q: What happens if we try to assign a value beyond the declared indices of an array (e.g. `a[6] = 23` for `int a[5]`)? {.r}
 
 A: Because the C compiler does not do range checking, this may result in a segmentation fault or overwrite other indices of the array; it is nondeterministic. {.lg}
@@ -1006,7 +1040,7 @@ A: Because the C compiler does not do range checking, this may result in a segme
 `&a[n]` for variable at array index n. {.lg}
 
 2\. Write a function that reverses an integer array. {.p}
-```c
+```
 see lecture 15: 02-11-2022_Lecture
 ```
 
@@ -1024,7 +1058,7 @@ a     <==>    &a[0]
 *a    <==>   *&a[0]   <==>   a[0]
 ```
 - Q: Since an array identifier points to the 1st element in the array, is an array identifer a pointer variable? {.lr}
-- A: No, array identifiers are not pointer variables. We know this because assigning an array identifer variable to another address causes a compile-time error. {.lg}
+- A: NO; array identifiers are not pointer variables! We know this because assigning an array identifer variable to another address causes a compile-time error. {.lg}
 - e.g. `a = &x` is invalid
 
 We can use pointers to pass arrays as parameters to functions, enabling us to actually manipulate arrays using functions.
@@ -1081,7 +1115,7 @@ We can also:
    - e.g. if `int *p = a = &a[0]` and `int *q = &a[3]`, then `q-p = 3-0 = 3`{.lg}
 2. use relational operators to compare pointers to each other (e.g. `if (p <= q)`)
 3. use relational operators to compare a pointer to an integer
-   - for all integers (except 0), this means that we're just comparing the address of the pointer (which isn't necessarily practical, but can come up on exams).
+   - for all integers (except 0), this means that we're just comparing the address of the pointer (not necessarily useful).
    - we can use `if (p != 0)` <=> `if (p != NULL)` to check if a pointer points to a valid address before dereferencing
 
 C does not check array bounds, so *pointer arithmetic that goes beyond the bounds of an array*{.r} is a nondeterministic bug -> it will not result in a compile-time error/warning or a run-time warning, but *may or may not result in a run-time warning*{.r}.
@@ -1089,6 +1123,8 @@ C does not check array bounds, so *pointer arithmetic that goes beyond the bound
 **PRACTICE:**
 1\. For the code below, how can we rewrite `&marks[i]` using pointer arithmetic? {.p}
 ```c
+// Q:
+
 int a[size];
 for (int i = 0; i < size; i++) {
   scanf("%d", &a[i]);
@@ -1096,11 +1132,16 @@ for (int i = 0; i < size; i++) {
 ```
 1\) Since `&a[0]` <=> `a` and `&a[1]` <=> `&a[0] + 1` <=> `a + 1`, *we can replace `&a[i]` with `a + i`*{.lg}:
 ```c
+// A:
+
 // 'scanf("%d", &a[i]);'
+// to
 scanf("%d", a + i);
 ```
 2\) We can also *rewrite the header of the `for` loop to increment a pointer initially at the first element of the array*{.lg}:
 ```c
+// A:
+
 // 'int i = 0; i < size; i++' is necessary because we can't check array bounds any other way
 for (int *p = a, int = 0; i < size; p++, i++) {
   scanf("%d", p);
@@ -1109,12 +1150,15 @@ for (int *p = a, int = 0; i < size; p++, i++) {
 
 2\. a) Is the code below valid? Why or why not? {.p}
 ```c
+// Q:
+
 void swap(int a[], int i, int j) {
   int temp = a[i];
   a[i] = a[j];
   a[j] = temp;
 }
 ```
+
 This code is valid. {.lg}
 - `int a[]` is pointer to the 1st element of `a[]`: `&a[0]`, which allows us to manipulate the array.
 - `a[i]` is equivalent to `*(&a[i])`, which allows us to dereference the value at `a[i]` and assign it a new value by: `a[i] = temp` <=> `*(&a[i])`.
@@ -1123,8 +1167,9 @@ b) Rewrite the code using pointers and pointer arithmetic. {.p}
 ```c
 // A:
 void swap(int *a, int i, int j) {
+  // via the definition of pointers & pointer arithmetic...
   // a[i] <=> *(&a[i]) <=> *(&a[0] + i) <=> *(a + i)
-  // via the definition of pointers & pointer arithmetic
+
   int temp = *(a + i);
   *(a + i) = *(a + j);
   *(a + j) = temp;
@@ -1138,9 +1183,9 @@ void swap(int *a, int i, int j) {
 Q: How can we allocate memory (i.e. set the size) of an array if we don't know how many elements it will hold while we are writing the program? {.r}
 
 A: Either...
-- set an arbitrarily high array size
+- set an arbitrarily high array size...
   - a waste of memory if left unused
-- write code that allows us to allocate a specific size of memory (for an array) based on variable input using `malloc()` and `free`. {.lg}
+- ...OR write code that allows us to allocate a specific size of memory (for an array) based on variable input using `malloc()` and `free`. {.lg}
 
 **HEAP:** a large amount of pre-reserved memory that a program can use to store data that won't be until the program is running.
 - examples of data that IS known before the program runs includes constants, int/double/char variables, and fixed arrays.
@@ -1152,7 +1197,7 @@ int *a = (int*) malloc(num_elements * sizeof(type))
 // while 'malloc' return type is void* and is implicitly typecasted to whatever data type it is being assigned to, typecasting as int* is easier to understand
 ```
 - Q: Do we need to initalize an array as `int a[1]` or any other low value before allocating memory using `malloc()`? {.lr}
-- A: No; by running `int *a = malloc(...)`, we are effectively initializing the array as a pointer.  {.lg}
+- A: NO; by running `int *a = malloc(...)`, we are effectively initializing the array as a pointer.  {.lg}
 
 ##  17.2. `free`
 
@@ -1184,6 +1229,7 @@ Obviously, however, you are going to need to understand pre-midterm concepts in 
 
 # 19. Intro to 2D Arrays
 ## 19.1. Initializing 2D Arrays
+
 ```c
 //  arr[rows][cols] = { {row1}, {row2}, ...}
 // where each row has 'cols' # of columns
@@ -1208,8 +1254,8 @@ for (int i = 0; i < num_rows; i++) {
 ```
 
 ## 19.2. 2D Array Memory Addresses/Pointer Arithmetic
-Q: How are 2D array values stored in memory addresses?
-(i.e. how does pointer arithmetic work with 2D arrays) {.r}
+
+Q: How are 2D array values stored in memory addresses? (i.e. how does pointer arithmetic work with 2D arrays) {.r}
 
 A: 2D array values are in ROW-MAJOR ORDER (start at `arr[0][0]`, increment col in same row, then increment col). {.lg}
 
@@ -1231,8 +1277,8 @@ $^1$Q: How can we find the address of any 2D array value if we know its row (`i`
 A: address of `arr[num_rows][num_cols]` = (address of `arr[0][0]`) `+ sizeof(TYPE) * (i * num_cols - j)` {.lg}
 
 ## 19.3. Passing 2D Arrays to Functions
-
 ### 19.3.1. Without Pointers
+
 The C compiler only needs the number of columns of a 2D array when passed as a parameter to a function.
 
 *NOTE: arrays (regardless of number of dimensions) are always passed to functions as pointers.*
@@ -1248,6 +1294,8 @@ We can initialize arrays of any number of dimensions:
 ```c
 int a[1][2][3];     // 3D array
 int b[1][2][3][4];  // 4D array
+...
+int b[1][2][3][4]...[n]; // n-dimensional array
 ```
 
 When we pass any multidimensional array to function, *the 1st dimension ('row') is always ignored if passed* but **ALL other dimensions MUST be passed**{.lr}:
@@ -1259,7 +1307,9 @@ void func(int b[][2][3][4]);
 ```
 
 ### 19.3.3. With Pointers
+
 When passed as a **DOUBLE pointer**, we can access each element normally via `arr[i][j]`:
+
 ```c
 void func(int **arr) {
   for (row = 0; ...) {
@@ -1270,7 +1320,8 @@ void func(int **arr) {
   }
 }
 ```
-Wwhen passed as a **SINGLE pointer**, we need to access each element by dereferencing the [specific address of each element](#192-2d-array-memory-addressespointer-arithmetic):
+
+When passed as a **SINGLE pointer**, we need to access each element by dereferencing the [specific address of each element](#192-2d-array-memory-addressespointer-arithmetic):
 
 ```c
 void func(int *arr) {
@@ -1285,7 +1336,8 @@ void func(int *arr) {
 ```
 
 ## 19.4. Dereferencing 2D Arrays
-A 2D array is basically just an array of pointers ('rows'), with each pointer pointing to the 1st element of its row (enabling traversal of 'columns' in each row).
+
+A 2D array is basically just an array of pointers ('rows'), with each pointer pointing to the 1st element (1st 'column') of a 'row' (enabling traversal of columns in each row).
 
 Just like with 1D arrays, the identifier (`arr`) of a 2D array (`arr[2][3]`) is the address of `arr[0]` (`&arr[0]`).
 
@@ -1315,14 +1367,13 @@ PRACTICE:
 int board[6][6] = ...;
 
 // A:
-
+...
 ```
 
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 20. 2D Arrays & Dynamic Memory Allocation
-
-## 20.1. `malloc` for 2D Arrays
+## 20.1. `malloc()` for 2D Arrays
 
 Q: How do we allocate memory for 2D arrays using `malloc`? {.r}
 
@@ -1335,8 +1386,18 @@ A:
 2. Then, allocate memory via `malloc` for the number of columns, iterating through each row. {.lg}
    ```c
    for (int row = 0; row < num_rows; row++) {
-     arr[row] = (int*) malloc(sizeof(int) * num_cols);
-     // <=> *(arr + i) = ...
+     *(arr + row) = (int*) malloc(sizeof(int) * num_cols);
+     // or 'arr[row] = ...'
+   }
+   ```
+3. Finally, fill in 2D array with values:
+   ```c
+   for (int row = 0; row < num_rows; row++) {
+     for (int col = 0; col < num_cols; col++) {
+       *(*(arr + row) + col) = ...
+       // or '*(arr[row] + col) = ...'
+       // or 'arr[row][col] = ...'
+     }
    }
    ```
 
@@ -1348,7 +1409,8 @@ Instead, we need to iterate through each row and run `free()` on the pointer to 
 ```c
 for (int row = 0; row < num_rows; row++) {
      free(arr[row]);
-  // free(*(arr + row));
+     // is the same as:
+     // 'free(*(arr + row));'
 }
 ```
 
@@ -1366,7 +1428,7 @@ Remember that [passing as a double vs. single pointer means different methods mu
 ## 21.1. String == `char` array
 
 Strings in C are null-terminated\* `char` arrays.
-\*Null-terminated means the final element in each `char` array corresponding to a string is always the **null character** `'\0'`.
+- \*Null-terminated means the final element in each `char` array corresponding to a string is always the **null character** `'\0'`.
 
 ## 21.2. Initializing Strings
 
@@ -1374,8 +1436,10 @@ Strings in C are null-terminated\* `char` arrays.
 
 We can initialize a string as a `char` array with `char` values OR with a **STRING CONSTANT**{.b}:
 ```c
-char s[] = {'H','e','l','l','o',\'0'}; // remember to include null character at end
+char s[] = {'H','e','l','l','o','\0'}; // remember to include null character at end
+
 char s[] = "Hello"; // using string constant
+
 char s[5] = "Hello"; // size input is ignored by compiler
 
 // when size input is greater than characters required,
@@ -1414,25 +1478,30 @@ A: **NO**{.lr} {.lg}
 - `char *p = "Hello"` initializes an array in the GLOBAL VARS & CONSTANTS section of memory; `p` is a pointer to a literal STRING CONSTANT, so attempting to mutate any value of the array via `p[i] = ...` or `*(p+i) = ...` is an invalid access of memory (potential segmentation fault).
   - **Conversely, if `p` pointed to a `char` array in the call stack (e.g. `char *p = s`), then `p[i] = ...` would be legal because local variables in the call stack are being mutated.**{.lg}
 
-  - Q: Does `s` in the code below end up pointing to the same string constant in the GLOBAL VARS & CONSTANTS section of memory? {.r}
+  - Q: Does `s` in the code below end up pointing to the same string constant in the GLOBAL VARS & CONSTANTS section of memory? {.lr}
   ```c
+  // Q:
+
   char *p = "Hello";
   p = "Hello";
   ```
   - A: **NO**{.lr}; a second string constant is allocated in a different memory block of the GLOBAL VARS & CONSTANTS section and the address in the pointer just changes to point to that new second string constant. {.lg}
 
+
   - Q: Is the following code legal? {.lr}
   ```c
+  // Q:
+
   char s[] = "Hello";
   s = "Hello";
   ```
   - A: **NO**{.lr}; `s` is not a pointer, it is just an address and we cannot change the value of its address. {.lg}
 
-#### 21.2.2.1. Empty Strings
+### 21.2.3. Empty Strings
 
 Since strings are `char` arrays with their end indicated by the null character `'\0'`, if the first element of a `char` array is the null character then the string is an EMPTY STRING `""`:
 ```c
-char s[] = {\'0','H','e','l','l','o',\'0'}; // is same as '""'
+char s[] = {'\0','H','e','l','l','o','\0'}; // is same as '""'
 ```
 Because every string in C is null-terminated, we don't need the size of the string's `char` array to iterate through its element without invalidly accessing memory; **we can just stop iterating when we reach an element with the null character:**
 ```c
@@ -1442,11 +1511,11 @@ for (int i = 0; s[i] != '\0'; i++) {
 }
 ```
 
-- Q: If we initalize a pointer pointing to the 2nd element of the `char` array `s[] = {\'0','H','e','l','l','o',\'0'}` above, what will happen? {.r}
+- Q: If we initalize a pointer pointing to the 2nd element of the `char` array `s[] = {'\0','H','e','l','l','o','\0'}` above, what will happen? {.r}
 - A: Because the C compiler only cares about the null character when terminating strings, this means that the pointer to the second value is basically pointing to string `"ello"`. {.lg}
 
-- Q: What is the difference between `'\0` and `NULL`? {.lr}
-- A: `'\0'` is a `char`-type constant with value `0`. `NULL` is a pointer-type constant with vlaue `0`. They are same value but different types. {.lg}
+- Q: What is the difference between `'\0'` and `NULL`? {.lr}
+- A: `'\0'` is a `char`-type constant with value `0`. `NULL` is a pointer-type constant with value `0`. They are same value but different types. {.lg}
 
 ---
 **PRACTICE:**
@@ -1456,12 +1525,12 @@ char *p = (char*) malloc(sizeof(char) * 6);
 p[1] = 'e';
 p = "Hello";
 ```
-- A `char` array with memory for 6 elements is initialized by `malloc` in the **HEAP**. {.lg}
-- The second element in the `char` array is changed to `'e'` (remember that the pointer to the second element is dereferenced: `p[1]` <=> `*&p[1]`). {.lg}
-- *`p = "Hello"` creates a string constant in the GLOBAL VARS & CONSTANTS memory and changes the pointer `p` to point to that new constant.*{.lg}
+1. A `char` array with memory for 6 elements is initialized by `malloc` in the **HEAP**. {.lg}
+2. The second element in the `char` array is changed to `'e'` (remember that the pointer to the second element is dereferenced: `p[1]` <=> `*&p[1]`). {.lg}
+3. *`p = "Hello"` creates a string constant in the GLOBAL VARS & CONSTANTS memory and changes the pointer `p` to point to that new constant.*{.lg}
 
-  - *Because only the address assigned to the pointer has changed, the memory allocated using `malloc` has not been freed and is causing a memory leak.*{.lr}
-  - To free the memory allocated by `malloc`, you can initialize a new pointer pointing to p (`char *p2 = p`), which allows us to free it (`free(p2)`) after changing the address assigned to `p`.
+   - *Because only the address assigned to the pointer has changed, the memory allocated using `malloc` has not been freed and is causing a memory leak.*{.lr}
+   - To free the memory allocated by `malloc`, you can initialize a new pointer pointing to p (`char *p2 = p`), which allows us to free it (`free(p2)`) after changing the address assigned to `p`.
 
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
@@ -1474,6 +1543,7 @@ PRACTICE:
 1\. Will the following code run? {.p}
 ```c
 // Q:
+
 const char *s;
 s = malloc(10);
 s[0] = 'H';
@@ -1492,8 +1562,8 @@ A: **ERROR OCCURS**{.lr}; cannot change character that the pointer is pointing t
 - `puts(s)` ---> print string s with new line appended at end
 
 ## 22.3. String INPUT
-
 ### 22.3.1. `scanf`
+
 `scanf("%s", s)` -- skips leading white space, reads before next white space
 - e.g. for `"__Another_Example"`, input will be `"Another"`
 - Q: what is the format for the variable s in `scanf`? {.r}
@@ -1505,19 +1575,20 @@ A: **ERROR OCCURS**{.lr}; cannot change character that the pointer is pointing t
 
 ### 22.3.2. `fget(s)` & STRINGS (`char` ARRAYS) AS FUNCTION PARAMETERS
 
-Q: so what is a safe string input function? {.r}
+Q: ...so what is a safe string input function? {.r}
 
 A: `gets(s)` and `fget(s)`. {.lg}
 - `get(s)` reads entire string (inc. leading and nonleading white spaces) until it reaches new line character. *however, still have problem of memory*{.lr}
 - `fgets(s, NUMBER OF CHARACTERS, stdin)`; gets string input from file, but bc we are using `stdin`, it will get input from user in terminal
-  - e.g. `fgets(s, 6, stdin)` for `"__Another_Example"` will just get `"__Ano"` (6-1 = 5 characters bc last character is null character)
+  - e.g. `fgets(s, 6, stdin)` for `"__Another_Example"` will just get `"__Ano"` ($6-1 = 5$ characters bc last character is null character)
   - e.g. `fgets(s, sizeof(s), stdin)` -- auto allocates memory (since `char` just takes up 1 B, we don't need to put in `... * sizeof(char)` like we have to do for `int` which takes up 4 B)
-  - NOTE: `sizeof(s)` only returns the valid number of characters (i.e. space taken up by the string/`char` array) only if string `s` is initialized as character array `char s[6]`, **NOT** character pointer using `malloc` (`char *s = (char*) malloc(6))`; because size of an address for a pointer is 8 B) {.lr}
+  - ***NOTE***: `sizeof(s)` only returns the valid number of characters (i.e. space taken up by the string/`char` array) only if string `s` is initialized as character array `char s[6]`, **NOT** character pointer using `malloc` (`char *s = (char*) malloc(6))`; because size of an address for a pointer is 8 B) {.lr}
 
 **PRACTICE:**
 1\. Will either of the lines of code below take in the right amount of characters into the function? {.p}
 ```c
 // Q:
+
 int f(char *s) {
   fgets(s, sizeof(s), stdin);
 }
@@ -1532,9 +1603,10 @@ int f(char s[]) {
 2\. Write your own function that takes safe string input. {.p}
 ```c
 // A:
+
 // 'getchar()' -- returns character entered by user
 
-// could also be void
+// return pointer to char array created for convenience
 char* getStringSafely(char *s, int size) {
   int i = 0;
   char c;
@@ -1548,7 +1620,9 @@ char* getStringSafely(char *s, int size) {
   return s;
 }
 ```
+
 Because we are returning a char array pointer char *s, we can easily print out the input string: {.lg}
+
 ```c
 int main(void) {
   char s[6];
@@ -1559,23 +1633,25 @@ int main(void) {
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 23. More on Strings & String Library Functions
-
-## 23.1. Small Details of Printing Strings
+## 23.1. Nuances in Printing Strings
 
 Q: What will be printed for the code below? {.lr}
+
 ```c
 // Q:
+
 char *s = "Sample";
 
 printf("%s", s);
 printf("%s", s + 2);
 ```
+A: ala pointer arithmetic, `s+2` points to the third cell in the array, and since strings are printed by iterating through a char array until null character is reached, printing `s+i` will just print string `s` starting from the `i`th cell to the end. {.lg}
 ```c
 // A:
+
 Sample
 mple
 ```
-A: ala pointer arithmetic, `s+2` points to the third cell in the array, and since strings are printed by iterating through a char array until null character is reached, printing `s+i` will just print string `s` starting from the `i`th cell to the end. {.lg}
 
 Q: How do you print a single character in a string? {.lr}
 
@@ -1594,19 +1670,20 @@ A: Dereference operator `*` has higher precedence +/-, so the code will run as: 
 ```
 
 ## 23.3. `strlen()`
+
+**`const char *s`** is used whenever we want to ensure that a function does not modify the input string or character.
 ```c
 int strlen(const char *s) // returns string length
-
-// 'const char *s' is used whenever we want to ensure that a function does not modify the input string or character
 ```
 
 **PRACTICE:**
 1\. a) Write your own implementation of `strlen().` {.p}
 ```c
+// A:
+
 // STRATEGY
 // get each char & count++ until '\n' or '\0'
 
-// A:
 int strLength(const char *s) {
   int size = 0;
   // 's[size]' <=> '*(s+i)'
@@ -1636,6 +1713,7 @@ int strLength_PointerArithmetic(const char *s) {
 ```
 
 ## 23.4. `strcpy()`
+
 ```c
 char* strcpy(char* dest, char* src);
 // could have been 'void' bc we are just manipulating pointers
@@ -1645,6 +1723,8 @@ char* strcpy(char* dest, char* src);
 **PRACTICE:**
 1\. a) Write your own implementation of `strcpy().` {.p}
 ```c
+// A:
+
 // STRATEGY:
 // iterate through each char of 'src' and assign to current index of 'dest'
 
@@ -1652,6 +1732,7 @@ char* strCopy(char* dest, char* src) {
   int i = 0;
   while (src[i] != '\0') {
     src[i] = dest[i];
+    i++;
   }
   dest[i] = '\0'; // add null character bc loop is exited before \0 can be added
   return dest;
@@ -1659,8 +1740,10 @@ char* strCopy(char* dest, char* src) {
 ```
 
 b) Rewrite your implementation of `strcpy().` _***using pointer arithmetic***_ {.p}
+
 ```c
 // A:
+
 char* strCopy_PointerArithmetic(char* dest, char* src) {
   // for returning pointer to `dest` string by returning address of first character
   char *t = dest;
@@ -1678,7 +1761,7 @@ char* strCopy_PointerArithmetic(char* dest, char* src) {
 }
 ```
 ```c
-// we could also write:
+// alternative A:
 
 // same as 'while ((*dest = *src))'
 while ((*dest = *src) != '\0') { // first assignment happens, then logic evaluation
@@ -1687,8 +1770,7 @@ while ((*dest = *src) != '\0') { // first assignment happens, then logic evaluat
 }
 return t;
 
-
-// or:
+// OR
 
 while ((*dest++ = *src++)) {} // first dereference, then assignment, then increment via pointer arithmetic
 return t;
@@ -1701,12 +1783,12 @@ return t;
 
 **PROBLEM:**{.lr} `char* strcpy(char *dest, const char *src)` is an unsafe function (because if `src` has more memory allocated to it than `dest`, then buffer overflow will occur when running `strcpy(dest, src)`).
 **SOLUTION:**{.lg} use `char* strncpy(char *dest, const char *src, int n)`; allocates first `n` characters of `src` to `dest`.
+
 ```c
 char* strncpy(char *dest, const char *src, int n);
 ```
-```c
-// e.g.
 
+```c
 // if       'n' == number of characters in 'src' + 1...
 // then     copy 'src' into 'dest' AND add null character at end
 
@@ -1714,7 +1796,8 @@ char s[6];
 strncpy(s, "Hello", 6);
 strncpy(s, "Hello", sizeof("Hello")); // same as above
 strncpy(s, "Hello", sizeof(s)); // same as above
-
+```
+```
 // if      'n' == number of characters in 'src'...
 // then    copy 'src' into 'dest'; null character is NOT ADDED at end
 
@@ -1737,11 +1820,13 @@ char* strn_Copy(char* dest, const char* src, size_t/int n); {
 ```
 
 ## 24.2. `strcat()` / `strcat()`
+
 ```c
 // concatenates 'src' string to end of 'dest'
 char* strcat(char* dest, const char* src);
 char* strcat(char* dest, const char* src, size_t/int n); // n is number of char to append
 ```
+
 ```c
 // e.g.
 
@@ -1753,10 +1838,12 @@ strcat(a, b); // a is now "AbCd!"
 ```
 
 ## 24.3. `strcmp()` / `strncmp()`
+
 ```c
 int strcmp(const char *a, const char *b);
 int strcmp(const char *a, const char *b, size_t/int n); // compares first n characters of each string
 ```
+
 ```c
 if      strcmp(a, b) < 0
 then    a precedes b
@@ -1767,20 +1854,22 @@ then    b precedes a
 if      strcmp(a, b) == 0
 then    a and b are same string
 ```
+
 Q: How are strings compared? {.r}
 
 A: via ASCII values of characters. {.lg}
-- e.g. "ab" precedes "bc"
-- e.g. "Ab" precedes "ab"
+- e.g. `"ab"` precedes `"bc"`
+- e.g. `"Ab"` precedes `"ab"`
   - NOTE: null character '\0' ASCII value is 0
-  - e.g. "abc" precedes "abca" bc null character (0) comes before any other ASCII value
-  - e.g. "Abcd" precedes "abc" bc comparison always starts from first character and then goes to next character if if both characters are the same
+  - e.g. `"abc"` precedes `"abca"` bc null character (0) comes before any other ASCII value
+  - e.g. `"Abcd"` precedes `"abc"` bc comparison always starts from first character and then goes to next character if if both characters are the same
 
 Q: Why can't we just use `s1 == s2` to compare strings? {.r}
 
 A: for a string, `s1` <=> `&s1`, so by `s1 == s2` we are comparing the addresses of the char pointers, **NOT the string characters.**{.lr} {.lg}
 
 ## 24.4. `atoi()` / `atof()`
+
 ```c
 int atoi(const char *s); // converts string (ASCII) to int
 // e.g. atoi("314") = (int) 314;
@@ -1790,11 +1879,13 @@ int atof(const char *s); // converts string (ASCII) to double
 ```
 
 ## 24.5. `strchr()`
+
 ```c
 char* int strchr(const char* str, char chr);
 // returns pointer to address of string/character array 'str' with FIRST OCCURENCE of 'chr'
 // if 'chr' not found, returns null character
 ```
+
 ```c
 // e.g.
 char* s = "Hello";
@@ -1823,6 +1914,7 @@ void charOccurences(const char* str, char chr) {
 ```
 
 ## 24.6. `strstr()`
+
 ```c
 char* strstr(const char *s1, const char *s2);
 // finds FIRST OCCURRENCE of string 's2' in string 's1'
@@ -1832,12 +1924,13 @@ char* strstr(const char *s1, const char *s2);
 **PRACTICE:**
 1\. a) Write your own implementation of `strstr().` {.p}
 ```c
+// A:
+
 // STRATEGY:
 // starting at index 0 and ending at index 'n - strlen(s2)',
 // iterate through each index i of 's1' and compare substring of size 'len_s2' to 's2'
 // use `strncmp()` to compare string 's2' to each substring of 's1'
 
-// A:
 char *p = s1;
 while (*p != '\0' && strncmp(p, s2, strlen(s2)) != 0) {
   p++;
@@ -1855,15 +1948,20 @@ return p;
 # 25. 2D Arrays of Strings
 
 While we can have 2D `char` arrays for strings, it is inefficient to do so if strings have different sizes because the same space is allocated for each subarray.
+
 ```c
+// e.g.
+
 // 10 because longest month (September) needs 9 characters + 1 for null char
 char months[][10] = {"January",
                      "February",
                      ...,
                      "December"};
 ```
+
 Instead, we can use an **array of pointers**, and set the pointer at each index to be a string constant.
 This way, each string "in" the array only as much space as required to store it (in GLOBAL VARS & CONSTANTS) and we can easily change what the string at each index in the array by simply pointing to a different address.
+
 ```c
 char *months[12];
 months[0] = "January";
@@ -1885,8 +1983,10 @@ A: **NO**{.r}: a 2D `char` array stores each string as characters in an array (w
 **Recursion** (divide-and-conquer) -- break down ("divide") a bigger problem into smaller problems until they are small enough to be solved easily ("conquer") and then combine solutions of smaller problems to form solution to bigger problem.
 
 EXAMPLE: Write a function for factorial using recursion. {.r}
+
 ```c
-// non-recursive implementation
+// NON-RECURSIVE
+
 int factorial(int n) {
   int f = 1;
   for (int i = 1; i <= n; i++) {
@@ -1895,21 +1995,31 @@ int factorial(int n) {
   return f;
 }
 ```
+
 We know that $n! = n * (n - 1)!$. Thus, we can recursively call the factorial function, eliminating the `for` loop and explicit storing of variables.
+
 ```c
-// RECURSIVE implementation
+// RECURSIVE
+
 int factorial(int n) {
-  // base case
+  // base cases
+  if (n == 1) {
+    return 1;
+  }
   if (n == 0) {
     return 0;
   }
-  // recursive call
-  return n * factorial(n - 1);
 
-  // e.g. 4! = 4 * 3! = 4 * (3 * 2!) =  4 * (3 * (2 * 1!)) = 4 * (3 * (2 * (1 * 0!)))
-  // '0!' is base case for factorial, and need to explicitly return 1
+  // recursive case
+  return n * factorial(n - 1);
 }
 ```
+```c
+e.g. 4! = 4 * 3! = 4 * (3 * 2!) =  4 * (3 * (2 * 1!)) = 4 * (3 * (2 * (1 * 0!)))
+
+'1!' is a base case for factorial, and need to explicitly return 1
+```
+
 - Q: What is the ***base case?*** {.r}
 - A: The base case is the (simplest) case when for the recursion should stop and the solution should be computed/combined. For factorial, this is when n equals 0 for n!. {.lg}
 
@@ -1924,8 +2034,10 @@ Recursion is typically suboptimal because it consumes stack by:
 
 **PRACTICE:**
 1\. a) Write a recursive function for the piecewise function f(x) = { 2f(n-1) + 1 for n > 0 AND = { 3 for n = 0. {.p}
+
 ```c
 // A:
+
 int f(int n) {
   // base case
   if (n == 0) {
@@ -1936,8 +2048,10 @@ int f(int n) {
 ```
 
 2\. a) Write a recursive function that prints a row of asterisks. {.p}
+
 ```c
 // A:
+
 void printRow(int n) {
   // base case --  stop printing at row 0
   if (n <= 0) {
@@ -1949,6 +2063,7 @@ void printRow(int n) {
   return;
 }
 ```
+
 - Q: What would happen if we switched the 2 following lines of code around as seen below? {.r}
   ```c
   ...
@@ -1960,13 +2075,16 @@ void printRow(int n) {
 - By switching the lines around, now we call each function, and then only backtrack and print '*' from each function call AFTER the base case has returned. {.lg}
 
 b) Using your `printRow()` function, write a recursive function that prints a half triangle. {.p}
+
 ```c
 // ?
+
 ****
 ***
 **
 *
 ```
+
 ```c
 // A:
 
@@ -1990,6 +2108,7 @@ void printTriangle(int n) {
 ## 27.1. Using Backtracking
 
 Q: How can we print an inverted half triangle (opposite of practice question 2. b) in last lecture)? {.lr}
+
 ```c
 // ?
 *
@@ -1997,23 +2116,30 @@ Q: How can we print an inverted half triangle (opposite of practice question 2. 
 ***
 ****
 ```
+
 A: use backtracking to our advantage; recursively call each function BEFORE printing row n; when we reach base case (n < 0), function calls will return starting by printing `printRow(1)`, then `printRow(1+1)`, then `printRow((1+1)+1)`, ... until `printRow(n-1)`, and finally `printRow(n)`. {.lg}
+
 ```c
 // A:
+
 void printTriangle(int n) {
   if (n > 0) {
     printTriangle(n - 1);
     printRow(n);
   }
-  // don't need else bc if statement in parent function call is only reached
+
+  // don't need 'else' bc if statement in parent function call is only reached
   // AFTER all interior function calls have returned
+
   return;
 }
 ```
 
 Q: How can we print a normal AND an inverted half triangle (see below)? {.lr}
+
 ```c
 // ?
+
 ****
 ***
 **
@@ -2022,9 +2148,12 @@ Q: How can we print a normal AND an inverted half triangle (see below)? {.lr}
 ***
 ****
 ```
+
 A: our base case is n = 1 (only print 1 star); **we can use backtracking by combining both types of recursively calling functions from the past 2 questions:** {.lg}
+
 ```c
 // A:
+
 void printTriangles(int n) {
   if (n == 1) {
     printRow(1);
@@ -2033,15 +2162,18 @@ void printTriangles(int n) {
     printTriangles(n - 1);
     printRow(n);
   }
+
   return;
 }
 ```
+
 - After the first `printRow(n)`, each time `printTriangles()` is called it runs `printRow()` and then recursively calls `printTriangles()` on and on (printing the upper inverted half triangle) until the base case. {.lg}
 - After printing out a row of 1 star at the base case, all the functions now backtrack, so the deepest function call now runs `printRow(2)` *(because `printTriangle(2-1)` is the base case where n = 2-1 = 1)*{.lr}, and then `printRow(3)`, and so on and so forth until `printRow(n)`, at which the parent function finally exits the if statement and returns. {.lg}
 
 - Q: Will the program be identical if we replaced the base case to be at n == 0 with the following code below? {.r}
   ```c
   // ?
+
   if (n == 0) {
     return;
   }
@@ -2051,8 +2183,11 @@ void printTriangles(int n) {
 ## 27.2. Multiple Base Cases
 
 Q: How should you go about writing a recursive function for: {.r}
+
 ```c
-double power(double x, int n); // ?
+double power(double x, int n) {
+  // ...?
+}
 ```
 
 A: find all relevant base cases and recursive cases, and then implement via code. {.lg}
@@ -2072,8 +2207,10 @@ A: find all relevant base cases and recursive cases, and then implement via code
 - **x = 0** => `return 0` if `n != 0` AND ERROR if `n == 0`;
 
 **IMPLEMENTATION:**
+
 ```c
 // A:
+
 double power(double x, int n) {
   // BASE CASES
   if (x == 0) {
@@ -2105,7 +2242,9 @@ double power(double x, int n) {
 ```
 
 ## 27.3. Storing Repeated Function Calls
+
 While our `power()` function does work, when we track all the function calls for a single parent call, we see that *we call the same function multiple times (as a result of calling `power(x, n/2)` twice per function call).*{.lr}
+
 ```
 // #        indicates when each function call occurred
 // # -> #   indicates which function is called after return value
@@ -2124,6 +2263,7 @@ power(2,5) // 1
 ```
 
 Since we are calling the same function (that will return the same value) multiple times, we can **save function values in a temporary variable and simply return that when the function call is repeated.**
+
 ```c
 // STORING FUNCTION RETURNS
 
@@ -2176,6 +2316,7 @@ Consider the string `"racecar"`.
   - A: **NO**{.r}; if we just run the following code... {.lg}
   ```c
   // ?
+
   bool isPalindrome(char *s) {
     int low = 0;
     int high = strlen(s) - 1;
@@ -2185,8 +2326,10 @@ Consider the string `"racecar"`.
     return isPalindrome(SUBSTRING);
   }
   ```
+
   - ...the values of low and high reset to that for base string for each function call. {.lr}
   - Instead, we need to have `low` and `high` be parameters to the function such that we are able to manipulate them when calling subfunctions: {.lg}
+
   ```c
   // values that need to be remembered between function calls MUST be passed as function parameters
 
@@ -2206,9 +2349,10 @@ Consider the string `"racecar"`.
     - Since this point is only reached if the current parent string of 2 characters has the same first and last character (e.g. `"aa"`), we **only need to consider how to `return true` when `low` is greater than `high`.**{.g}
   - If in a function call `low == high`, then the parent string has odd length and current substring is just a single character.
     - Since **a single character is palindromic and this point is only reached when all parent strings have the same first and last characters**{.g}, this means we can `return true`.
-  - We can combine the two conditions when base case is true as `!(low < high)
+  - We can combine the two conditions when base case is true as `!(low < high)`
   ```c
   // A:
+
   bool isPalindrome(char *s, int low, int high) {
     if (!(low < high)) {
       return true;
@@ -2216,10 +2360,12 @@ Consider the string `"racecar"`.
     ...
   }
   ```
+
 - Q: What is the condition where the RECURSIVE CASE returns `true`/`false`? {.r}
 - A: we can just return false if the first character is not equal to the last character; if they are equal, simply recursively call the function (when base case is reached, function will return true)... {.lg}
   ```c
   // A:
+
   bool isPalindrome(char *s, int low, int high) {
     // BASE CASE
     if (!(low < high)) {
@@ -2237,6 +2383,7 @@ Consider the string `"racecar"`.
 
 ### 28.0.1. Helper Functions
 Since it can be inconvenient to call a function with multiple arguments, it is better to consolidate our actual function (with all the required arguments) into a helper function that only takes the string as an argument.
+
 ```c
 bool isPalindrome(char *s) {
   isPalindromeHelper(s, 0, strlen(s) - 1);
@@ -2247,14 +2394,18 @@ bool isPalindromeHelper(char *s, int low, int high) {
   ... // actual function implementation
 }
 ```
+
 **PRACTICE:**
 1. ***(FINAL EXAM 2018, Q14)*** --- Write a recursive function for `strchr()` (take a string and a character and return index of 1st occurrence of character in string). {.p}
+
 ```c
-// function prototype
+// Q:
+
 int recursiveFindIndex(char *str, char c) {
-  // ?
+  // ...?
 }
 ```
+
 STEPS: consider examples -> determine base cases & recursive call -> implement base cases & recursive calls. {.lg}
 
 **EXAMPLE:**
@@ -2271,6 +2422,7 @@ STEPS: consider examples -> determine base cases & recursive call -> implement b
 - have reached end of string & have not found character
 
 **IMPLEMENTATION:**
+
 ```c
 // A:
 
@@ -2290,8 +2442,7 @@ int recursiveFindIndexHelper(char *str, char c, int index) {
   } else {
     // c not found,
     // but not yet end of string, so increment index
-    index++;
-    return recursiveFindIndexHelper(str, c, index);
+    return recursiveFindIndexHelper(str, c, index++);
   }
 }
 
@@ -2304,17 +2455,17 @@ int recursiveFindIndex(char *str, char c) {
 
 2. Write a recursive function that counts the number of odd numbers in an array. {.p}
 
-EXAMPLE:
+*EXAMPLE:*
 - arr: `[3,2,1]`
 - returns: 3
 
-RECURSIVE CALL:
+**RECURSIVE CALL:**
 - check if `arr[i]` at first index is odd, then add to count of odd numbers in rest of array.
   - since `true == 1` and `false == 0`, we can just add the function calls.
 - use `low`/`left` and `high`/`right` variables to signify current and end indices.
 - number is odd if `num % 2 == 1) is true.
 
-BASE CASE:
+**BASE CASE:**
 - reached end of array
 - only need to see if number is odd and add to count (just return int of whether number is odd)
 
@@ -2348,6 +2499,7 @@ int recursiveOddCountHelper(int *arr, int left, int right) {
   }
 }
 ```
+
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 29. STRUCTURES
@@ -2355,14 +2507,18 @@ int recursiveOddCountHelper(int *arr, int left, int right) {
 *Sidenote: sections 28. and 29. occurred in the same lecture and were split up for organization. Each section N from 29. onwards corresponds to the lecture number N-1 (e.g. 31. -> LEC 30).*
 
 ## 29.1. Structures
- Arrays allow us to define variables that can hold several data items of the type.
 
- **STRUCTURES** all us to hold several data items of different types.
+Arrays allow us to define variables that can hold several data items of the type.
+
+**STRUCTURES** all us to hold several data items of different types.
+
 ### 29.1.1. Declaring `struct`
+
 We can initialize `struct` variables...:
 1. ...in `main()`
 2. ...in the `struct` definition
- ```c
+
+```c
 // e.g. to represent info about a warehouse item in a database
 struct entry { // struct name is called a 'tag'
 int quantity;
@@ -2389,9 +2545,11 @@ int main() {
   return 0;
 }
 ```
+
 ### 29.1.2. `typedef`
 
 Instead of writing `struct entry` every time to intialize a new struct variable of this type, we can use `typedef` to set a custom name for this combined type:
+
 ```c
 // typedef [old type] [new type]
 struct entry {
@@ -2408,16 +2566,19 @@ typedef struct entry {
 ```
 
 We can also use `typedef` to make working with primitives easier:
+
 ```c
 // e.g. custom unsigned int for non-negative variables
 typedef unsigned int size_t
 ```
+
 ```c
 // e.g. custom int pointer
 typedef int* int_pointer
 ```
 
 ### 29.1.3. Initializing `struct` Variables
+
 ```c
 // suppose we had a struct for a date:
 typedef struct date {
@@ -2447,6 +2608,7 @@ Date *p = &date_variable;
 Date *p = &date_variable;
 p -> year = 1862;
 ```
+
 - Instead of using ampersand to assign address to pointer, we can also use `malloc()` (so we can free the memory later on):
   ```c
   p = (Date*) malloc(sizeof(Date));
@@ -2498,6 +2660,7 @@ head -> [] -> [] -> [] -> [] -> [tail] -> NULL
 ```
 
 ## 30.4. Implementing Linked Lists (0/3)
+
 ```c
 typdef struct node {
   int data; // can add multiple data types
@@ -2508,6 +2671,7 @@ typdef struct node {
 Q: How can we create a new empty linked list? {.lr}
 
 A: Since the last (tail) node in a linked list points to NULL, we can easily and memory-efficiently declare a new linked list simply by pointing head to NULL: {.lg}
+
 ```c
 // A:
 head [] -> NULL
@@ -2526,25 +2690,33 @@ A: We can simply point the `*next` pointer of the previous node to the inserted 
 
 # 31. Implmenting Linked Lists (1/3)
 ## 31.1. `struct` Node
+
 0. We have already defined the node struct for our linked list:
+
 ```c
 typedef struct node {
   int data;
   struct node *next;
 } Node;
 ```
+
 Q: Is the following replacement code valid? {.r}
+
 ```c
 struct node next; // a) ?
 // OR
 Node *next; // b) ?
 ```
+
 A: *a) causes compile-time error* because it results in never-ending recursion in allocating space for a node. *b) causes compile-time error* because alias 'Node' does not exist within the struct definition. {.lg}
 
 ## 31.2. `createNode()`
+
 1. Write a function for our linked list interface to create a node: {.lr}
+
 ```c
 // A:
+
 Node* createNode(int data) {
   Node* newNode = malloc(sizeof(Node));
   if (newNode != NULL) { // only assign data if memory is available to avoid segmentation faults
@@ -2557,8 +2729,10 @@ Node* createNode(int data) {
 ```
 
 ### 31.2.1. Manually Initializing Head & Adding Nodes
+
 Now, we can separately initialize the `head` pointer of our linked list (in `main()` for now) to NULL:
 - *Just like with arrays, we only need a pointer to the first element because we can get to any other element by traversing through the list.*
+
 ```c
 int main() {
   Node *head = NULL;
@@ -2567,6 +2741,7 @@ int main() {
 ```
 
 Now that we can create nodes and have initialized our head pointer, we can start (manually) adding nodes to our linked list: {.lr}
+
 ```c
 // set head to a new node
 *head = createNode(0);
@@ -2580,6 +2755,7 @@ head -> next -> next = createNode(2);
 head -> next -> next = createNode(3);
 // head -> [0] -> [1] -> [2] -> [3] -> NULL
 ```
+
 Q: Do we need to assign to `head` using the dereference operator? {.r}
 
 A: YES! If we just use `head = createNode(0)`, we are entirely reassigning head and lose access to the past node (causing memory leak). {.lg}
@@ -2589,6 +2765,7 @@ A: YES! If we just use `head = createNode(0)`, we are entirely reassigning head 
 Manually adding nodes is inefficient and unscaleable; instead let's...
 
 1. ...write a function to insert a node at the front of a linked list (later, we'll look at inserting at the end): {.lr}
+
 ```c
 // return true/false in the event that we cannot insert
 bool insertAtFront(Node **head, int data) {
@@ -2610,16 +2787,22 @@ bool insertAtFront(Node **head, int data) {
   return true;
 }
 ```
+
 Q: Can we switch the two lines of code changing the pointer addresses for the nodes (as below)? {.r}
+
 ```c
 // ?
+
 *head = newNode;          // previously ↓
 newNode -> next = *head;  // previously ↑
 ```
+
 A: NO; if we point head to the newNode first, we are unable to point the newNode next pointer to the node that head was originally pointing to! {.lg}
 
 ### 31.3.1. Manually Initializing Head & Adding Nodes via `insertAtFront()`
+
 Now, we can create a linked list from NULL again using our insert-at-beginning function: {.lr}
+
 ```c
 Node *head = NULL;
 insertAtFront(&head, 1); // need to use '&head' bc head parameter is a double pointer
@@ -2633,6 +2816,7 @@ insertAtFront(&head, 2);
 Instead of manually initializing a Node pointer for the head, we can...
 
 3. ...write a struct for a linked list containing the head pointer: {.lr}
+
 ```c
 struct linkedList {
   // 'Node *head = NULL;' -> CANNOT do this; need to initialize struct vars separately
@@ -2643,6 +2827,7 @@ struct linkedList {
 ### 31.4.1. Initializing Head & Adding Nodes to our linkedList `struct`
 
 Now, we can change the parameter of our insertAtFront() function to take in a pointer to the linked list data type and get the head from there:
+
 ```c
 // previously '**head'
 bool insertAtFront(LinkedList *list, int data) {
@@ -2677,6 +2862,7 @@ Finally, we've abstracted away any refernece to the head in the interface, which
 Suppose we needed to reset a linkedlist. Right now, we have to point head of a linked list to NULL in main(). Instead, we can...
 
 4. ...write a function that initializes a new linkedlist (taking an input of list pointer): {.lr}
+
 ```c
 // A:
 void initList(LinkedList *list) {
@@ -2685,7 +2871,9 @@ void initList(LinkedList *list) {
 ```
 
 ## 32.2. `isEmpty()`
+
 5. Write a function to check if a linked list is empty (i.e. head points to null). {.lr}
+
 ```c
 // A:
 void isEmpty(LinkedList *list) {
@@ -2696,6 +2884,7 @@ void isEmpty(LinkedList *list) {
 For final exams, NEVER assume a linked list input is never empty; empty linked lists are often edge cases you need to consider. {.r}
 
 ## 32.3. `printList()`
+
 6. Write a function to print each node of a linked list in order. {.lr}
 
 ```c
@@ -2713,11 +2902,12 @@ void printList(LinkedLIst *list) {
     curr = curr -> next;
   }
 }
-
 ```
 
 ## 32.4. `findFirstNodeSearch()`
+
 7. Write a function to find the first node that matches search data. {.lr}
+
 ```c
 // iterate through each node starting at head
 // want to RETURN the NODE that matches search data
@@ -2737,7 +2927,9 @@ Node* findFirstNodeSearch(LinkedList *list, int data) {
 ```
 
 ## 32.5. `insertAtBack()`
+
 8. Write a function to insert a node at the tail of a linked list. {.lr}
+
 ```c
 // return T/F if possible
 bool insertAtBack(LinkedList *list, int data) {
@@ -2768,8 +2960,10 @@ bool insertAtBack(LinkedList *list, int data) {
 *Remember to consider edge cases with your functions!*{.lr} For our` insertAtBack()` function, if a list is empty (no nodes), then the current node is NULL which means we get a segmentation fault trying to assign `curr -> next` to the new node.
 
 SOLUTION: insert a new node (at front) when list is empty (i.e. head points to null; JUST USE OUR BUILT FUNCTION!): {.lg}
+
 ```c
 // A:
+
 bool insertAtBack(LinkedList *list, int data) {
   if (isEmpty(list)) {
     // can just return insert function bc we have bool for that too
@@ -2800,13 +2994,16 @@ bool insertAtBack(LinkedList *list, int data) {
 Note: in the final exam, function implementations for linked lists will NOT be provided for questions (except for those explicitly stated; commonly `createNode()`). You will need to be able to create helper functions as necessary to write the function that actually answers the question.
 
 ## 33.1. `insertIntoOrderedList()`
+
 9. Write a function to insert a node (with an `int` data value) into a sorted linked list: {.lr}
+
 ```c
 // ?
 
 // e.g. insert [2] into...
 // head -> [0] -> [1] -> [3] -> NULL
 ```
+
 ```c
 // STRATEGY:
 // iterate through each node until the data value of the
@@ -2824,6 +3021,7 @@ void insertIntoOrderedList(LinkedList *list, int data) {
   curr -> next = newNode;
 }
 ```
+
 PROBLEM: need to account for edge cases! {.lr}
 - if new node data is greater than all list data
   - just need to stop while loop when next node is null -> *needs to be before checking data of next node bc otherwise that would be invalid access of memory the other way around*{.lr}
@@ -2861,8 +3059,8 @@ bool insertIntoOrderedList(LinkedList *list, int data) {
 ```
 
 ## 33.2. `deleteFront()`
-10. Write a function to delete the FIRST node in a list: {.lr}
 
+10. Write a function to delete the FIRST node in a list: {.lr}
 
 **General case:**
 ```c
@@ -2873,9 +3071,11 @@ free(list -> head);
 // 3 - set head to tmp new head pointer
 list -> head = newHead;
 ```
+
 **Edge cases:**
 - if list is empty
   - can just return (true if `bool` return type)
+
 ```c
 // A:
 
@@ -2891,49 +3091,64 @@ void deleteFront(LinkedList *list) {
 ```
 
 ## 33.3. `deleteLast()`
+
 11. Write a function to delete the LAST node in a list: {.lr}
+
 ```
 e.g. want to delete last node of:
 head -> [1] -> [2] -> NULL
 ```
+
 **General case:**
 - traverse through list until node after next node is NULL
   - bc we need to set the 'next' pointer of the second last node to NULL
+
 ```c
 while (curr -> next -> next != NULL) {
   curr = curr -> next;
 }
 ```
+
 - when node after next node is null, free next node and set next of current node to NULL
+
 ```c
 free(curr -> next);
 curr -> next = NULL;
 ```
+
 **Edge cases:**
  - empty list
    - catch when: `isEmpty()` is true
    - nothing needs to be done: `return void`
+
 ```c
 if (isEmpty(list)) {
   return;
 }
 ```
+
 - list only has 1 node *(visualize using examples!)*{.r}
+
 ```
 head -> [1] -> NULL
 ...
 head -> NULL
 ```
+
   - catch when: `next` pointer after `head` points to NULL
   - handle by: ~free head and set head to NULL~ can just use `deleteFront()`!
+
 ```c
 if (list -> head -> next == NULL) {
   deleteFront(list);
 }
 ```
+
 Putting it all together...
+
 ```c
 // A:
+
 void deleteLast(LinkedList *list) {
   if (isEmpty(list)) { // empty list
     return;
@@ -2952,13 +3167,17 @@ void deleteLast(LinkedList *list) {
 ```
 
 ## 33.4. `deleteAllNodes()`
+
 12. Write a function to delete all nodes in a list {.lr}
+
 We can just use our `deleteFront()` or `deleteLast()` functions and simply call them on the list until the list is empty.
 NOTE: since `deleteLast()` needs to traverse through entire list while `deleteFront()` doesn't, using `deleteFront()` will make our function more efficient. {.lr}
 
 We can add additional functionality (that could come into use later on) by returning the number of deleted nodes:
+
 ```c
 // A:
+
 int deleteAllNodes(LinkedList *list) {
   int deleted = 0;
   while (!isEmpty(list)) {
@@ -2970,18 +3189,21 @@ int deleteAllNodes(LinkedList *list) {
 ```
 
 ## 33.5. `deleteFirstMatch()`
+
 13. Write a function to search for a data value in a linked list and delete the first matching node: {.lr}
+
 ```
 e.g. want to delete node with data 3:
 head -> [1] -> [2] -> [3] -> NULL
 ```
-General case:
+
+**General case:**
 - traverse through each node
 - check whether next node data value matches input
 - if node data matches input, set current node pointer to 'next' pointer of next node
 - free the deleted node pointer
 
-Special cases:
+**Special cases:**
 - if matching node is not found, simply stop traversing through list (avoid calling 'data' for NULL)
 - if memory is unavailable, ensure that invalid access of memory does not occur (*guard condition*)
 - if first node in list matches input, we can simply call our `deleteAtFront()` function on the list (instead of re-implementing)
@@ -2989,6 +3211,7 @@ Special cases:
 
 ```c
 // A:
+
 bool deleteFirstMatch(LinkedList *list, int data) {
   Node *curr = list -> head;
 
@@ -3014,6 +3237,7 @@ bool deleteFirstMatch(LinkedList *list, int data) {
 ```
 
 ## 33.6. `deleteAllMatches()`
+
 14. Write a function to delete **all** nodes with the matching input data value: {.lr}
 
 Instead of re-implementing, we can simply call our `deleteFirstMatch()` function repeatedly on the list until it returns false.
@@ -3021,6 +3245,7 @@ Instead of re-implementing, we can simply call our `deleteFirstMatch()` function
 
 ```c
 // A:
+
 int deleteAllMatches(LinkedList *list, int data) {
   int numDeleted = 0;
 
@@ -3033,6 +3258,7 @@ int deleteAllMatches(LinkedList *list, int data) {
 ```
 
 ## 33.7. (Linked List) FINAL EXAM STRATEGIES
+
 - Consider whether list traversal is needed
 - Generate an example for each general and edge case
 - Create an initial implementation for the general case
@@ -3094,16 +3320,18 @@ int binarySearch(int list[], int length, int data) {
 ```
 
 ## 34.3. Binary Search (recursive)
-Base cases:
+**Base cases:**
 - if found, middle index between low and high will have value being searched -> return that index
 - if not found, low will become greater than high -> when this happens, return -1
 
-Recursive case(s):
+**Recursive case(s):**
 - if middle index is greater than searched value, set high to be middle index - 1
 - if middle index is less than searched value, set low to be middle index + 1
 - call binarySearchHelper with new low & high parameters
+
 ```c
 // A:
+
 int binarySearchHelper(int list[], int data, int low, int high) {
   if (low > high) {
     return -1;
@@ -3121,6 +3349,7 @@ int binarySearchHelper(int list[], int data, int low, int high) {
   }
 }
 ```
+
 - Q: Why use `...Helper()?` {.r}
 - A: Add parameters for recursive case(s) in helper function and auto-get those parameters in the interface function so that user doesn't need to care about implementation. {.lg}
 
@@ -3142,8 +3371,8 @@ A: Using binary search (which is much more efficient than sequential search) req
 
 Array is virtually split into a sorted and an unsorted part. Values from the unsorted part are picked and placed at the correct position in the sorted part.
 
-Steps:
-To sort an array of size n in ascending order:
+**Steps:**
+To sort an array of size n in ascending order...
 1. Iterate from arr[1] to arr[n] over the array.
 2. Compare the current element (key) to its predecessor.
 3. If the key element is smaller than its predecessor, compare it to the elements before. Move the greater elements one position up to make space for the swapped element.
@@ -3165,6 +3394,7 @@ How can we implement? {.lr}
 
 ```c
 // A:
+
 void insertionSort(int list[], int length) {
   // iterate through each index of the list
   for (int top = 1; top < length; top++) {
@@ -3182,6 +3412,7 @@ void insertionSort(int list[], int length) {
 ```
 
 ## 35.2. Selection Sort
+
 - Search entire array to find largest value & move largest value to end (by swapping with end)
 - Search for largest element excluding last element (which was placed in correct position in last step)
 
@@ -3194,6 +3425,7 @@ void insertionSort(int list[], int length) {
 2 [5 5 8 9 18]
 [2 5 5 8 9 18]
 ```
+
 - Q: # of times we looked for largest Number? {.r}
 - A: size of array - 1 {.lg}
 - Q: How many items did we have to compare in each search? {.r}
@@ -3205,6 +3437,7 @@ void insertionSort(int list[], int length) {
 
 ```c
 // A:
+
 void selectionSort(int list[], int length) {
   for (int top = length - 1; top > 0; top--) {
     // assume first element is largest
@@ -3228,11 +3461,14 @@ void selectionSort(int list[], int length) {
 
 Recursively sorts an array by dividing the array into 2 subarrays (one with all integers less than pivot, other where all is greater than pivot).
 
-The quicksort algorithm requires us to choose a pivot element in the array. The pivot can be at any point, such as the start, middle, or end. Next, we sort all of the elements that are less than the pivot to the left of the pivot, and all of the elements that are greater than the pivot to the right. Once this is done, the pivot is at the correct position (i.e. pivot is sorted; all other elements are initially unsorted). We then recursively repeat this process on the left and right subarrays until the whole list is sorted.
+1. The quicksort algorithm requires us to choose a pivot element in the array. The pivot can be at any point, such as the start, middle, or end.
+2. Next, we sort all of the elements that are less than the pivot to the left of the pivot, and all of the elements that are greater than the pivot to the right. Once this is done, the pivot is at the correct position (i.e. pivot is sorted; all other elements are initially unsorted).
+3. We then recursively repeat this process on the left and right subarrays until the whole list is sorted.
 
-- iterate from left to right (start at first element, increase index until ending at pivot) and if current element is greater than pivot, swap with element found going from right to left (start at last element, decrease index until ending at pivot) that is less than pivot.
+*SUMMARY:* iterate from left to right (start at first element, increase index until ending at pivot) and if current element is greater than pivot, swap with element found going from right to left (start at last element, decrease index until ending at pivot) that is less than pivot.
 
-**IMPLEMENTATION 1**
+**IMPLEMENTING QUICKSORT (1/2)**
+
 ```c
 void swap(int *a, int *b); // swap elements
 
@@ -3270,6 +3506,7 @@ int partition(int list[], int low, int high) {
   return (i + 1);
 }
 ```
+
 ```c
 void quickSort(int list[], int low, int high) {
   if (low < high) {
@@ -3288,7 +3525,8 @@ void quickSort(int list[], int low, int high) {
 }
 ```
 
-**IMPLEMENTATION 2**
+**IMPLEMENTING QUICKSORT (2/2)**
+
 ```c
 int partition(int list[], int low, int high) {
   // set pivot to be first element
@@ -3316,6 +3554,7 @@ int partition(int list[], int low, int high) {
   }
 }
 ```
+
 ```c
 void quickSort(int list[], int length) {
   return quickSortHelper(list, 0, length - 1);
@@ -3332,7 +3571,7 @@ void quickSortHelper(int list[], int low, int high) {
 
 ## 35.4. Bubble Sort
 
-Steps:
+**Steps:**
 1. iterate through array from left to right
 2. compare two elements next to each other & swap them if out of order
 3. after one "loop" through array, the largest element will have "bubbled" its way to the right
@@ -3357,13 +3596,14 @@ Steps:
 ```
 
 **IMPLEMENTING BUBBLE SORT**
+
 ```c
 void bubbleSort(int list[], int length) {
   bool sorted = false;
 
-  for (int top = length - 1; top > 0 && !sorted), top-- {
+  for (int top = length - 1; top > 0 && !sorted; top--) {
     sorted = true;
-    for (int i = 0, i < top, i++) {
+    for (int i = 0; i < top; i++) {
       if (list[i] > list [i + 1]) {
         swap(list[i], list[i + 1]);
         sorted = false; // if need to swap before end of for loop,
@@ -3379,16 +3619,19 @@ void bubbleSort(int list[], int length) {
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 36. Binary Search Trees (1/2)
+
 Sequential search was a slow searching algorithm. We were able to speed up searching using binary search.
 
 Similarly, inserting elements in an array or sorted linked list can be slow as we need to traverse every element sequentially. We can make this insertion more efficient by using binary search (trees) to reduce the number of comparisons we have to do.
 
 ## 36.1. Binary Tree Implementation
+
 Similar to a linked list, except each node points to 2 items:
 1. *left --- all values of nodes on left subtree are smaller than parent node
 2. *right --- all values of nodes on right subtree
 
 1\. Write struct definitions for a binary search and its nodes: {.r}
+
 ```c
 typedef struct node {
   int data;
@@ -3409,7 +3652,9 @@ int main() {
 ```
 
 ### 36.1.1. `createNode()`
+
 2\. Write a function to create an empty node for the BS tree: {.r}
+
 ```c
 Node* createNode(int data) {
   Node* newNode = (Node*) malloc(sizeof(Node));
@@ -3434,6 +3679,7 @@ int main() {
 ```
 
 ### 36.1.2. `isEmpty()`
+
 ```c
 bool isEmpty(BSTree *tree) {
   return (tree -> root == NULL);
@@ -3441,6 +3687,7 @@ bool isEmpty(BSTree *tree) {
 ```
 
 ### 36.1.3. `printTree()`
+
 3\. Write a function to print all nodes of a BS tree: {.r}
 
 Q: How can we efficiently print all elements of a binary search tree in order? {.lr}
@@ -3463,6 +3710,7 @@ void printTree(BSTree *tree) {
   printNode(tree -> root);
 }
 ```
+
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 37. Binary Search Trees (2/2)
@@ -3470,6 +3718,7 @@ void printTree(BSTree *tree) {
 ### 37.1.1. `nonRecursiveSearch()`
 
 4\. Write a function to ***NON-RECURSIVELY*** search for a node in BS tree: {.r}
+
 ```c
 Node* nonRecursiveSearch(BSTree *tree, int data) {
   Node *curr = tree -> root;
@@ -3602,17 +3851,19 @@ Node* recursiveInsertHelper(Node *n, int data) {
 <hr style="border:20px solid #FFFF; margin: 30px 0 30px 0; "> </hr>
 
 # 38. Final Exam Strategies
-## 38.1. Generating Ideas
-1. Regular Cases
+## 38.1. Generating Solution Ideas
+
+1. **Regular Cases**
    - How can we handle the recursive case to make the problem smaller?
    - Work through examples before starting your code
    - e.g. How can a node be inserted into a sorted, non-empty list?
-2. Special Cases
+2. **Special Cases**
    - Test out your existing solution to see if it can handle each special case.
    - For special cases your code cannot handle, add additional code (mainly logic for detecting special cases and reacting accordingly) to handle each special case
    - e.g. empty list/tree, list/tree with only one node, inserting at end of list/bottom of tree
 
-## 38.2. Questions that will appear on the Final Exam
+## 38.2. Questions on the Final Exam
+
 ```
 7 short answer questions:       4 mark x 5 questions
                               + 6 mark x 2 questions
